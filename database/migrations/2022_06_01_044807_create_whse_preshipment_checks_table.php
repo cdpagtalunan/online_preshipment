@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePreshipmentListsTable extends Migration
+class CreateWhsePreshipmentChecksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePreshipmentListsTable extends Migration
      */
     public function up()
     {
-        Schema::create('preshipment_lists', function (Blueprint $table) {
+        Schema::create('whse_preshipment_checks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('fkControlNo')->nullable();
             $table->string('Master_CartonNo')->nullable();
@@ -32,10 +32,6 @@ class CreatePreshipmentListsTable extends Migration
             // $table->string('Username');
             $table->string('logdel')->default(0)->comment = '0-active, 1-deleted';
             $table->timestamps();
-
-
-            // $table->foreign('fkControlNo')->references('id')->on('preshipments');
-
         });
     }
 
@@ -46,6 +42,6 @@ class CreatePreshipmentListsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('preshipment_lists');
+        Schema::dropIfExists('whse_preshipment_checks');
     }
 }

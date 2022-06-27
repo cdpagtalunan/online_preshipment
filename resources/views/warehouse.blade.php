@@ -10,12 +10,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Dashboard</h1>
+                    <h1>Online Pre-shipment</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                 
-                        <li class="breadcrumb-item active">Dashboard</li>
+                        <li class="breadcrumb-item active">Warehouse</li>
                     </ol>
                 </div>
             </div>
@@ -26,7 +26,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card card-primary m-2" style="min-width: 700px;">
+                    <div class="card card-primary m-2" style="min-width: 700px; overflow: auto;">
                         <div class="card-body">
                             <div class="table responsive mt-2">
                                 <table id="tbl_whse_preshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
@@ -38,6 +38,7 @@
                                             <th>Packing List Control No</th>
                                             <th>Shipment Date</th>
                                             <th>Destination</th>
+                                            <th>Transfer Date and Time</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -160,6 +161,7 @@
                                         <th style="text-align: center;">Package Qty</th>                           
                                         <th style="text-align: center;">Weight By</th>                           
                                         <th style="text-align: center;">Packed By</th>                           
+                                        <th style="text-align: center;">Remarks</th>                           
                                                                 
                                     </tr>
                                     </thead>
@@ -189,7 +191,7 @@
                         <form id="formApproveWhse">
 
                             <div class="modal-body">
-                                    <input type="text" name="preshipment_approval_id" id="txt_preshipment_approval_id">
+                                    <input type="hidden" name="preshipment_approval_id" id="txt_preshipment_approval_id">
                                 
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend w-50">
@@ -250,6 +252,34 @@
                 </div>
             </div>
 
+            {{-- MODAL DISAPPROVE --}}
+            <div class="modal fade" id="modalWhsDisapprove" data-backdrop="static" style="overflow: auto;">
+                <div class="modal-dialog" style="margin-top: 5%;">
+                    <div class="modal-content">
+                        <form action="post" id="formDisapprovePreshipmentId">
+                            @csrf
+                            <div class="modal-header">
+                                
+                                <button id="close" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="disPreshipmentId" name="disapprove_preshipment">
+
+                                <h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you want to disapprove?</h5><br>
+                                <h6>Remarks:</h6>
+                                <textarea name="pps_disapprove_remarks" id="ppsDisapproveRemarks" class="form-control" rows="5" required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" class="btn btn-success">Yes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             
         </div>
     </section>
@@ -263,16 +293,18 @@ $(document).ready(function () {
     dataTableWhsePreshipment = $("#tbl_whse_preshipment").DataTable({
       "processing" : true,
       "serverSide" : true,
+      "ordering"  : false,
       "ajax" : {
           url: "get_preshipment_for_whse", 
       },
       "columns":[    
           { "data" : "status"},
-          { "data" : "preshipment_for_approval.date" },
-          { "data" : "preshipment_for_approval.station" },
-          { "data" : "preshipment_for_approval.packing_list_ctrlNo"},
-          { "data" : "preshipment_for_approval.Shipment_date"},
-          { "data" : "preshipment_for_approval.Destination"},
+          { "data" : "preshipment.Date" },
+          { "data" : "preshipment.Station" },
+          { "data" : "preshipment.Packing_List_CtrlNo"},
+          { "data" : "preshipment.Shipment_Date"},
+          { "data" : "preshipment.Destination"},
+          { "data" : "from_whse_noter_date_time"},
           { "data" : "action"},
           
       ],
@@ -284,7 +316,8 @@ $(document).ready(function () {
       "ajax" : {
           url: "get_preshipment_list_for_whse",
           data: function (param){
-            param.preshipmentId = $("#preshipmentId").val();
+            // param.preshipmentId = $("#preshipmentId").val();
+            param.preshipmentCtrlId = $("#packingControlNoId").val();
           },
       },
       "columns":[    
@@ -299,7 +332,7 @@ $(document).ready(function () {
           { "data" : "PackageQty"},
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
-        //   { "data" : "action"},
+          { "data" : "Remarks"},
           
       ],
     });
@@ -323,6 +356,16 @@ $(document).ready(function () {
     $('#txtAcceptShipSendTo').on('click', function(e){
         e.preventDefault();
         return false;
+    });
+
+    $(document).on('click', '.btn-disapprove-whse', function(){
+        let preshipmentId = $(this).attr('preshipment-id');
+        $('#disPreshipmentId').val(preshipmentId);
+    });
+
+    $('#formDisapprovePreshipmentId').submit(function(event){
+        event.preventDefault();
+        disapprovePreshipment();
     });
 });
 </script>

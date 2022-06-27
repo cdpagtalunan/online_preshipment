@@ -64,10 +64,10 @@ $user_level = 0;
         </body>
     </html>
 
-    <script>
+    {{-- <script>
         let loginUserId = $('#login_id').val();
         verifyUser(loginUserId);
-    </script>
+    </script> --}}
 
     @else
     <script type="text/javascript">

@@ -20,12 +20,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Dashboard</h1>
+          <h1>Online Pre-shipment</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             
-            <li class="breadcrumb-item active">Dashboard</li>
+            <li class="breadcrumb-item active">Material Handler</li>
           </ol>
         </div>
       </div>
@@ -36,25 +36,28 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
-            <div class="card card-primary m-2" style="min-width: 700px;">
+            <div class="card card-primary m-2" style="min-width: 700px; overflow: auto;">
               <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
                   
-                        <li class="nav-item">
-                        <a class="nav-link active" id="MH-checking-tab" data-toggle="tab" href="#MH-checking" role="tab" aria-controls="MH-checking" aria-selected="true">QR Checker</a>
+                      <li class="nav-item">
+                        <a class="nav-link active" id="MH-checking-tab" data-toggle="tab" href="#MH-checking" role="tab" aria-controls="MH-checking" aria-selected="true">Pending Transactions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="MH-whse-tab" data-toggle="tab" href="#MH-whse" role="tab" aria-controls="MH-whse" aria-selected="false">WHSE Transaction</a>
+                            <a class="nav-link" id="MH-whse-int-tab" data-toggle="tab" href="#MH-int-whse" role="tab" aria-controls="MH-int-whse" aria-selected="false">Internal Transactions</a>
                         </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="MH-whse-ext-tab" data-toggle="tab" href="#MH-ext-whse" role="tab" aria-controls="MH-ext-whse" aria-selected="false">External Transactions</a>
+                      </li>
                 </ul>
                     
                 <div class="tab-content" id="myTabContent" >
                     <div class="tab-pane fade show active" id="MH-checking" role="tabpanel" aria-labelledby="MH-checking-tab">
                         <div class="table responsive mt-2">
-                            <table id="tblPreshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
+                            <table id="tblPreshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive wrap" style="width: 100%; min-width: 10%; ">
                                 <thead>
                                     <tr>
-                                        <th>Status</th>
+                                        <th style="width: 10%;">Status</th>
                                         <th>Date</th>
                                         <th>Station</th>
                                         <th>Packing List Control No</th>
@@ -71,9 +74,32 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="MH-whse" role="tabpanel" aria-labelledby="MH-whse-tab">
+                    <div class="tab-pane fade" id="MH-int-whse" role="tabpanel" aria-labelledby="MH-whse-int-tab">
                       <div class="table responsive mt-2">
-                          <table id="tbl_whse_transaction" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
+                          <table id="tbl_whse_int_transaction" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
+                              <thead>
+                                  <tr>
+                                      <th>Status</th>
+                                      <th>Date</th>
+                                      <th>Station</th>
+                                      <th>Packing List Control No</th>
+                                      <th>Invoice Number</th>
+                                      <th>Shipment Date</th>
+                                      <th>Destination</th>
+                                      <th>Action</th>
+                                      
+                                  </tr>
+                              </thead>
+                              <tbody>
+
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="MH-ext-whse" role="tabpanel" aria-labelledby="MH-whse-ext-tab">
+                      <div class="table responsive mt-2">
+                          <table id="tbl_whse_ext_transaction" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
                               <thead>
                                   <tr>
                                       <th>Status</th>
@@ -91,7 +117,7 @@
                               </tbody>
                           </table>
                       </div>
-                    </div>
+                    </div> 
 
 
                 </div>
@@ -127,7 +153,7 @@
                           Pre-Shipment Info
                         </h3>                    
                       </div>
-                      <div class="col-sm-5">
+                      <div class="col-sm-5 d-none">
                         <div style="float: right">
                           <button class="btn btn-sm btn-secondary d-none" id="btnDoneScan">Done</button>
                           <button id="btnScanItem" class="btn btn-sm btn-primary"><i class="fas fa-qrcode"></i> Scan Item</button>
@@ -139,6 +165,7 @@
                   <div class="card-body">
                     <form method="post" id="form_packing_list">
                       @csrf
+                      <input type="hidden" id="packingId" name="packing_id">
                       <div class="input-group input-group-sm mb-3">
                           <div class="input-group-prepend w-50">
                             <span class="input-group-text w-100" id="basic-addon1" style="background-color: #17a2b8; color: white;">Packing List Control No:</span>
@@ -190,7 +217,7 @@
                       <div class="card-footer">
                         <div style="float: right">
                           <button class="btn btn-outline-danger" id="btn_disapprove_list_id"><i class="far fa-times-circle"></i> Disapprove</button>
-                          <button type="submit" class="btn btn-outline-success " id="btn_approve_list_id" disabled><i class="far fa-check-circle"></i> Approve</button>
+                          <button type="submit" class="btn btn-outline-success " id="btn_approve_list_id" ><i class="far fa-check-circle"></i> Approve</button>
                         </div>
                       </div>
                     </form>
@@ -231,6 +258,7 @@
                         <th style="text-align: center;">Package Qty</th>                           
                         <th style="text-align: center;">Weight By</th>                           
                         <th style="text-align: center;">Packed By</th>                           
+                        <th style="text-align: center;">Remarks</th>                           
                                                  
                       </tr>
                     </thead>
@@ -354,6 +382,7 @@
                           <th style="text-align: center;">Package Qty</th>                           
                           <th style="text-align: center;">Weight By</th>                           
                           <th style="text-align: center;">Packed By</th>                           
+                          <th style="text-align: center;">Remarks</th>                           
                                                    
                         </tr>
                       </thead>
@@ -413,7 +442,7 @@
           </div>
           <div class="modal-footer">
             <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
-            <button type="submit" class="btn btn-success">Yes</button>
+            <button type="submit" id="btnApprove" class="btn btn-success">Yes</button>
           </div>
         </form>
       </div>
@@ -438,11 +467,12 @@
     dataTablePreshipment = $("#tblPreshipment").DataTable({
       "processing" : true,
       "serverSide" : true,
+      "ordering"   : false,
       "ajax" : {
           url: "get_Preshipment", 
       },
       "columns":[    
-          { "data" : "id"},
+          { "data" : "status"},
           { "data" : "Date" },
           { "data" : "Station" },
           { "data" : "Packing_List_CtrlNo"},
@@ -477,26 +507,49 @@
           { "data" : "PackageQty"},
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
+          { "data" : "Remarks"},
           
       ],
     });
 
-
-    dataTableForWhse = $("#tbl_whse_transaction").DataTable({
+    //datatable for internal transaction
+    dataTableForWhse = $("#tbl_whse_int_transaction").DataTable({
       "processing" : false,
       "serverSide" : true,
-      "paging"     : false,
+      // "paging"     : false,
       "ordering"   : false,
       "ajax" : {
           url: "get_for_whse_transaction", 
       },
       "columns":[    
           { "data" : "status"},
-          { "data" : "preshipment_for_approval.date" },
-          { "data" : "preshipment_for_approval.station" },
-          { "data" : "preshipment_for_approval.packing_list_ctrlNo"},
-          { "data" : "preshipment_for_approval.Shipment_date"},
-          { "data" : "preshipment_for_approval.Destination"},
+          { "data" : "preshipment.Date" },
+          { "data" : "preshipment.Station" },
+          { "data" : "preshipment.Packing_List_CtrlNo"},
+          { "data" : "rapid_invoice_number"},
+          { "data" : "preshipment.Shipment_Date"},
+          { "data" : "preshipment.Destination"},
+          { "data" : "action"},
+          
+      ],
+    });
+
+    //datatable for external transaction
+    dataTableForWhseExt = $("#tbl_whse_ext_transaction").DataTable({
+      "processing" : false,
+      "serverSide" : true,
+      // "paging"     : false,
+      "ordering"   : false,
+      "ajax" : {
+          url: "get_for_whse_ext_transaction", 
+      },
+      "columns":[    
+          { "data" : "status"},
+          { "data" : "preshipment.Date" },
+          { "data" : "preshipment.Station" },
+          { "data" : "preshipment.Packing_List_CtrlNo"},
+          { "data" : "preshipment.Shipment_Date"},
+          { "data" : "preshipment.Destination"},
           { "data" : "action"},
           
       ],
@@ -525,6 +578,7 @@
           { "data" : "PackageQty"},
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
+          { "data" : "Remarks"},
           
       ],
     });
@@ -538,7 +592,7 @@
       $('#txtForScanner').focus();
       $('#close').attr('disabled','disabled');
       $('#btn_disapprove_list_id').attr('disabled','disabled');
-      $('#btn_approve_list_id').attr('disabled','disabled');
+      // $('#btn_approve_list_id').attr('disabled','disabled');
       $('#btnDoneScan').removeClass("d-none");
 
      
@@ -550,7 +604,7 @@
       $('#qrDiv').css('display','none');
       $('#close').removeAttr('disabled');
       $('#btn_disapprove_list_id').removeAttr('disabled');
-      $('#btn_approve_list_id').removeAttr('disabled');
+      // $('#btn_approve_list_id').removeAttr('disabled');
 
       let test = [];
 
@@ -566,13 +620,13 @@
 				
 			});
       // console.log(jQuery.inArray(false, test));
-      if(jQuery.inArray(false, test) == -1){
-        // console.log('enable button');
-        $('#btn_approve_list_id').prop('disabled', false);
-      }
-      else{
-        $('#btn_approve_list_id').prop('disabled', true);
-      }
+      // if(jQuery.inArray(false, test) == -1){
+      //   // console.log('enable button');
+      //   $('#btn_approve_list_id').prop('disabled', false);
+      // }
+      // else{
+      //   $('#btn_approve_list_id').prop('disabled', true);
+      // }
 
       
 
@@ -582,7 +636,7 @@
     $(document).on('click', '.btn-openshipment', function(){
         let checksheetId = $(this).attr('checksheet-id');
         GetPreshipmentList(checksheetId);
-        $('#btn_approve_list_id').prop('disabled', true);
+        // $('#btn_approve_list_id').prop('disabled', true);
         
     });
     $(document).on('click', '.btn-openshipmentWhse', function(){

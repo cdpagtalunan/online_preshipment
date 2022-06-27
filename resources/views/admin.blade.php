@@ -13,7 +13,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Dashboard</h1>
+          <h1>Online Pre-shipment</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
@@ -45,7 +45,7 @@
                                         <th>Username</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>Department</th>
+                                        <th>Access Type</th>
                                         <th>User Level</th>                                 
                                     </tr>
                                 </thead>
@@ -83,7 +83,7 @@
             <div class="row">
                 <div class="col-sm-12">
                   <label>RapidX User</label>
-                  <select class="form-control select-rapidx-user" id="rapidx_user" name="rapidx_user" required>
+                  <select class="form-control select-rapidx-user" id="txtRapidxUser" name="rapidx_user" required>
                     <option selected disabled>-- Select One --</option>
                   </select>
                 </div>
@@ -91,13 +91,13 @@
             <div class="row">
               <div class="col-sm-12">
                 <label>Email</label>
-                <input type="text" class="form-control" name="rapidx_email" id="rapid_email" readonly>
+                <input type="text" class="form-control" name="rapidx_email" id="txtRapidxEmail" readonly>
               </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
                   <label>Access Level</label>
-                  <select class="form-control" id="access_level" name="access_level" required>
+                  <select class="form-control" id="selectAccessLevel" name="access_level" required>
                     <option selected disabled>-- Select One --</option>
                     <option value="admin">Administrator</option>
                     <option value="user">User</option>
@@ -108,33 +108,31 @@
     
             <div class="row">
                 <div class="col-sm-12">
-                  <label>Department</label>
-                  <select class="form-control" id="user_department" name="user_department" required>
+                  <label>Access Type</label>
+                  <select class="form-control" id="selectUserDeparment" name="user_department" required>
                     <option selected disabled>-- Select One --</option>
-                    {{-- <option value="ISS">ESS</option> --}}
-                    {{-- <option value="HRD">HRD</option> --}}
-                    {{-- <option value="Logistics">Logistics</option> --}}
-                    {{-- <option value="Facility">Facility</option> --}}
-                    {{-- <option value="EMS">EMS</option> --}}
-                    {{-- <option value="Finance">Finance</option> --}}
-                    {{-- <option value="IAS">IAS</option> --}}
-                    {{-- <option value="QAD">QAD</option> --}}
-                    {{-- <option value="Secretariat">Secretariat</option> --}}
-                    <option value="ISS">ISS</option>                
-                    {{-- <option value="FAS">FAS</option> --}}
-                    {{-- <option value="TS Eng">TS Eng</option> --}}
-                    <option value="TS Prod">TS Prod</option>
-                    <option value="TS QC">TS QC</option>
+
+                    {{-- <option value="ISS">ISS</option>                 --}}
+                    <option value="material handler">Material Handler</option>
+                    {{-- <option value="material handler">PPS CN</option> --}}
+                    {{-- <option value="material handler">PPS TS</option> --}}
+                    <option value="inspector">QC</option>
+                    <option value="PPS WHSE">PPS WHSE</option>
                     <option value="TS WHSE">TS WHSE</option>
-                    <option value="PPC">PPC</option>
-                    {{-- <option value="CN 2A">CN 2A</option> --}}
-                    {{-- <option value="CN 2B">CN 2B</option> --}}
                     <option value="CN WHSE">CN WHSE</option>
-                    <option value="PPS">PPS</option>
-                    <option value="PPS CN">PPS CN</option>
-                    {{-- <option value="YF">YF</option> --}}
+
                   </select>
                 </div>
+            </div>
+            <div class="row" id="divCheckboxApprover" style="display: none;">
+              <div class="col-sm-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="checkbox_approver" value="1" id="checkboxWhseApprover">
+                  <label class="form-check-label" for="checkboxWhseApprover">
+                    Approver?
+                  </label>
+                </div>
+              </div>
             </div>
 
           </div>
@@ -161,7 +159,7 @@
         
           
           <div class="modal-body">
-            <input type="text" id="txtUserDeleteId" name="delete_user">
+            <input type="hidden" id="txtUserDeleteId" name="delete_user">
             <h4>Are you sure you want to delete this user?</h4>
 
           </div>
@@ -186,7 +184,7 @@
         
           
           <div class="modal-body">
-            <input type="text" id="txtUserEnableId" name="enable_user">
+            <input type="hidden" id="txtUserEnableId" name="enable_user">
             <h4>Are you sure you want to enable this user?</h4>
 
           </div>
@@ -226,7 +224,7 @@
           { "data" : "rapidx_user_details.username"},
           { "data" : "rapidx_user_details.name"},
           { "data" : "email"},
-          { "data" : "department"},
+          { "data" : "department", defaultContent: '-',},
           { "data" : "user_level"},
         //   { "data" : "action"},
           
@@ -246,14 +244,16 @@
         addUser();
     });
 
-    $('#rapidx_user').on('change', function(){
+    $('#txtRapidxUser').on('change', function(){
       var rapidxId = $(this).val();
-
-      getUserEmail(rapidxId);
+      if(rapidxId != null){
+        getUserEmail(rapidxId);
+      }
     });
     $('#btnAddUser').on('click',function(){
       $('#add_user_form')[0].reset();
-      $('#rapidx_user').val('0').trigger('change');
+      $('#txtRapidxUser').val('0').trigger('change');
+      $('#selectUserDeparment').prop('disabled', false);
     });
 
     $(document).on('click', '.btn-user-edit', function(){
@@ -284,6 +284,27 @@
       let userId = $('#txtUserEnableId').val();
       // console.log(userId);
       userEnable(userId);
+    });
+    
+    $('#selectUserDeparment').on('change', function(){
+      let userDepartment = $('#selectUserDeparment').val();
+      if(userDepartment == 'TS WHSE' || userDepartment ==  'CN WHSE'){
+        $("#divCheckboxApprover").css('display', 'block');
+      }
+      else{
+        $("#divCheckboxApprover").css('display', 'none');
+      }
+    });
+
+    $('#selectAccessLevel').on('change', function(){
+      let accessLevel = $(this).val();
+      if(accessLevel == 'admin'){
+        $('#selectUserDeparment').prop('disabled', true);
+      }
+      else{
+        $('#selectUserDeparment').prop('disabled', false);
+
+      }
     });
   
 

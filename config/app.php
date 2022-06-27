@@ -178,6 +178,8 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        Barryvdh\DomPDF\ServiceProvider::class,
+
 
     ],
 
@@ -231,6 +233,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Datatables' => 'Yajra\Datatables\Facades\Datatables',
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+        'PDF' => Barryvdh\DomPDF\Facade::class,
 
     ],
 

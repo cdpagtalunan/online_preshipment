@@ -27,7 +27,7 @@ use App\Model\SubsystemWbsTS;
 
 
 
-class UsersExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
+class WbsExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -168,12 +168,24 @@ class UsersExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
 
         if($packingListProductLine == 'ts'){
             $wbs_receive_no = SubsystemWbsTS::where('invoice_no', $ControlNumber)->first();
-            return $wbs_receive_no->receive_no;
+            if($wbs_receive_no != null){
+                return $wbs_receive_no->receive_no;
+            }
+            else{
+                return "";
+
+            }
 
         }
         else if($packingListProductLine == 'cn'){
             $wbs_receive_no = SubsystemWbsCN::where('invoice_no', $ControlNumber)->first();
-            return $wbs_receive_no->receive_no;
+            if($wbs_receive_no != null){
+                return $wbs_receive_no->receive_no;
+            }
+            else{
+                return "";
+
+            }
 
         }
         else{

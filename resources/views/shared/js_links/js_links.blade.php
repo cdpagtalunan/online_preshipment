@@ -31,9 +31,9 @@
 <!-- Custom JS -->
 {{-- <script src="{{ asset('public/js/my_js/UserLevel.js') }}"></script>
 <script src="{{ asset('public/js/my_js/licence.js') }}"></script> --}}
-<script src="{{ asset('public/js/my_js/User.js?n=2') }}"></script>
-<script src="{{ asset('public/js/my_js/inspector.js') }}"></script>
-<script src="{{ asset('public/js/my_js/MaterialHandler.js') }}"></script>
-<script src="{{ asset('public/js/my_js/warehouse.js?n=22') }}"></script>
-<script src="{{ asset('public/js/my_js/common.js?n=1') }}"></script>
+<script src="{{ asset('public/js/my_js/User.js?n=5') }}"></script>
+<script src="{{ asset('public/js/my_js/inspector.js?n=28') }}"></script>
+<script src="{{ asset('public/js/my_js/MaterialHandler.js?n=7') }}"></script>
+<script src="{{ asset('public/js/my_js/warehouse.js?n=74') }}"></script>
+<script src="{{ asset('public/js/my_js/common.js?n=11') }}"></script>
 

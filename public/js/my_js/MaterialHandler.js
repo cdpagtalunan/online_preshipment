@@ -27,6 +27,7 @@ function GetPreshipmentList(checksheetId){
         },
         dataType: "json",
         beforeSend: function(){
+            $("#packingId").val("");
             $("#packingCtrlNo_id").val("");
             $("#packingDate_id").val("");
             $('#packingShipmentDate_id').val("");
@@ -44,6 +45,7 @@ function GetPreshipmentList(checksheetId){
             console.log(response);
             if(response['response'] == 1){
                 // console.log(response['preshipment'][0]['Destination']);
+                $('#packingId').val(response['preshipment'][0]['id']);
                 $('#packingCtrlNo_id').val(response['preshipment'][0]['Packing_List_CtrlNo']);
                 $('#packingDate_id').val(response['preshipment'][0]['Date']);
                 $('#packingShipmentDate_id').val(response['preshipment'][0]['Shipment_Date']);
@@ -92,7 +94,8 @@ function itemVerification(arr){
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut",
     };
-   
+
+    
     var table = document.getElementById("tbl_preshipment_list");
 	var trlength= table.getElementsByTagName("tr").length;
     let i;
@@ -107,31 +110,31 @@ function itemVerification(arr){
         var package_category = tr1.getElementsByTagName("td")[7].innerHTML;
         var package_qty = tr1.getElementsByTagName("td")[8].innerHTML;
 
-        test = $(tr1).hasClass('checked-ok');
-      console.log(test);
-        
-        if(test == true){
+        checked = $(tr1).hasClass('checked-ok');
+      console.log(checked);
+
+        if(checked == true){
             if(arr[0] == po_num){
                 if(arr[1] == partcode){
                     if(arr[2] == device_name){
                         if(arr[3] == lot_no){
                             if(arr[4] == qty){
                                 if(arr[5] == package_category){
-                                    if(arr[6] == package_qty){
-                                        // console.log(po_num);
-                                        // console.log(partcode);
-                                        // console.log(device_name);
-                                        // console.log(lot_no);
-                                        // console.log(qty);
-                                        // console.log(package_category);
-                                        // console.log(package_qty);
-                                        $(tr1).removeClass('checked-ng');
+                                    if(package_qty == 'DO'){
+                                        if(arr[6] == "1"){
+                                            $(tr1).removeClass('checked-ng');
+                                            $(tr1).addClass('checked-ok');
+                                            tr1.scrollIntoView({behavior: "smooth"});
 
-                                        $(tr1).addClass('checked-ok');
-
-                                        // i= trlength + 1;
-                                        // tr1.scrollIntoView({behavior: "smooth"});
+                                        }
                                     }
+                                    else if(arr[6] == package_qty){
+                                        $(tr1).removeClass('checked-ng');
+                                        $(tr1).addClass('checked-ok');
+                                        tr1.scrollIntoView({behavior: "smooth"});
+
+                                    }
+                                  
                                 }
                             }
                         }
@@ -139,31 +142,25 @@ function itemVerification(arr){
                 }
             }
         }
-        else if(test == false){
+        else if(checked == false){
             if(arr[0] == po_num){
                 if(arr[1] == partcode){
                     if(arr[2] == device_name){
                         if(arr[3] == lot_no){
                             if(arr[4] == qty){
                                 if(arr[5] == package_category){
-                                    if(arr[6] == package_qty){
-                                        // console.log(po_num);
-                                        // console.log(partcode);
-                                        // console.log(device_name);
-                                        // console.log(lot_no);
-                                        // console.log(qty);
-                                        // console.log(package_category);
-                                        // console.log(package_qty);
+                                    if(package_qty == 'DO'){
+                                        if(arr[6] == "1"){
+                                            $(tr1).removeClass('checked-ng');
+                                            $(tr1).addClass('checked-ok');
+                                            tr1.scrollIntoView({behavior: "smooth"});
+                                        }
+                                    }
+                                    else if(arr[6] == package_qty){
                                         $(tr1).removeClass('checked-ng');
-
                                         $(tr1).addClass('checked-ok');
-
-                                        i= trlength + 1;
-                                        // tr1.scrollIntoView({behavior: "smooth"});
-
-                                       
-    
-                                    } 
+                                        tr1.scrollIntoView({behavior: "smooth"});
+                                    }
                                 } 
                             } 
                         } 
@@ -243,7 +240,9 @@ function approvePackingList(){
         method: "post",
         data: $('#form_packing_list').serialize(),
         dataType: "json",
-       
+        beforeSend: function(){
+            $('#btnApprove').prop('disabled', true);
+        },
         success: function(response){
             if(response['result'] == 1){
                 toastr.success('Pre-Shipment has been Approved');
@@ -251,6 +250,11 @@ function approvePackingList(){
                 $('#modalapproveId').modal('hide');
                 dataTablePreshipment.draw();
 
+                $('#btnApprove').prop('disabled', false);
+
+            }
+            else{
+                toastr.error('test');
             }
         },
         // error: function(data, xhr, status){

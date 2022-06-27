@@ -22,7 +22,7 @@
                     </a>
                 </li>
                 <li class="nav-item has-treeview">
-                    <a href="" class="nav-link">
+                    <a href="../OnlinePreShipment/" class="nav-link">
                         {{-- <i class="nav-icon fa fa-users"></i> --}}
                         <i class="nav-icon fas fa-home"></i>
                         <p>Home</p>
@@ -32,11 +32,12 @@
             
                 {{-- <li class="nav-header font-weight-bold" style="font-size: 1rem"></li> --}}
             
-                <div class="nav-item has-treeview" id="ppc-id"  >
+                <div class="nav-item has-treeview" id="divMaterialHandlerId"  style="display: none;">
                     <a href="materialhandler" class="nav-link">
                     <li>
                         
-                        <i class="nav-icon fas fa-pallet"></i>
+                        {{-- <i class="nav-icon fas fa-pallet"></i> --}}
+                        <i class="nav-icon fas fa-file-alt"></i>
                             <p>Material Handler</p>
                     </li>
                     </a>
@@ -44,10 +45,10 @@
                 </div>
 
                 
-                <div class="nav-item has-treeview" id="grinding-id" >
+                <div class="nav-item has-treeview" id="divInspectorId" style="display: none;">
                     <a href="inspector" class="nav-link">
                     <li>
-                        <i class="nav-icon fas fa-file-download"></i>
+                        <i class="nav-icon fas fa-microscope"></i>
                             <p>Inspector</p>
                     </li>
                     </a>
@@ -55,39 +56,30 @@
                    
                 </div>
 
-                <div class="nav-item has-treeview" id="grinding-id1" >
+                <div class="nav-item has-treeview" id="divPPSWarehouseId" style="display: none;">
                     <a href="warehouse" class="nav-link">
                         <li>
                             
-                            <i class="nav-icon fas fa-folder"></i>
+                            {{-- <i class="nav-icon fas fa-folder"></i> --}}
+                            <i class="nav-icon fas fa-pallet"></i>
                                 <p>PPS Warehouse</p>
                         </li>
                     </a>
                 </div>
-                <div class="nav-item has-treeview" id="grinding-id3" >
+                <div class="nav-item has-treeview" id="divTSCNWarehouseId" style="display: none;">
                     <a href="receiver-warehouse" class="nav-link">
                         <li>
                             
-                            <i class="nav-icon fas fa-folder"></i>
+                            {{-- <i class="nav-icon fas fa-folder"></i> --}}
+                            <i class="nav-icon fas fa-pallet"></i>
                                 <p>TS/CN Warehouse</p>
                         </li>
                     </a>
                 </div>
 
-               
-                <div class="nav-item has-treeview" id="grinding-id2" >
-                    <a href="" class="nav-link">
-                    <li>
-                        
-                            <i class="fas fa-history"></i>
-                            <p>Transaction History</p>
-                    </li>
-                    </a>
 
-                </div>
-
-                <div class="nav-item has-treeview" id="admin-id" >
-                    <a href="" class="nav-link">
+                <div class="nav-item has-treeview" id="divUserManagementId" style="display: none;">
+                    <a href="admin" class="nav-link">
                     <li>
                         
                             <i class="nav-icon fa fa-users"></i>

@@ -18,8 +18,9 @@ class UserAccess extends Migration
             $table->bigInteger('rapidx_id');
             $table->string('email')->nullable();
             $table->string('access_level');
-            $table->string('department');
-            $table->string('position')->nullable();
+            $table->string('department')->nullable();
+            // $table->string('position')->nullable();
+            $table->bigInteger('approver')->default(0)->comment = "0-not approver, 1-approver";
             $table->bigInteger('logdel')->default(0)->comment = '0-Active, 1-Deleted';
             $table->timestamps();
         });

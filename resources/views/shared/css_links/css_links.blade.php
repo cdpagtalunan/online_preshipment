@@ -29,4 +29,4 @@
 
 <link href="{{ asset('public/css/flash.css') }}" rel="stylesheet">
 
-<link href="{{ asset('public/css/custom.css?n=1') }}" rel="stylesheet">
+<link href="{{ asset('public/css/custom.css?n=2') }}" rel="stylesheet">

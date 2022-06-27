@@ -12,19 +12,32 @@
       position: absolute;
       opacity: 0;
   }
-  </style>
+
+  #tbl_preshipment_list_QC tbody td:last-child {
+    display: none;
+  }
+  /* #tbl_preshipment_list_QC tbody td:first-child {
+    display: none;
+
+  } */
+
+
+  #modalViewQCChecksheets{
+    scroll-behavior: smooth;
+  }
+</style>
 
 <div class="content-wrapper">
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Dashboard</h1>
+          <h1>Online Pre-shipment</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             
-            <li class="breadcrumb-item active">Dashboard</li>
+            <li class="breadcrumb-item active">Inspector</li>
           </ol>
         </div>
       </div>
@@ -35,7 +48,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-                <div class="card card-primary m-2" style="min-width: 700px;">
+                <div class="card card-primary m-2" style="min-width: 700px; overflow: auto;">
                     <div class="card-body">
                         {{-- <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
                           
@@ -113,6 +126,7 @@
                         <div style="float: right">
                           <button class="btn btn-sm btn-secondary d-none" id="btnDoneScan">Done</button>
                           <button id="btnScanItem" class="btn btn-sm btn-primary"><i class="fas fa-qrcode"></i> Scan Item</button>
+                          <a href="" id="toScrollId" class="d-none"> Scan Item</a>
                         </div>
                       </div>                    
                     </div>
@@ -170,7 +184,7 @@
                       </div>    
                       </div>
                       <div class="card-footer">
-                        <div style="float: right">
+                        <div style="float: right" id="btnDiv">
                           <button class="btn btn-outline-danger" id="btn_disapprove_list_id"><i class="far fa-times-circle"></i> Disapprove</button>
                           <button type="submit" class="btn btn-outline-success " id="btn_approve_list_id" disabled><i class="far fa-check-circle"></i> Approve</button>
                         </div>
@@ -221,6 +235,7 @@
                   <table id="tbl_preshipment_list_QC" class="table table-striped table-bordered" style="width: 100%; font-size: 85%;">
                     <thead>
                       <tr>
+                        {{-- <th style="display: none;">hidden id</th> --}}
                         <th style="text-align: center;">Master Carton No</th>
                         <th style="text-align: center;">Item No.</th>
                         <th style="text-align: center;">P.O. No.</th>
@@ -232,6 +247,9 @@
                         <th style="text-align: center;">Package Qty</th>                           
                         <th style="text-align: center;">Weight By</th>                           
                         <th style="text-align: center;">Packed By</th>                           
+                        <th style="text-align: center;">Remarks</th>                           
+                        <th style="text-align: center; display: none;">hidden inputs</th>
+
                                                  
                       </tr>
                     </thead>
@@ -253,6 +271,7 @@
     <div class="modal-dialog" style="margin-top: 5%;"> 
       <div class="modal-content">
         <form action="post" id="DisapproveFormid">
+          {{-- @csrf --}}
           <div class="modal-header">
             <h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you want to disapprove?</h5>
             <button id="close" class="close" data-dismiss="modal" aria-label="Close">
@@ -261,7 +280,7 @@
           </div>
           <div class="modal-body">
             <h5>Remarks:</h5>
-            <textarea name="" id="" cols="50" rows="5" class="form-control"  style="resize: none;" required></textarea>
+            <textarea name="" id="qcRemarks" cols="50" rows="5" class="form-control"  style="resize: none;" required></textarea>
           </div>
           <div class="modal-footer">
             <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
@@ -286,7 +305,7 @@
           </div>
           <div class="modal-footer">
             <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
-            <button type="submit" class="btn btn-success">Yes</button>
+            <button type="submit" id="btnApprove" class="btn btn-success">Yes</button>
           </div>
         </form>
       </div>
@@ -312,11 +331,12 @@
     dataTablePreshipment_QC = $("#tblPreshipment").DataTable({
       "processing" : true,
       "serverSide" : true,
+      "ordering"   : false,
       "ajax" : {
           url: "get_Preshipment_QC", 
       },
       "columns":[    
-          { "data" : "id"},
+          { "data" : "status"},
           { "data" : "Date" },
           { "data" : "Station" },
           { "data" : "Packing_List_CtrlNo"},
@@ -333,6 +353,13 @@
       "serverSide" : true,
       "paging"     : false,
       "ordering"   : false,
+      "searching": false,
+      // "columnDefs": [
+      //       {
+      //           "targets": [ 11 ],
+      //           "visible": false,
+      //           // "searchable": false
+      //       }],
       "ajax" : {
           url: "get_Preshipment_list_QC",
           data: function (param){
@@ -340,6 +367,7 @@
           },
       },
       "columns":[    
+          // { "data" : "hide_id"},
           { "data" : "Master_CartonNo"},
           { "data" : "ItemNo" },
           { "data" : "PONo" },
@@ -351,6 +379,9 @@
           { "data" : "PackageQty"},
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
+          { "data" : "Remarks"},
+          { "data" : "hide_input"},
+
           
       ],
     }); 
@@ -408,9 +439,12 @@
 
 
     $(document).on('click', '.btn-openshipment', function(){
-        let checksheetId = $(this).attr('checksheet-id');
+      let checksheetId = $(this).attr('checksheet-id');
+      // console.log(checksheetId);
         GetPreshipmentList_QC(checksheetId);
         $('#btn_approve_list_id').prop('disabled', true);
+
+        // readLoadForQC(checksheetId);
 
     });
 
@@ -423,6 +457,7 @@
         clearTimeout(timer);
         timer = setTimeout(function() {
           scannedItem = txtForScanning.val();
+          console.log(scannedItem);
           var arr = scannedItem.split(',');
           itemVerificationQC(arr);
           txtForScanning.val("");
@@ -451,13 +486,6 @@
       event.preventDefault();
       approvePackingList_QC();
     });
-
- 
-
-
-
-
-
 
   });
 

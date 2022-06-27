@@ -1,5 +1,6 @@
 
 .checked-ok { background: #8be082!important; }
+.checked-partial { background: #ebee26!important; }
 .checked-ng { background: #e84c31!important;color: white;  }
 
 

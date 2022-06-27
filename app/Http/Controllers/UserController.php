@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Response;
+
+
 use App\Model\RapidxUser;
 use App\Model\UserAccess;
 
@@ -20,36 +24,60 @@ class UserController extends Controller
         
     }
     public function add_user(Request $request){
-       $user_id =  $request->rapidx_user;
-       $user_email =  $request->rapidx_email;
-       $user_level =$request->access_level;
-       $user_department = $request->user_department;
-    
+        $user_id =  $request->rapidx_user;
+        $user_email =  $request->rapidx_email;
+        $user_level =$request->access_level;
+        $user_department = $request->user_department;
+        
+        $data = $request->all();
+        $to_validate = [
+            'rapidx_user' => 'required',
+            'access_level' => 'required',
+        ];
+        if($user_level == "user" || $user_level == ""){
+            $to_validate['user_department'] = 'required';
+        }
 
-        if(isset($request->edit_user_id)){
-            UserAccess::where('id', $request->edit_user_id)
-            ->update([
-                'rapidx_id' => $user_id,
-                'email' => $user_email,
-                'access_level' => $user_level,
-                'department' => $user_department,
-            ]);
-            return response()->json(['result' => 2]);
-
+        $validator = Validator::make($data, $to_validate);
+        if($validator->fails()) {
+            return response()->json(['validation' => 'hasError', 'error' => $validator->messages()]);
         }
         else{
-            UserAccess::insert([
+            $database_data = [
                 'rapidx_id' => $user_id,
                 'email' => $user_email,
                 'access_level' => $user_level,
                 'department' => $user_department,
-                 
-            ]);
+            ];
 
-            return response()->json(['result' => 1]);
+            if(isset($request->checkbox_approver)){
+                $database_data['approver'] =  1;
+            }
+            else{
+                $database_data['approver'] =  0;
+            }
 
+
+            // if()
+
+            if(isset($request->edit_user_id)){
+                UserAccess::where('id', $request->edit_user_id)
+                ->update(
+                    $database_data
+                );
+                return response()->json(['result' => 2]);
+            }
+            else{
+                UserAccess::insert(
+                    $database_data
+                );
+    
+                return response()->json(['result' => 1]);
+    
+            }    
         }
 
+       
      
 
     
@@ -132,6 +160,7 @@ class UserController extends Controller
     public function get_user_email(Request $request){
         $email = RapidxUser::where('id',$request->rapidxId)->first();
 
+
         // return $email;
         return response()->json(['email' => $email->email]);
     }
@@ -162,5 +191,28 @@ class UserController extends Controller
         ]);
 
         return response()->json(['result' => 1]);
+    }
+
+    public function get_user_for_verify_login(Request $request){
+        $get_user_for_verify = UserAccess::where('rapidx_id', $request->loginUserId)
+        ->where('logdel', 0)
+        ->get();
+
+        $get_user_to_verify_for_admin = UserAccess::where('rapidx_id', $request->loginUserId)
+        ->where('access_level', 'admin')
+        ->where('logdel', 0)
+        ->get();
+
+        if(count($get_user_for_verify) > 0){
+            if(count($get_user_to_verify_for_admin) > 0){
+                return response()->json(['result' => 1, 'admin' => 1, 'userDetails' => $get_user_for_verify]);
+
+            }else{
+                return response()->json(['result' => 1, 'userDetails' => $get_user_for_verify]);
+            }
+        }
+        else{
+            return response()->json(['result' => 0]);
+        }
     }
 }

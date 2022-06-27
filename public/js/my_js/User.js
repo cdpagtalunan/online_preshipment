@@ -62,9 +62,38 @@ function addUser(){
         dataType: "json",
        
         success: function(response){
-            // console.log(response['test']);
-            // console.log(response['test1']);
-            // console.log(response['test2']);
+
+            if(response['validation'] == 'hasError'){
+                toastr.error('Adding User Fail!');
+
+                if(response['error']['rapidx_user'] === undefined){
+                    $("#txtRapidxUser").removeClass('is-invalid');
+                    $("#txtRapidxUser").attr('title', '');
+                }
+                else{
+                    $("#txtRapidxUser").addClass('is-invalid');
+                    $("#txtRapidxUser").attr('title', response['error']['rapidx_user']);
+                }
+
+                if(response['error']['access_level'] === undefined){
+                    $("#selectAccessLevel").removeClass('is-invalid');
+                    $("#selectAccessLevel").attr('title', '');
+                }
+                else{
+                    $("#selectAccessLevel").addClass('is-invalid');
+                    $("#selectAccessLevel").attr('title', response['error']['access_level']);
+                }
+
+                if(response['error']['user_department'] === undefined){
+                    $("#selectUserDeparment").removeClass('is-invalid');
+                    $("#selectUserDeparment").attr('title', '');
+                }
+                else{
+                    $("#selectUserDeparment").addClass('is-invalid');
+                    $("#selectUserDeparment").attr('title', response['error']['user_department']);
+                }
+            }
+            
             if(response['result'] == 1){
                 toastr.success('Adding User Successfully');
                 $('#modalAddUser').modal('hide');
@@ -76,12 +105,10 @@ function addUser(){
                 dataTableUser.draw();
             }
         },
-        // error: function(data, xhr, status){
-        //     toastr.error('An error occured!\n' + 'Data: ' + data + "\n" + "XHR: " + xhr + "\n" + "Status: " + status);
-        //     $("#iBtnEditUserIcon").removeClass('fa fa-spinner fa-pulse');
-        //     $("#btnEditUser").removeAttr('disabled');
-        //     $("#iBtnEditUserIcon").addClass('fa fa-check');
-        // }
+        error: function(data, xhr, status){
+            toastr.error('An error occured!\n' + 'Data: ' + data + "\n" + "XHR: " + xhr + "\n" + "Status: " + status);
+         
+        }
     });
 }
 
@@ -95,7 +122,15 @@ function getUserEmail(rapidxId){
         dataType: "json",
        
         success: function(response){
-           $('#rapid_email').val(response['email']);
+            // console.log(response['email']);
+            if(response['email'] == null){
+
+                $('#txtRapidxEmail').val('kiosk@pricon.ph');
+            }
+            else{
+
+                $('#txtRapidxEmail').val(response['email']);
+            }
         },
     });
 }
@@ -110,9 +145,18 @@ function getUserDetailsForEdit(userId){
         dataType: "json",
        
         success: function(response){
-          $('#rapidx_user').val(response['result'][0]['rapidx_id']).trigger('change');
-          $('#access_level').val(response['result'][0]['access_level']).trigger('change');
-          $('#user_department').val(response['result'][0]['department']).trigger('change');
+            console.log(response);
+          $('#txtRapidxUser').val(response['result'][0]['rapidx_id']).trigger('change');
+          $('#selectAccessLevel').val(response['result'][0]['access_level']).trigger('change');
+          $('#selectUserDeparment').val(response['result'][0]['department']).trigger('change');
+          if(response['result'][0]['approver'] == 1){
+            $('#checkboxWhseApprover').prop("checked", true);
+          }
+          else{
+            $('#checkboxWhseApprover').prop("checked", false);
+
+          }
+        
         },
     });
 }
