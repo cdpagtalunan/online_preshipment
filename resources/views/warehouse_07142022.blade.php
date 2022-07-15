@@ -28,62 +28,22 @@
                 <div class="col-md-12">
                     <div class="card card-primary m-2" style="min-width: 700px; overflow: auto;">
                         <div class="card-body">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
-                          
-                                <li class="nav-item">
-                                <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="delivered-tab" data-toggle="tab" href="#delivered" role="tab" aria-controls="delivered" aria-selected="false">Delivered</a>
-                                </li>
-                                {{-- <li class="nav-item">
-                                    <a class="nav-link" id="workloads-person-tab" data-toggle="tab" href="#workloadsPerson" role="tab" aria-controls="person" aria-selected="false">Person in Charge Tab</a>
-                                </li>
-                                --}}
-                            </ul>
-
-                            <div class="tab-content test" id="myTabContent" >
-                                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-
-                                    <div class="table responsive mt-2">
-                                        <table id="tbl_whse_preshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Status</th>
-                                                    <th>Date</th>
-                                                    <th>Station</th>
-                                                    <th>Packing List Control No</th>
-                                                    <th>Shipment Date</th>
-                                                    <th>Destination</th>
-                                                    <th>Transfer Date and Time</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="delivered" role="tabpanel" aria-labelledby="delivered-tab">
-
-                                    <div class="table responsive mt-2">
-                                        <table id="tbl_whse_preshipment_done" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Status</th>
-                                                    <th>Date</th>
-                                                    <th>Station</th>
-                                                    <th>Packing List Control No</th>
-                                                    <th>Shipment Date</th>
-                                                    <th>Destination</th>
-                                                    <th>Transfer Date and Time</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            
-                                        </table>
-                                    </div>
-                                </div>
-                                
+                            <div class="table responsive mt-2">
+                                <table id="tbl_whse_preshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Station</th>
+                                            <th>Packing List Control No</th>
+                                            <th>Shipment Date</th>
+                                            <th>Destination</th>
+                                            <th>Transfer Date and Time</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -373,26 +333,6 @@ $(document).ready(function () {
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
           { "data" : "Remarks"},
-          
-      ],
-    });
-    //change 07/14/2022
-    dataTableWhsePreshipmentDone = $("#tbl_whse_preshipment_done").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"  : false,
-      "ajax" : {
-          url: "get_preshipment_for_whse_done", 
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "from_whse_noter_date_time"},
-          { "data" : "action"},
           
       ],
     });

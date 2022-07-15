@@ -206,15 +206,26 @@
                     ?>
                 </td>
                 <td colspan="2" style="width: 10%;">RECEIVED BY:</td>
-                <td colspan="2" style="width: 15%; border-bottom: 1px solid black;"> 
+                {{-- <td colspan="2" style="width: 15%; border-bottom: 1px solid black;">  --}}
                     <?php
-                        if ($preshipment->to_whse_noter_details != null) {
-                            echo $preshipment->to_whse_noter_details->rapidx_user_details->name;
-                        }
+                        // if ($preshipment->to_whse_noter_details != null) {
+                            // echo $preshipment->to_whse_noter_details->rapidx_user_details->name;
+                        // }
                     ?>
-                </td>
-                <td colspan="2" style="width: 9%; border-bottom: 1px solid black;">{{ $date_format_receive }}</td>
-                <td  style="border-bottom: 1px solid black;">{{ $time_format_receive }}</td>
+
+                    @if ($preshipment->to_whse_noter_details != null)
+                        <td colspan="2" style="width: 15%; border-bottom: 1px solid black;"> {{ $preshipment->to_whse_noter_details->rapidx_user_details->name }} </td>
+                        <td colspan="2" style="width: 9%; border-bottom: 1px solid black;">{{ $date_format_receive }}</td>
+                        <td  style="border-bottom: 1px solid black;">{{ $time_format_receive }}</td>
+                    {{-- @endif --}}
+                    @else
+                        <td colspan="2" style="width: 15%; border-bottom: 1px solid black;"></td>
+                        <td colspan="2" style="width: 9%; border-bottom: 1px solid black;"></td>
+                        <td  style="border-bottom: 1px solid black;"></td>
+                    @endif
+                {{-- </td> --}}
+                {{-- <td colspan="2" style="width: 9%; border-bottom: 1px solid black;">{{ $date_format_receive }}</td> --}}
+                {{-- <td  style="border-bottom: 1px solid black;">{{ $time_format_receive }}</td> --}}
             </tr>
 
             <tr>
@@ -227,21 +238,41 @@
                 <td></td>
                 <td></td>
                 <td colspan="2">UPLOADED BY:</td>
-                <td colspan="2" style="border-bottom: 1px solid black;">
+                
                     <?php
                         $date_upload = "";
                         $date_format_upload ="";
                         $time_format_upload ="";
-                        if ($preshipment->whse_uploader_details != null) {
+                        
+                        $internal_invoice_check = array("TS","CN"); 
+
+                        $PO = $preshipment_list[0]['PONo'][0].$preshipment_list[0]['PONo'][1];
+                        if(in_array($PO,$internal_invoice_check)){
+                            echo '<td colspan="2" style="border-bottom: 1px solid black;">N/A</td>';
+                            echo '<td colspan="2" style="border-bottom: 1px solid black;">N/A</td>';
+                            echo '<td style="border-bottom: 1px solid black;">N/A</td>';
+                        }
+                        else if ($preshipment->whse_uploader_details != null) {
                             $date_upload=date_create($preshipment->whse_uploader_date_time);
                             $date_format_upload = date_format($date_upload, "m-d-Y");
                             $time_format_upload = date_format($date_upload, "H:i");
-                            echo $preshipment->whse_uploader_details->rapidx_user_details->name;
-                        }    
+                            echo '<td colspan="2" style="border-bottom: 1px solid black;">'
+                                .$preshipment->whse_uploader_details->rapidx_user_details->name.
+                                '</td>';
+                            echo '<td colspan="2" style="border-bottom: 1px solid black;">'
+                                .$date_format_upload.'</td>';
+                            echo '<td  style="border-bottom: 1px solid black;">'
+                                .$time_format_upload. '</td>';
+                        }
+                        else{
+                            echo '<td colspan="2" style="border-bottom: 1px solid black;"></td>';
+                            echo '<td colspan="2" style="border-bottom: 1px solid black;"></td>';
+                            echo '<td  style="border-bottom: 1px solid black;"></td>';
+                        }
                     ?>
-                </td>
-                <td colspan="2" style="border-bottom: 1px solid black;">{{ $date_format_upload }}</td>
-                <td  style="border-bottom: 1px solid black;">{{ $time_format_upload }}</td>
+                
+                
+                
             </tr>
 
             <tr>

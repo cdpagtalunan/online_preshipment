@@ -33,7 +33,6 @@ class WhsePreshipmentController extends Controller
             'preshipment'
         ])
         ->where('logdel', 0)
-        ->whereIn('status', [0])
         ->whereNotIn('status', [5])
         ->orderBy('fk_preshipment_id', 'DESC')
         ->get();
@@ -283,61 +282,28 @@ class WhsePreshipmentController extends Controller
             'rapidx_user_details'
         ])
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
-        ->where('logdel',0)
-        ->get();
+        ->first();
 
         $whse_preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval'
             'preshipment'
         ])
-        // ->whereIn('status', [1,2,3,4])
-        ->whereIn('status', [1,2,3]) //change 07/13/2022
+        ->whereIn('status', [1,2,3,4])
         ->orderBy('fk_preshipment_id', 'DESC')
         ->where('logdel', 0)
         ->get();
 
 
-        // if($user_details->department == "TS WHSE"){
-        //     // return "ts";
-        //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-        // }
-        // else if($user_details->department == "CN WHSE"){
-        //     // return "cn";
-        //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-        // }
-
-        $dept_array = array();
-        if(count($user_details) > 1){
-            for($x = 0; $x<count($user_details);$x++){
-                if($user_details[$x]->department == "TS WHSE"){
-                    // return "ts";
-                    array_push($dept_array,'ts');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-                }
-                if($user_details[$x]->department == "CN WHSE"){
-                    // return "cn";
-                    array_push($dept_array,'cn');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-                }
-            }
-            $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
+        if($user_details->department == "TS WHSE"){
+            // return "ts";
+            $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
         }
-        else{
-            if($user_details[0]->department == "TS WHSE"){
-                // return "ts";
-                // array_push($dept_array,'ts');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-            }
-            if($user_details[0]->department == "CN WHSE"){
-                // return "cn";
-                // array_push($dept_array,'cn');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-            }
+        else if($user_details->department == "CN WHSE"){
+            // return "cn";
+            $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
         }
 
-        
       
-        // return $dept_array;
 
 
         return DataTables::of($whse_preshipment)
@@ -450,7 +416,7 @@ class WhsePreshipmentController extends Controller
         }
 
         $LastPONO 		= $LastPONO[0].$LastPONO[1];	//Check the OrderNo first 2 index. 
-        $internal_invoice_check = array("TS","WH"); 
+        $internal_invoice_check = array("TS","CN"); 
 
         $array_database_val = array(
             'to_whse_noter' => $_SESSION['rapidx_user_id'],
@@ -964,8 +930,7 @@ class WhsePreshipmentController extends Controller
             'rapidx_user_details'
         ])
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
-        ->where('logdel',0)
-        ->get();
+        ->first();
 
         $whse_preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval'
@@ -976,47 +941,15 @@ class WhsePreshipmentController extends Controller
         ->get();
 
 
-        // if($user_details->department == "TS WHSE"){
-        //     // return "ts";
-        //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-        // }
-        // else if($user_details->department == "CN WHSE"){
-        //     // return "cn";
-        //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-        // }
-
-        
-        $dept_array = array();
-        if(count($user_details) > 1){
-            for($x = 0; $x<count($user_details);$x++){
-                if($user_details[$x]->department == "TS WHSE"){
-                    // return "ts";
-                    array_push($dept_array,'ts');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-                }
-                if($user_details[$x]->department == "CN WHSE"){
-                    // return "cn";
-                    array_push($dept_array,'cn');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-                }
-            }
-
-            $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
+        if($user_details->department == "TS WHSE"){
+            // return "ts";
+            $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
         }
-        else{
-            if($user_details[0]->department == "TS WHSE"){
-                // return "ts";
-                // array_push($dept_array,'ts');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-            }
-            if($user_details[0]->department == "CN WHSE"){
-                // return "cn";
-                // array_push($dept_array,'cn');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-            }
+        else if($user_details->department == "CN WHSE"){
+            // return "cn";
+            $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
         }
-      
-        // return $dept_array;
+
         
         return DataTables::of($whse_preshipment)
         ->addColumn('preshipment_ctrl_num', function($whse_preshipment){
@@ -1196,171 +1129,5 @@ class WhsePreshipmentController extends Controller
             'PackageCategory' => $request->package_category,
             'PackageQty' => $request->package_qty
         ]);
-    }
-    //change 07/13/2022
-    public function get_preshipment_done(Request $request){
-        date_default_timezone_set('Asia/Manila');
-        session_start();
-        // $sendto_filter = "";
-
-        $user_details = UserAccess::with([
-            'rapidx_user_details'
-        ])
-        ->where('rapidx_id',$_SESSION['rapidx_user_id'])
-        ->where('logdel',0)
-        ->get();
-
-        $whse_preshipment = PreshipmentApproving::with([
-            // 'Preshipment_for_approval'
-            'preshipment'
-        ])
-        // ->whereIn('status', [1,2,3,4])
-        ->whereIn('status', [4]) 
-        // ->orderByRaw('ISNULL(remarks)', 'DESC')
-        ->orderBy('fk_preshipment_id', 'DESC')
-        ->where('logdel', 0)
-        ->get();
-
-        
-        $whse_preshipment = collect($whse_preshipment);
-
-
-        // if($user_details->department == "TS WHSE"){
-        //     // return "ts";
-        //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-        // }
-        // else if($user_details->department == "CN WHSE"){
-        //     // return "cn";
-        //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-        // }
-
-        $dept_array = array();
-        if(count($user_details) > 1){
-            for($x = 0; $x<count($user_details);$x++){
-                if($user_details[$x]->department == "TS WHSE"){
-                    // return "ts";
-                    array_push($dept_array,'ts');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-                }
-                if($user_details[$x]->department == "CN WHSE"){
-                    // return "cn";
-                    array_push($dept_array,'cn');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-                }
-            }
-            $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
-
-        }
-        else{
-            if($user_details[0]->department == "TS WHSE"){
-                // return "ts";
-                // array_push($dept_array,'ts');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-            }
-            if($user_details[0]->department == "CN WHSE"){
-                // return "cn";
-                // array_push($dept_array,'cn');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-            }
-        }
-      
-        // return $dept_array;
-
-        return DataTables::of($whse_preshipment)
-        ->addColumn('preshipment_ctrl_num', function($whse_preshipment){
-            $result ="";
-            $result .= $whse_preshipment->preshipment->Destination."-".$whse_preshipment->preshipment->Packing_List_CtrlNo;
-            return $result;
-        })
-        ->addColumn('status', function($whse_preshipment){
-            $result = "<center>";
-
-        
-                $result .='<span class="badge badge-success"> Done </span>';
-            $result .="</center>";
-
-            return $result;
-        })
-        ->addColumn('action', function($whse_preshipment) use ($user_details) {
-            $result = "<center>";    
-
-            
-                $result .= '<button class="btn btn-primary mr-1 btn-sm btn-whs-view" data-toggle="modal" data-target="#modalViewPreshipmentOnly"  preshipment-id="'.$whse_preshipment->id.'">  <i class="fa fa-eye"></i></button>';
-            
-                $result .= '<div class="btn-group">
-                <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Action">
-                <i class="fas fa-lg fa-file-download"></i>
-                </button>';
-                    $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
-    
-                    $result .='<a class="dropdown-item text-center" href="export_excel/'.$whse_preshipment->id.'" target="_blank">Export Excel</a>';
-                    $result .='<a class="dropdown-item text-center" href="pdf_export/'.$whse_preshipment->id.'" target="_blank">Export PDF</a>';
-                    
-                    $result .= '</div>'; // dropdown-menu end
-                $result .= '</div>';
-            $result .='</center>';
-
-            return $result;
-
-        })
-        ->rawColumns(['status','action','preshipment_ctrl_num'])
-        ->make(true);
-
-    }
-    //change 07/14/2022
-    public function get_preshipment_for_whse_done(Request $request){
-        $whse_preshipment = PreshipmentApproving::with([
-            // 'Preshipment_for_approval',
-            'preshipment'
-        ])
-        ->where('logdel', 0)
-        // ->whereIn('status', [1,2])
-        ->whereNotIn('status', [0,5])
-        ->orderBy('fk_preshipment_id', 'DESC')
-        ->get();
-
-
-        return DataTables::of($whse_preshipment)
-        ->addColumn('status', function($whse_preshipment){
-            $result = "<center>";
-
-            // if($whse_preshipment->status == 0){
-            //     $result .='<span class="badge badge-warning">For Approval</span>';
-            // }
-            if($whse_preshipment->status == 1){
-                $result .='<span class="badge badge-warning">For '.strtoupper($whse_preshipment->send_to).'-Whse Approval</span>';
-            }
-            else if($whse_preshipment->status >= 2){
-                $result .='<span class="badge badge-success">'.strtoupper($whse_preshipment->send_to).'-Whse Accepted</span>';
-            }
-
-            $result .="</center>";
-
-            return $result;
-        })
-        ->addColumn('action', function($whse_preshipment) {
-            $result = "<center>";
-            // $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandlerChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
-            // $result .= $preshipment->Packing_List_CtrlNo;
-
-            // return $result;
-            // <button type="button" class="btn btn-outline-dark btn-sm fa fa-edit text-center actionEditCashAdvance" style="width:105px;margin:2%;" cash_advance-id="3" data-toggle="modal" data-target="#modalEditCashAdvance" data-keyboard="false"> Edit</button>
-            $result .= '<button class="btn btn-primary btn-sm btn-whs-view mr-1" data-toggle="modal" data-target="#modalViewWhsePreshipment" preshipment-id="'.$whse_preshipment->preshipment->id.'"><i class="fas fa-eye"></i></button>';
-
-            if($whse_preshipment->status == 0){
-                $result .= '<button class="btn btn-success btn-sm btn-approve-whse mr-1"  data-toggle="modal" data-target="#modalWhsApprove" preshipment-id="'.$whse_preshipment->preshipment->id.'"><i class="fas fa-check-circle"></i></button>';
-                $result .= '<button class="btn btn-danger btn-sm btn-disapprove-whse" data-toggle="modal" data-target="#modalWhsDisapprove" preshipment-id="'.$whse_preshipment->id.'"><i class="fas fa-times-circle"></i></button>';
-            }
-            // else if($whse_preshipment->status == 1){
-            //     $result .= '<center><button class="btn btn-outline-success btn-sm btn-openshipment " style="width:105px;margin:2%;" preshipment-id="">Excel</button></center>';
-            //     $result .= '<center><button class="btn btn-outline-warning btn-sm btn-openshipment " style="width:105px;margin:2%;" preshipment-id="">Uploaded</button></center>';
-
-            // }
-            $result .= "</center>";
-            return $result;
-
-        })
-        ->rawColumns(['status','action'])
-        ->make(true);
     }
 }

@@ -50,25 +50,25 @@
             <div class="col-md-12">
                 <div class="card card-primary m-2" style="min-width: 700px; overflow: auto;">
                     <div class="card-body">
-                      <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
+                        {{-- <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
                           
-                        <li class="nav-item">
-                        <a class="nav-link active" id="inspection-tab" data-toggle="tab" href="#inspection" role="tab" aria-controls="inspection" aria-selected="true">For Inspection</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="done-tab" data-toggle="tab" href="#done" role="tab" aria-controls="done" aria-selected="false">Done</a>
-                        </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" id="workloads-person-tab" data-toggle="tab" href="#workloadsPerson" role="tab" aria-controls="person" aria-selected="false">Person in Charge Tab</a>
-                        </li>
-                        --}}
-                
-                  
-                    
-                      </ul>
+                                <li class="nav-item">
+                                <a class="nav-link active" id="reminder-tab" data-toggle="tab" href="#reminder" role="tab" aria-controls="reminder" aria-selected="true">Unpaid Billing/License Tab</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="reminder-archive-tab" data-toggle="tab" href="#reminderArchive" role="tab" aria-controls="archive" aria-selected="false">Paid Tab</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="workloads-person-tab" data-toggle="tab" href="#workloadsPerson" role="tab" aria-controls="person" aria-selected="false">Person in Charge Tab</a>
+                                </li>
+                               
+                        
+                          
+                            
+                        </ul> --}}
                     
                         <div class="tab-content test" id="myTabContent" >
-                            <div class="tab-pane fade show active" id="inspection" role="tabpanel" aria-labelledby="inspection-tab">
+                            <div class="tab-pane fade show active" id="reminder" role="tabpanel" aria-labelledby="reminder-tab">
                                 <div class="table responsive mt-2">
                                     <table id="tblPreshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
                                         <thead>
@@ -89,28 +89,6 @@
                                     </table>
                                 </div>
                             </div>
-
-                            <div class="tab-pane fade" id="done" role="tabpanel" aria-labelledby="done-tab">
-                              <div class="table responsive mt-2">
-                                  <table id="tblDonePreshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
-                                      <thead>
-                                          <tr>
-                                              <th>Status</th>
-                                              <th>Date</th>
-                                              <th>Station</th>
-                                              <th>Packing List Control No</th>
-                                              <th>Shipment Date</th>
-                                              <th>Destination</th>
-                                              <th>Action</th>
-                                              
-                                          </tr>
-                                      </thead>
-                                      <tbody>
-
-                                      </tbody>
-                                  </table>
-                              </div>
-                          </div>
                         </div>
                     </div>
                 </div>
@@ -406,26 +384,6 @@
       {
         className: "d-none", "targets": [ 13,12 ]
       }],
-    }); 
-
-    //change 07/14/2022
-    dataTablePreshipmentDone = $("#tblDonePreshipment").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_Preshipment_done", 
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "Date" },
-          { "data" : "Station" },
-          { "data" : "Packing_List_CtrlNo"},
-          { "data" : "Shipment_Date"},
-          { "data" : "Destination"},
-          { "data" : "action"},
-          
-      ],
     }); 
 
       

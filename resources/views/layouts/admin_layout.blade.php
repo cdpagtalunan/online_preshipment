@@ -71,6 +71,7 @@ $user_level = 0;
 
     @else
     <script type="text/javascript">
+        alert('session expired');
         window.location = "{{ url('http://rapidx/RapidX/') }}";
     </script>
     @endauth

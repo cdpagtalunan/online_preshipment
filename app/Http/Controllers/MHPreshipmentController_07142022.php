@@ -24,7 +24,7 @@ class MHPreshipmentController extends Controller
 {
     public function get_Preshipment(){
         $preshipment = RapidPreshipment::where('rapidx_MHChecking','0')
-        // ->orWhere('rapidx_QCChecking', 1)
+        ->orWhere('rapidx_QCChecking', 1)
         ->orWhere('remarks','!=','null')
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
@@ -37,9 +37,9 @@ class MHPreshipmentController extends Controller
                 $result .='<span class="badge badge-warning">For MH Checking</span>';
             }
 
-            // if($preshipment->rapidx_QCChecking == 1){
-            //     $result .='<span class="badge badge-info">For QC Checking</span>';
-            // }
+            if($preshipment->rapidx_QCChecking == 1){
+                $result .='<span class="badge badge-info">For QC Checking</span>';
+            }
 
             if(($preshipment->rapidx_QCChecking == 3 && $preshipment->remarks != null) || ($preshipment->to_edit == 1 && $preshipment->remarks != null)){
                 $result .='<span class="badge badge-danger">Disapproved</span>';
@@ -53,9 +53,9 @@ class MHPreshipmentController extends Controller
             if($preshipment->rapidx_MHChecking == 0){
                 $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandlerChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
             }
-            // if($preshipment->rapidx_QCChecking == 1){
-            //     $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
-            // }
+            if($preshipment->rapidx_QCChecking == 1){
+                $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
+            }
          
             // $result .= $preshipment->Packing_List_CtrlNo;
 
@@ -311,48 +311,6 @@ class MHPreshipmentController extends Controller
         ->make(true);
     }
 
-    //change 07/14/2022
-    public function get_for_qc_transaction(Request $request){
-        $preshipment = RapidPreshipment::Where('rapidx_QCChecking', 1)
-        ->orWhere('remarks','!=','null')
-        ->orderBy('id', 'DESC')
-        ->where('logdel', 0)
-        ->get();
-      
-        return DataTables::of($preshipment)
-        ->addColumn('status', function($preshipment){
-            $result = "<center>";
-            // if($preshipment->rapidx_MHChecking == 0){
-            //     $result .='<span class="badge badge-warning">For MH Checking</span>';
-            // }
-
-            if($preshipment->rapidx_QCChecking == 1){
-                $result .='<span class="badge badge-info">For QC Checking</span>';
-            }
-
-            // if(($preshipment->rapidx_QCChecking == 3 && $preshipment->remarks != null) || ($preshipment->to_edit == 1 && $preshipment->remarks != null)){
-            //     $result .='<span class="badge badge-danger">Disapproved</span>';
-            //     $result .='<br><strong>Remarks:</strong><br>'.$preshipment->remarks;
-            // }
-            $result .= "</center>";
-            return $result;
-        })
-        ->addColumn('action', function($preshipment) {
-            $result = "";
-            // if($preshipment->rapidx_MHChecking == 0){
-            //     $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandlerChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
-            // }
-            if($preshipment->rapidx_QCChecking == 1){
-                $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
-            }
-         
-            // $result .= $preshipment->Packing_List_CtrlNo;
-
-            return $result;
-        })
-        ->rawColumns(['action','status'])
-        ->make(true);
-    }
 
 
 

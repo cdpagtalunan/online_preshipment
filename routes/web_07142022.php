@@ -60,8 +60,6 @@ Route::get('/get_for_whse_transaction', 'MHPreshipmentController@get_for_whse_tr
 Route::get('/getpreshipmentbyCtrlNoWhse', 'MHPreshipmentController@getpreshipmentbyCtrlNoWhse');
 Route::get('/get_for_whse_ext_transaction', 'MHPreshipmentController@get_for_whse_ext_transaction');
 
-Route::get('/get_for_qc_transaction', 'MHPreshipmentController@get_for_qc_transaction'); //change 07/14/2022
-
 
 
 //INSPECTOR
@@ -73,9 +71,6 @@ Route::post('/approve_list_QC', 'QCPreshipmentController@approve_list_QC');
 
 
 Route::get('/insert_preshimentlist_from_qc_qr_checking', 'QCPreshipmentController@insert_preshimentlist_from_qc_qr_checking');
-
-Route::get('/get_Preshipment_done', 'QCPreshipmentController@get_Preshipment_done'); //change 07/14/2022
-
 
 
 //WAREHOUSE
@@ -128,10 +123,6 @@ Route::post('/whse_reject_preshipment', 'WhsePreshipmentController@whse_reject_p
 
 Route::get('/insert_preshipmentlist_for_whse_check', 'WhsePreshipmentController@insert_preshipmentlist_for_whse_check');
 
-
-Route::get('/get_preshipment_done', 'WhsePreshipmentController@get_preshipment_done'); //change 07/14/2022
-
-Route::get('/get_preshipment_for_whse_done', 'WhsePreshipmentController@get_preshipment_for_whse_done'); //change 07/14/2022
 
 //EXPORTS
 

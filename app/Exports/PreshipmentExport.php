@@ -346,19 +346,34 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 $date_upload = "";
                 $date_format_upload = "";
                 $time_format_upload = "";
-                if($preshipment->whse_uploader_details != null){
-
+                $internal_invoice_check = array("TS","CN"); 
+                $PO = $preshipment_list[0]['PONo'][0].$preshipment_list[0]['PONo'][1];
+                if(in_array($PO,$internal_invoice_check)){
+                    $event->sheet->setCellValue('K'.$colno,"N/A"); 
+                    $event->sheet->setCellValue('N'.$colno,"N/A");
+                    $event->sheet->setCellValue('Q'.$colno,"N/A");    
+                }
+                else if ($preshipment->whse_uploader_details != null) {
                     $event->sheet->setCellValue('K'.$colno,$preshipment->whse_uploader_details->rapidx_user_details->name);
                     $date_upload=date_create($preshipment->whse_uploader_date_time);
                     $date_format_upload = date_format($date_upload, "m-d-Y");
                     $time_format_upload = date_format($date_upload, "H:i");
+
+                    $event->sheet->setCellValue('N'.$colno,$date_format_upload);
+                    $event->sheet->setCellValue('Q'.$colno,$time_format_upload);    
                 }
+                // if($preshipment->whse_uploader_details != null){
+
+                //     $event->sheet->setCellValue('K'.$colno,$preshipment->whse_uploader_details->rapidx_user_details->name);
+                //     $date_upload=date_create($preshipment->whse_uploader_date_time);
+                //     $date_format_upload = date_format($date_upload, "m-d-Y");
+                //     $time_format_upload = date_format($date_upload, "H:i");
+                // }
 
 
                
 
 
-                $event->sheet->setCellValue('N'.$colno,$date_format_upload);
 
                 $event->sheet->getDelegate()->mergeCells('K'.$colno.':L'.$colno);
                 $event->sheet->getDelegate()->getStyle('K'.$colno.':L'.$colno)->applyFromArray($styleBorderBottomThin);
@@ -366,7 +381,6 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 $event->sheet->getDelegate()->mergeCells('N'.$colno.':O'.$colno);
                 $event->sheet->getDelegate()->getStyle('N'.$colno.':O'.$colno)->applyFromArray($styleBorderBottomThin);
 
-                $event->sheet->setCellValue('Q'.$colno,$time_format_upload);
 
                 $event->sheet->getDelegate()->getStyle('Q'.$colno)->applyFromArray($styleBorderBottomThin);
                 $event->sheet->getDelegate()->getRowDimension($colno)->setRowHeight(30);

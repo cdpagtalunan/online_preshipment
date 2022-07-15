@@ -40,11 +40,8 @@
               <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
                   
-                        <li class="nav-item">
+                      <li class="nav-item">
                         <a class="nav-link active" id="MH-checking-tab" data-toggle="tab" href="#MH-checking" role="tab" aria-controls="MH-checking" aria-selected="true">Pending Transactions</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="MH-inspector-tab" data-toggle="tab" href="#MH-inspector" role="tab" aria-controls="MH-inspector" aria-selected="false">For QC Transaction</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="MH-whse-int-tab" data-toggle="tab" href="#MH-int-whse" role="tab" aria-controls="MH-int-whse" aria-selected="false">Internal Transactions</a>
@@ -75,28 +72,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="MH-inspector" role="tabpanel" aria-labelledby="MH-inspector-tab">
-                      <div class="table responsive mt-2">
-                          <table id="tbl_qc_transaction" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
-                              <thead>
-                                  <tr>
-                                      <th>Status</th>
-                                      <th>Date</th>
-                                      <th>Station</th>
-                                      <th>Packing List Control No</th>
-                                      <th>Shipment Date</th>
-                                      <th>Destination</th>
-                                      <th>Action</th>
-                                      
-                                  </tr>
-                              </thead>
-                              <tbody>
-
-                              </tbody>
-                          </table>
-                      </div>
                     </div>
 
                     <div class="tab-pane fade" id="MH-int-whse" role="tabpanel" aria-labelledby="MH-whse-int-tab">
@@ -604,30 +579,6 @@
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
           { "data" : "Remarks"},
-          
-      ],
-    });
-
-    //change 07/14/2022
-    dataTableForQcTransaction = $("#tbl_qc_transaction").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      // "paging"     : false,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_for_qc_transaction",
-          // data: function (param){
-          //   param.preshipmentCtrlNo = $("#packingCtrlNo_id").val();
-          // },
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "Date" },
-          { "data" : "Station" },
-          { "data" : "Packing_List_CtrlNo"},
-          { "data" : "Shipment_Date"},
-          { "data" : "Destination"},
-          { "data" : "action"},
           
       ],
     });

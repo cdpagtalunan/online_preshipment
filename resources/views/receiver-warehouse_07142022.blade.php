@@ -48,10 +48,7 @@
                             <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top:-13px;">
                   
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="whse-user-pending-tab" data-toggle="tab" href="#whse-pending-user" role="tab" aria-controls="whse-user" aria-selected="true">Warehouse Pending</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="whse-user-done-tab" data-toggle="tab" href="#whse-done-user" role="tab" aria-controls="whse-done-user" aria-selected="true">Warehouse Done</a>
+                                <a class="nav-link active" id="whse-user-tab" data-toggle="tab" href="#whse-user" role="tab" aria-controls="whse-user" aria-selected="true">Warehouse Handler</a>
                                 </li>
                                 <li class="nav-item" style="display: none;" id="whse-approver-tab">
                                     <a class="nav-link" id="whse-approver-tab" data-toggle="tab" href="#whse-approver" role="tab" aria-controls="whse-approver" aria-selected="false">Warehouse Approver</a>
@@ -59,29 +56,9 @@
                             </ul>
                             
                             <div class="tab-content" id="myTabContent" >
-                                <div class="tab-pane fade show active" id="whse-pending-user" role="tabpanel" aria-labelledby="whse-user-pending-tab">
+                                <div class="tab-pane fade show active" id="whse-user" role="tabpanel" aria-labelledby="whse-user-tab">
                                     <div class="table responsive mt-2">
                                         <table id="tbl_whse_preshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive wrap" style="width: 100%; min-width: 10%">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width: 15%;">Status</th>
-                                                    <th>Date</th>
-                                                    <th>Station</th>
-                                                    <th>Packing List Control No</th>
-                                                    <th>Invoice Number</th>
-                                                    <th>Shipment Date</th>
-                                                    <th>Destination</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <div class="tab-pane fade show " id="whse-done-user" role="tabpanel" aria-labelledby="whse-user-done-tab">
-                                    <div class="table responsive mt-2">
-                                        <table id="tbl_whse_done_preshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive wrap" style="width: 100%; min-width: 10%">
                                             <thead>
                                                 <tr>
                                                     <th style="width: 15%;">Status</th>
@@ -1212,28 +1189,6 @@ $(document).ready(function () {
       "ordering"   : false,
       "ajax" : {
           url: "get_preshipment_of_ts_cn_for_approval",
-      },
-      "columns":[    
-        { "data" : "status"},
-        { "data" : "preshipment.Date" },
-        { "data" : "preshipment.Station" },
-        { "data" : "preshipment_ctrl_num"},
-        // { "data" : "preshipment.Packing_List_CtrlNo"},
-        { "data" : "rapid_invoice_number"},
-        { "data" : "preshipment.Shipment_Date"},
-        { "data" : "preshipment.Destination"},
-          { "data" : "action"},
-        //   { "data" : "action"},
-          
-      ],
-    });
-       // change 07/13/2022
-       dataTableWhseDone= $("#tbl_whse_done_preshipment").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_preshipment_done",
       },
       "columns":[    
         { "data" : "status"},
