@@ -21,7 +21,9 @@ class UserAccess extends Migration
             $table->string('department')->nullable();
             // $table->string('position')->nullable();
             $table->bigInteger('approver')->default(0)->comment = "0-not approver, 1-approver";
+            $table->bigInteger('authorize')->default(0)->comment = "0-Unauthorize, 1-authorize";
             $table->bigInteger('logdel')->default(0)->comment = '0-Active, 1-Deleted';
+            $table->string('created_by')->nullable();
             $table->timestamps();
         });
     }

@@ -91,6 +91,7 @@ class WbsExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
                     $event->sheet->setCellValueExplicit('C'.$colno, $rapid_shipment_records1[$i]['ItemCode'],DataType::TYPE_STRING);
                     $event->sheet->setCellValue('D'.$colno,$rapid_shipment_records1[$i]['TotalShipoutQty']);
                     $event->sheet->setCellValue('E'.$colno,$this->return_package_category($rapid_shipment_records1[$i]['ControlNumber'],$rapid_shipment_records1[$i]['OrderNo'],$rapid_shipment_records1[$i]['ItemCode'],$rapid_shipment_records1[$i]['LotNo']));
+                    // $event->sheet->setCellValue('F'.$colno,$this->return_package_qty($packing_list_ctrl_num,$rapid_shipment_records1[$i]['OrderNo'],$rapid_shipment_records1[$i]['ItemCode'],$rapid_shipment_records1[$i]['LotNo']));
                     $event->sheet->setCellValue('F'.$colno,$this->return_package_qty($packing_list_ctrl_num,$rapid_shipment_records1[$i]['OrderNo'],$rapid_shipment_records1[$i]['ItemCode'],$rapid_shipment_records1[$i]['LotNo']));
                     $event->sheet->setCellValueExplicit('G'.$colno, $rapid_shipment_records1[$i]['LotNo'],DataType::TYPE_STRING);
                     $event->sheet->setCellValue('H'.$colno,'PPS');
@@ -131,6 +132,7 @@ class WbsExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
         ->get();
 
         return $package_category[0]['PackageCategory'];
+        // return $package_category;
     }
 
 

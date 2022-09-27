@@ -92,6 +92,15 @@ function addUser(){
                     $("#selectUserDeparment").addClass('is-invalid');
                     $("#selectUserDeparment").attr('title', response['error']['user_department']);
                 }
+
+                if(response['error']['autorize'] === undefined){
+                    $("#selectAuthorize").removeClass('is-invalid');
+                    $("#selectAuthorize").attr('title', '');
+                }
+                else{
+                    $("#selectAuthorize").addClass('is-invalid');
+                    $("#selectAuthorize").attr('title', response['error']['autorize']);
+                }
             }
             
             if(response['result'] == 1){
@@ -149,6 +158,7 @@ function getUserDetailsForEdit(userId){
           $('#txtRapidxUser').val(response['result'][0]['rapidx_id']).trigger('change');
           $('#selectAccessLevel').val(response['result'][0]['access_level']).trigger('change');
           $('#selectUserDeparment').val(response['result'][0]['department']).trigger('change');
+          $('#selectAuthorize').val(response['result'][0]['authorize']).trigger('change');
           if(response['result'][0]['approver'] == 1){
             $('#checkboxWhseApprover').prop("checked", true);
           }

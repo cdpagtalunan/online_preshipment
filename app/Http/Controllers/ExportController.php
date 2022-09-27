@@ -58,7 +58,7 @@ class ExportController extends Controller
         // }
 
 
-        // return $invoice_number;
+        // return $rapid_shipment_records;
 
         $date = date('Ymd',strtotime(NOW()));
         return Excel::download(new WbsExports($date,$rapid_shipment_records,$packing_list_ctrl_num,$packingListProductLine), 'wbs-upload.xlsx');

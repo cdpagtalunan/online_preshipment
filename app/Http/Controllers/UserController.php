@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Response;
 use App\Model\RapidxUser;
 use App\Model\UserAccess;
 
+use App\Model\InvalidDetails;
+
 use DataTables;
 
 class UserController extends Controller
@@ -24,15 +26,19 @@ class UserController extends Controller
         
     }
     public function add_user(Request $request){
+        session_start();
+        date_default_timezone_set("Asia/Manila");
         $user_id =  $request->rapidx_user;
         $user_email =  $request->rapidx_email;
         $user_level =$request->access_level;
         $user_department = $request->user_department;
+        $authorize = $request->authorize;
         
         $data = $request->all();
         $to_validate = [
             'rapidx_user' => 'required',
             'access_level' => 'required',
+            'authorize' => 'required',
         ];
         if($user_level == "user" || $user_level == ""){
             $to_validate['user_department'] = 'required';
@@ -48,6 +54,7 @@ class UserController extends Controller
                 'email' => $user_email,
                 'access_level' => $user_level,
                 'department' => $user_department,
+                'authorize' => $authorize,
             ];
 
             if(isset($request->checkbox_approver)){
@@ -68,6 +75,8 @@ class UserController extends Controller
                 return response()->json(['result' => 2]);
             }
             else{
+                $database_data['created_by'] = $_SESSION['rapidx_user_id'];
+                $database_data['created_at'] = NOW();
                 UserAccess::insert(
                     $database_data
                 );
@@ -214,5 +223,54 @@ class UserController extends Controller
         else{
             return response()->json(['result' => 0]);
         }
+    }
+
+    public function get_authorize_by_id(Request $request){
+        $test = $request->emp_id;
+        // $user_details = UserAccess::with([
+        //     'rapidx_user_details'
+        // ])
+        // ->where('logdel',0)
+        // ->get();
+        $user_details = UserAccess::with([
+            'rapidx_user_details',
+        ])
+        ->where('authorize',1)
+        ->where('logdel',0)
+        ->get();
+        
+
+        $user_details = collect($user_details)->where('rapidx_user_details.employee_number', $request->emp_id)->flatten(1);
+
+        // return $user_details;
+        if(isset($user_details[0]->rapidx_user_details->employee_number)){
+            if($user_details[0]->rapidx_user_details->employee_number ==  $request->emp_id){
+                return response()->json(['result' => 1]);
+            }
+        }
+        else{
+            return response()->json(['result' => 0]);
+        }
+
+        // return $user_details;
+    }
+
+    public function add_invalid_details(Request $request){
+        session_start();
+        date_default_timezone_set('Asia/Manila');
+
+        $data = $request->all();
+
+        // return $data;
+        InvalidDetails::insert([
+            'rapid_preshipment_id' => $request->preshipment_id,
+            'authorize_id_no' => strtoupper($request->emp_id),
+            'remarks' => $request->remarks,
+            'invalid_on' => $request->invalid_module,
+            'created_at' => NOW()
+        ]);
+
+        return response()->json(['result' => 1]);
+
     }
 }

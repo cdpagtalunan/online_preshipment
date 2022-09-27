@@ -455,6 +455,7 @@ class WhsePreshipmentController extends Controller
         $array_database_val = array(
             'to_whse_noter' => $_SESSION['rapidx_user_id'],
             'to_whse_noter_date_time' => NOW(),
+            'is_invalid' => '0'
         );
 
         if( in_array($LastPONO,$internal_invoice_check) ){
@@ -683,6 +684,7 @@ class WhsePreshipmentController extends Controller
             $message->to($to_email);
             $message->cc($cc_email);
             $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment for Superior's Approval-".$packing_ctrl_num);
         });
 
@@ -830,6 +832,7 @@ class WhsePreshipmentController extends Controller
             $message->to($to_email);
             $message->cc($cc_email);
             $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment ".$product_line_details."-WHSE Superior Approval-".$packing_ctrl_num);
         });
 
@@ -908,6 +911,7 @@ class WhsePreshipmentController extends Controller
             $message->to($to_email);
             // $message->cc($cc_email);
             $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment Supervisor Disapprove-".$packing_ctrl_num);
         });
 
@@ -973,6 +977,7 @@ class WhsePreshipmentController extends Controller
         ])
         ->whereIn('status', [3])
         ->orderBy('id', 'ASC')
+        ->where('logdel', 0)
         ->get();
 
 
@@ -1061,7 +1066,8 @@ class WhsePreshipmentController extends Controller
         RapidPreshipment::where('id', $get_preshipment_fk_id->fk_preshipment_id)
         ->update([
             'to_edit' => 1,
-            'remarks' => $request->pps_disapprove_remarks
+            'remarks' => $request->pps_disapprove_remarks,
+            'has_invalid' => 0
         ]);
 
         PreshipmentApproving::where('id', $request->disapprove_preshipment)
@@ -1105,6 +1111,7 @@ class WhsePreshipmentController extends Controller
             $message->to($to_email);
             $message->cc($cc_email);
             $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment PPS WHSE Disapprove-".$packing_ctrl_num);
         });
 
@@ -1175,6 +1182,7 @@ class WhsePreshipmentController extends Controller
             $message->to($to_email);
             $message->cc($cc_email);
             $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment ".$department." Disapprove-".$packing_ctrl_num);
         });
     
@@ -1362,5 +1370,44 @@ class WhsePreshipmentController extends Controller
         })
         ->rawColumns(['status','action'])
         ->make(true);
+    }
+
+    public function add_invalid_whse(Request $request){
+        PreshipmentApproving::where('id',$request->preshipment_id)
+        ->update([
+            'is_invalid' => 1
+        ]);
+        // return $data;
+        $to_email = array();
+
+        if($request->from == 'cn'){
+            $get_user_email = UserAccess::where('department', 'CN WHSE')
+            ->where('logdel',0)
+            ->distinct()
+            ->get('email');
+        }
+        else if($request->from == 'ts'){
+            $get_user_email = UserAccess::where('department', 'TS WHSE')
+            ->where('logdel',0)
+            ->distinct()
+            ->get('email');
+        }
+
+        foreach($get_user_email as $email){
+            $to_email[] = $email->email;
+        }
+        
+        $data = array(
+            'invalid_from' => $request->from
+        );
+
+        Mail::send('mail.invalid_scan_mail', $data, function($message) use ($to_email){
+            $message->to($to_email);
+            // $message->cc($cc_email);
+            $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
+            $message->subject("Invalid Scanning Alert");
+        });
+        return response()->json(['result' => 1]);
     }
 }

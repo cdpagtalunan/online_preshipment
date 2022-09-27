@@ -17,6 +17,7 @@ class CreatePreshipmentApprovingsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('fk_preshipment_id')->unsigned();
             $table->bigInteger('status')->dafault(0)->comment = '0-Approval of PPS-WHS, 1-Approval of TS/CN WHS, 2-Uploading of TS/CN WHSE, 3-Approval of WHS Supervisor, 4-approved by supervisor(internal), 5-approved by QC(external)';
+            $table->bigInteger('is_invalid')->default(0)->comment = '0-not invalid, 1-has invalid';
             $table->bigInteger('qc_checker')->nullable();
             $table->string('qc_checker_date_time')->nullable();
             $table->bigInteger('checked_by')->nullable();
@@ -44,6 +45,7 @@ class CreatePreshipmentApprovingsTable extends Migration
 
             
             $table->bigInteger('logdel')->default(0)->comment = '0-Active, 1-Deleted';
+            $table->bigInteger('has_invalid')->default(0)->comment = '0-not invalid, 1-has invalid';
             $table->timestamps();
 
             // $table->foreign('fk_preshipment_id')->references('id')->on('preshipments');

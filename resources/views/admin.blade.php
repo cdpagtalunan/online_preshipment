@@ -124,6 +124,7 @@
                   </select>
                 </div>
             </div>
+           
             <div class="row" id="divCheckboxApprover" style="display: none;">
               <div class="col-sm-12">
                 <div class="form-check">
@@ -132,6 +133,17 @@
                     Approver?
                   </label>
                 </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <label>Authorize</label>
+                <select class="form-control" id="selectAuthorize" name="authorize" required>
+                  <option selected disabled>-- Select One --</option>
+                  <option value="1">Authorize</option>
+                  <option value="0">Unauthorize</option>
+                </select>
               </div>
             </div>
 

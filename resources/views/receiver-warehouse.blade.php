@@ -165,9 +165,11 @@
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body">
+                                        <input type="hidden" id="txtInvalidChecker">
 
                                         <input type="hidden" id="preshipmentId" name="preshipmentId">
-                                        
+                                        <input type="hidden" id="txtPreshipmentProductLine" name="preshipment_product_line">
+
                                         <div class="input-group input-group-sm mb-3 d-none">
                                             <div class="input-group-prepend w-50">
                                                 <span class="input-group-text w-100" id="basic-addon1" style="background-color: #17a2b8; color: white;">Packing List Control No:</span>
@@ -236,7 +238,7 @@
                                     <div class="card-footer">
                                         <div style="float: right">
                                             <button class="btn btn-outline-danger" id="btnRejectPreshipmentId" data-toggle="modal" data-target="#modalRejectId"><i class="far fa-times-circle"></i> Reject</button>
-                                            <button type="submit" class="btn btn-outline-success" id="btnAcceptPreshipment" data-toggle="modal" data-target="#modalApproveId" disabled><i class="far fa-check-circle"></i> Accept</button>
+                                            <button type="submit" class="btn btn-outline-success" id="btnAcceptPreshipment" disabled><i class="far fa-check-circle"></i> Accept</button>
                                         </div>
                                         {{-- <div style="float: left">
                                             <button class="btn btn-warning btn-sm mt-1" id="btnBypassAccept" data-toggle="modal" data-target="#modalBypassAccept"  title="Bypass Scan"><i class="fas fa-barcode"></i></button>
@@ -1062,6 +1064,43 @@
                     </div>
                 </div>
             </div>
+
+            {{-- MODAL FOR HAS INVALID --}}
+            <div class="modal fade" id="modalHasInvalidId" data-backdrop="static" style="overflow: auto;">
+                <div class="modal-dialog" style="margin-top: 5%;"> 
+                <div class="modal-content">
+                    {{-- <form action="post" id="formHasInvalidId"> --}}
+                    <div class="modal-header">
+                        <button id="close" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="moda-body p-2">
+                        <h5 class="modal-title text-center"><i class="fa fa-pencil-square"></i>Invalid Sticker Detected.<br>Please Insert Remarks and Scan Supervisor ID to Proceed.</h5><br>
+                        <label>Remarks:</label>
+                        <textarea name="invalid_remarks" id="invalidRemarks" class="form-control" rows="5" required></textarea>            
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" id="btnInvalidScanUserId" class="btn btn-success">Scan ID</button>
+                    </div>
+                    {{-- </form> --}}
+                </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalScanEmployeeId" data-formid="" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <input type="text" class="w-100 hidden_scanner_input" id="txtScanEmployeeId" name="" autocomplete="off">
+                            <div class="text-center text-dark"><h4>Please scan your ID.</h4>
+                                <h1><i class="fa fa-barcode fa-lg"></i></h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1308,10 +1347,19 @@ $(document).ready(function () {
      
         clearTimeout(timer);
         timer = setTimeout(function() {
-          scannedItem = txtForScanning.val();
+          scannedItem = txtForScanning.val().toUpperCase();
           console.log(scannedItem);
-          var arr = scannedItem.split(',');
-          itemVerificationTSCNWhse(arr);
+        //   var arr = scannedItem.split(', ');
+        //   itemVerificationTSCNWhse(arr);
+            var arr = scannedItem.split(',');
+
+            if(arr.length == 7){
+            itemVerificationTSCNWhse(arr);
+            }
+            else{
+            var arr = scannedItem.split(', ');
+            itemVerificationTSCNWhse(arr);
+            }
           txtForScanning.val("");
         }, 500);
     });
@@ -1330,7 +1378,77 @@ $(document).ready(function () {
     $('#btnAcceptPreshipment').on('click', function(){
         let preshipmentId = $('#preshipmentId').val();
         $('#acceptPreshipmentId').val(preshipmentId);
+        let isInvalidCheck = $('#txtInvalidChecker').val();
+        if(isInvalidCheck == 0){
+            $('#modalApproveId').modal('show');
+        }
+        else{
+            $('#modalHasInvalidId').modal('show');
+        }
         // console.log(preshipmentId);
+    });
+
+    $('#btnInvalidScanUserId').on('click', function(){
+        if($('#invalidRemarks').val() == ""){
+        $("#invalidRemarks").addClass('is-invalid');
+        }
+        else{
+            $("#invalidRemarks").removeClass('is-invalid');
+            $('#modalScanEmployeeId').modal('show');
+            $('#modalScanEmployeeId').on('shown.bs.modal', function () {
+                $('#txtScanEmployeeId').val("");
+                $('#txtScanEmployeeId').focus();
+            });
+        }
+    });
+
+    $('#txtScanEmployeeId').on('keyup', function(e){
+
+      if(e.keyCode == 13 ){
+        $.ajax({
+          url: "get_authorize_by_id",
+          type: "get",
+          data: {
+            emp_id: $('#txtScanEmployeeId').val().toUpperCase()
+          },
+          dataType: "json",
+          success: function (response) {
+            // acceptPreshipment();
+            // $('#txtScanEmployeeId').val("");
+            // $('#modalScanEmployeeId').modal('hide');
+            // $('#modalHasInvalidId').modal('hide');
+
+            if(response['result'] == 1){
+              let scannedId = $('#txtScanEmployeeId').val();
+              let invalidRemarks = $('#invalidRemarks').val();
+              let invalidModule = $('#txtPreshipmentProductLine').val()+'-whse';
+              let preshipmentId = $('#preshipmentId').val();
+
+              addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId);
+              acceptPreshipment();
+
+              $('#modalScanEmployeeId').modal('hide');
+              $('#modalHasInvalidId').modal('hide');
+            }
+            else{
+              toastr.error('Invalid ID');
+              $('#modalScanEmployeeId').modal('hide');
+              setTimeout(() => {
+                
+                $('#modalScanEmployeeId').modal('show');
+              }, 400);
+            }
+
+            $('#txtScanEmployeeId').val("");
+            
+          }
+        });
+      }
+    });
+
+    $('#acceptFormid').submit(function(event){
+        event.preventDefault();
+        acceptPreshipment();
     });
 
     $('#btnRejectPreshipmentId').on('click', function(){
@@ -1338,10 +1456,7 @@ $(document).ready(function () {
         $('#rejectPreshipmentId').val(preshipmentId);
     });
 
-    $('#acceptFormid').submit(function(event){
-        event.preventDefault();
-        acceptPreshipment();
-    });
+   
 
     $(document).on('click', '.btn-whs-view-for-upload', function(){
         let preshipmentId = $(this).attr('preshipment-id');
@@ -1448,36 +1563,6 @@ $(document).ready(function () {
             $('#txtApprovingInvoinceNo').prop('readonly', true);
         }
     });
-
-     //Script for bypass
-    //  $('#btnBypassAccept').on('click', function(){
-    //     setTimeout(() => {
-    //         $('#txtBypassId').focus();
-    //     }, 400);
-    // });
-
-    // var timer = '', scannedUserId = "";
-    // $('input#txtBypassId').keypress( function() {
-      
-    //     var txtForScanning = $(this); // copy of this object for further usage
-     
-    //     clearTimeout(timer);
-    //     timer = setTimeout(function() {
-    //         scannedUserId = txtForScanning.val();
-    //         if(scannedUserId == 'N025' ||  //Barcellano Jr., Rodrigo B. - CN
-    //         scannedUserId == 'L003' || //Tibayan, Roland Esacalona - CN
-    //         scannedUserId == 'P123' || //Hernandez, Emmanuel L - CN
-    //         scannedUserId == 'N196' || //Victoriano, Randolph R. - CN
-    //         scannedUserId == 'Q121' || // christian pagtalunan - ISS
-    //         scannedUserId == '3802' || // Sir Jojo - TS
-    //         scannedUserId == 'A160' // Ma'am Krick - TS
-    //         ){
-    //             $('#btnAcceptPreshipment').prop('disabled', false);
-    //             $('#modalBypassAccept').modal('hide');
-    //         }
-    //         txtForScanning.val("");
-    //     }, 400);
-    // });
 });
 </script>
 @endsection

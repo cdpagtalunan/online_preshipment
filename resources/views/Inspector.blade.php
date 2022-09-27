@@ -157,6 +157,9 @@
                   <div class="card-body">
                     <form method="post" id="form_packing_list">
                       @csrf
+                      <input type="hidden" id="packingId" name="packing_id">
+                      <input type="hidden" id="txtInvalidChecker">
+
                       <div class="input-group input-group-sm mb-3">
                           <div class="input-group-prepend w-50">
                             <span class="input-group-text w-100" id="basic-addon1" style="background-color: #17a2b8; color: white;">Packing List Control No:</span>
@@ -335,6 +338,59 @@
     </div>
   </div>
 
+  {{-- MODAL FOR HAS INVALID --}}
+  <div class="modal fade" id="modalHasInvalidId" data-backdrop="static" style="overflow: auto;">
+    <div class="modal-dialog" style="margin-top: 5%;"> 
+      <div class="modal-content">
+        {{-- <form action="post" id="formHasInvalidId"> --}}
+          <div class="modal-header">
+            <button id="close" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="moda-body p-2">
+            <h5 class="modal-title text-center "><i class="fa fa-pencil-square"></i>Invalid Sticker Detected.<br>Please Insert Remarks and Scan Supervisor ID to Proceed.</h5><br>
+            <label>Remarks:</label>
+            <textarea name="invalid_remarks" id="invalidRemarks" class="form-control" rows="5" required></textarea>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
+            <button type="submit" id="btnInvalidScanUserId" class="btn btn-success">Scan ID</button>
+          </div>
+        {{-- </form> --}}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalScanEmployeeId" data-formid="" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="text" class="w-100 hidden_scanner_input" id="txtScanEmployeeId" name="" autocomplete="off">
+                <div class="text-center text-dark"><h4>Please scan your ID.</h4>
+                    <h1><i class="fa fa-barcode fa-lg"></i></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+  {{-- SCANNING CHECKING OF PRESHIPMENT --}}
+  <div class="modal fade" id="modalScanPreshipment" data-formid="" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document" style="margin-right: 75%;">
+        <div class="modal-content">
+            <div class="modal-body">
+              <div class="text-center text-dark">
+                <h1><i class="fa fa-qrcode fa-2x"></i></h1>
+                <h4>Please Scan QR Code.</h4>
+              </div>
+              <input type="text" class="w-100 hidden_scanner_input" id="txtScanPreshipment" name="" autocomplete="off">
+            </div>
+        </div>
+    </div>
+  </div>
+
  
 
 
@@ -431,14 +487,21 @@
       
     //SCRIPT TO SHOW QR FOR PRESHIPMENT TO START THE SCANNING PROCESS
     $('#btnScanItem').on('click',function(){
-      $('#qrDiv').css('display','block');
-      // $('#test').modal('show');
+      $('#modalScanPreshipment').modal('show');
+      $('#modalScanPreshipment').on('shown.bs.modal', function () {
+            $('#txtScanPreshipment').val("");
+            $('#txtScanPreshipment').focus();
+      });
+
+
+      // $('#qrDiv').css('display','block');
+      // // $('#test').modal('show');
       
-      $('#txtForScanner').focus();
-      // $('#close').disable();
-      $('#close').attr('disabled','disabled');
+      // $('#txtForScanner').focus();
+      // // $('#close').disable();
+      // $('#close').attr('disabled','disabled');
       $('#btn_disapprove_list_id').attr('disabled','disabled');
-      $('#btn_approve_list_id').attr('disabled','disabled');
+      // $('#btn_approve_list_id').attr('disabled','disabled');
       $('#btnDoneScan').removeClass("d-none");
 
      
@@ -468,7 +531,7 @@
 				
 			});
 
-      if(jQuery.inArray(false, test) == -1){
+      if(jQuery.inArray(false, trArray) == -1){
         // console.log('enable button');
         $('#btn_approve_list_id').prop('disabled', false);
       }
@@ -492,17 +555,41 @@
 
     //FOR BARCODE SCANNING
     var timer = '', scannedItem = "";
-    $('input#txtForScanner').keypress( function() {
+    // $('input#txtForScanner').keypress( function() {
+      
+    //   var txtForScanning = $(this); // copy of this object for further usage
+     
+    //     clearTimeout(timer);
+    //     timer = setTimeout(function() {
+    //       scannedItem = txtForScanning.val().toUpperCase();
+    //       // scannedItem = txtForScanning.val();
+    //       console.log(scannedItem);
+    //       var arr = scannedItem.split(',');
+    //       itemVerificationQC(arr);
+    //       txtForScanning.val("");
+    //     }, 500);
+    // });
+    $('#txtScanPreshipment').keypress( function() {
       
       var txtForScanning = $(this); // copy of this object for further usage
      
         clearTimeout(timer);
         timer = setTimeout(function() {
           scannedItem = txtForScanning.val().toUpperCase();
-          // scannedItem = txtForScanning.val();
-          console.log(scannedItem);
+          // // scannedItem = txtForScanning.val();
+          // console.log(scannedItem);
+          // var arr = scannedItem.split(', ');
+          // itemVerificationQC(arr);
           var arr = scannedItem.split(',');
-          itemVerificationQC(arr);
+          // console.log(arr.length);
+          if(arr.length == 7){
+            itemVerificationQC(arr);
+          }
+          else{
+            var arr = scannedItem.split(', ');
+
+            itemVerificationQC(arr);
+          }
           txtForScanning.val("");
         }, 500);
     });
@@ -523,11 +610,69 @@
     //APPROVAL OF PRE-SHIPMENT
     $("#btn_approve_list_id").on('click', function(event){
       event.preventDefault();
-      $('#modalapproveId').modal('show');
+      let isInvalidCheck = $('#txtInvalidChecker').val();
+      if(isInvalidCheck == 0){
+        $('#modalapproveId').modal('show');
+      }
+      else{
+        $('#modalHasInvalidId').modal('show');
+      }
     });
     $('#approveFormid').submit(function(event){
       event.preventDefault();
       approvePackingList_QC();
+    });
+
+    $('#btnInvalidScanUserId').on('click', function(){
+      if($('#invalidRemarks').val() == ""){
+        $("#invalidRemarks").addClass('is-invalid');
+      }
+      else{
+        $("#invalidRemarks").removeClass('is-invalid');
+        $('#modalScanEmployeeId').modal('show');
+        $('#modalScanEmployeeId').on('shown.bs.modal', function () {
+            $('#txtScanEmployeeId').val("");
+            $('#txtScanEmployeeId').focus();
+        });
+      }
+    });
+
+    $('#txtScanEmployeeId').on('keyup', function(e){
+
+      if(e.keyCode == 13 ){
+        $.ajax({
+          url: "get_authorize_by_id",
+          type: "get",
+          data: {
+            emp_id: $('#txtScanEmployeeId').val().toUpperCase()
+          },
+          dataType: "json",
+          success: function (response) { 
+            if(response['result'] == 1){
+              let scannedId = $('#txtScanEmployeeId').val();
+              let invalidRemarks = $('#invalidRemarks').val();
+              let invalidModule = 'qc';
+              let preshipmentId = $('#packingId').val();
+
+              addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId);
+              approvePackingList_QC();
+
+              $('#modalScanEmployeeId').modal('hide');
+              $('#modalHasInvalidId').modal('hide');
+            }
+            else{
+              toastr.error('Invalid ID');
+              $('#modalScanEmployeeId').modal('hide');
+              setTimeout(() => {
+                
+                $('#modalScanEmployeeId').modal('show');
+              }, 400);
+            }
+
+            $('#txtScanEmployeeId').val("");
+          }
+        });
+      }
     });
 
   });

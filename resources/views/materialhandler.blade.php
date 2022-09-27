@@ -12,6 +12,10 @@
     position: absolute;
     opacity: 0;
 }
+
+#modalViewMaterialHandlerChecksheets{
+    scroll-behavior: smooth;
+  }
 </style>
 
 
@@ -178,10 +182,11 @@
                           Pre-Shipment Info
                         </h3>                    
                       </div>
-                      <div class="col-sm-5 d-none">
+                      <div class="col-sm-5">
                         <div style="float: right">
                           <button class="btn btn-sm btn-secondary d-none" id="btnDoneScan">Done</button>
                           <button id="btnScanItem" class="btn btn-sm btn-primary"><i class="fas fa-qrcode"></i> Scan Item</button>
+                          <a href="" id="toScrollId" class="d-none"> Scan Item</a>
                         </div>
                       </div>                    
                     </div>
@@ -191,6 +196,7 @@
                     <form method="post" id="form_packing_list">
                       @csrf
                       <input type="hidden" id="packingId" name="packing_id">
+                      <input type="hidden" id="txtInvalidChecker">
                       <div class="input-group input-group-sm mb-3">
                           <div class="input-group-prepend w-50">
                             <span class="input-group-text w-100" id="basic-addon1" style="background-color: #17a2b8; color: white;">Packing List Control No:</span>
@@ -242,7 +248,7 @@
                       <div class="card-footer">
                         <div style="float: right">
                           <button class="btn btn-outline-danger" id="btn_disapprove_list_id"><i class="far fa-times-circle"></i> Disapprove</button>
-                          <button type="submit" class="btn btn-outline-success " id="btn_approve_list_id" ><i class="far fa-check-circle"></i> Approve</button>
+                          <button type="submit" class="btn btn-outline-success " id="btn_approve_list_id" disabled><i class="far fa-check-circle"></i> Approve</button>
                         </div>
                       </div>
                     </form>
@@ -283,7 +289,9 @@
                         <th style="text-align: center;">Package Qty</th>                           
                         <th style="text-align: center;">Weight By</th>                           
                         <th style="text-align: center;">Packed By</th>                           
-                        <th style="text-align: center;">Remarks</th>                           
+                        <th style="text-align: center;">Remarks</th>       
+                        <th style="text-align: center;">hidden inputs</th>
+                        <th style="text-align: center;">hidden stamping</th>                    
                                                  
                       </tr>
                     </thead>
@@ -474,6 +482,60 @@
     </div>
   </div>
 
+  {{-- MODAL FOR HAS INVALID --}}
+  <div class="modal fade" id="modalHasInvalidId" data-backdrop="static" style="overflow: auto;">
+    <div class="modal-dialog" style="margin-top: 5%;"> 
+      <div class="modal-content">
+        {{-- <form action="post" id="formHasInvalidId"> --}}
+          <div class="modal-header">
+            <button id="close" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="moda-body p-2">
+            <h5 class="modal-title text-center"><i class="fa fa-pencil-square"></i>Invalid Sticker Detected.<br>Please Insert Remarks and Scan Supervisor ID to Proceed.</h5><br>
+            <label>Remarks:</label>
+            <textarea name="invalid_remarks" id="invalidRemarks" class="form-control" rows="5" required></textarea>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
+            <button type="submit" id="btnInvalidScanUserId" class="btn btn-success">Scan ID</button>
+          </div>
+        {{-- </form> --}}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalScanEmployeeId" data-formid="" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm " role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+              <div class="text-center text-dark"><h4>Please scan your ID.</h4>
+                <h1><i class="fa fa-barcode fa-lg"></i></h1>
+              </div>
+              <input type="text" class="w-100 hidden_scanner_input" id="txtScanEmployeeId" name="" autocomplete="off">
+            </div>
+        </div>
+    </div>
+  </div>
+
+  {{-- SCANNING CHECKING OF PRESHIPMENT --}}
+  <div class="modal fade" id="modalScanPreshipment" data-formid="" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document" style="margin-right: 75%;">
+        <div class="modal-content">
+            <div class="modal-body">
+              <div class="text-center text-dark">
+                <h1><i class="fa fa-qrcode fa-2x"></i></h1>
+                <h4>Please Scan QR Code.</h4>
+              </div>
+              <input type="text" class="w-100 hidden_scanner_input" id="txtScanPreshipment" name="" autocomplete="off">
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+
  
 
 
@@ -533,8 +595,14 @@
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
           { "data" : "Remarks"},
+          { "data" : "hide_input"},
+          { "data" : "hide_stamping"}
           
       ],
+      "columnDefs": [
+      {
+        className: "d-none", "targets": [ 13,12 ]
+      }],
     });
 
     //datatable for internal transaction
@@ -635,13 +703,18 @@
       
     //SCRIPT TO SHOW QR FOR PRESHIPMENT TO START THE SCANNING PROCESS
     $('#btnScanItem').on('click',function(){
-      $('#qrDiv').css('display','block');
 
-      
-      $('#txtForScanner').focus();
-      $('#close').attr('disabled','disabled');
+      $('#modalScanPreshipment').modal('show');
+      $('#modalScanPreshipment').on('shown.bs.modal', function () {
+            $('#txtScanPreshipment').val("");
+            $('#txtScanPreshipment').focus();
+      });
+
+      // $('#qrDiv').css('display','block');
+      // $('#txtForScanner').focus();
+      // $('#close').attr('disabled','disabled');
       $('#btn_disapprove_list_id').attr('disabled','disabled');
-      // $('#btn_approve_list_id').attr('disabled','disabled');
+      // // $('#btn_approve_list_id').attr('disabled','disabled');
       $('#btnDoneScan').removeClass("d-none");
 
      
@@ -668,14 +741,14 @@
         row++;
 				
 			});
-      // console.log(jQuery.inArray(false, test));
-      // if(jQuery.inArray(false, test) == -1){
-      //   // console.log('enable button');
-      //   $('#btn_approve_list_id').prop('disabled', false);
-      // }
-      // else{
-      //   $('#btn_approve_list_id').prop('disabled', true);
-      // }
+      console.log(jQuery.inArray(false, test));
+      if(jQuery.inArray(false, test) == -1){
+        // console.log('enable button');
+        $('#btn_approve_list_id').prop('disabled', false);
+      }
+      else{
+        $('#btn_approve_list_id').prop('disabled', true);
+      }
 
       
 
@@ -685,7 +758,7 @@
     $(document).on('click', '.btn-openshipment', function(){
         let checksheetId = $(this).attr('checksheet-id');
         GetPreshipmentList(checksheetId);
-        // $('#btn_approve_list_id').prop('disabled', true);
+        $('#btn_approve_list_id').prop('disabled', true);
         
     });
     $(document).on('click', '.btn-openshipmentWhse', function(){
@@ -695,18 +768,43 @@
 
     //FOR BARCODE SCANNING
     var timer = '', scannedItem = "";
-    $('input#txtForScanner').keypress( function() {
-      
+    $('#txtScanPreshipment').keypress(function(){
       var txtForScanning = $(this); // copy of this object for further usage
      
-        clearTimeout(timer);
-        timer = setTimeout(function() {
-          scannedItem = txtForScanning.val();
-          var arr = scannedItem.split(',');
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+
+        scannedItem = txtForScanning.val().toUpperCase();
+        var arr = scannedItem.split(',');
+        var trimStr = arr[0].trim();
+        // console.log(trimStr);
+        if(arr.length == 7){
           itemVerification(arr);
-          txtForScanning.val("");
-        }, 500);
-    });
+        }
+        else{
+          var arr = scannedItem.split(', ');
+          itemVerification(arr);
+
+        }
+        // console.log(testScann);
+        // itemVerification(arr);
+        txtForScanning.val("");
+        txtForScanning.focus();
+      }, 500);
+    })
+
+    // $('input#txtForScanner').keypress( function() {
+      
+    //   var txtForScanning = $(this); // copy of this object for further usage
+     
+    //     clearTimeout(timer);
+    //     timer = setTimeout(function() {
+    //       scannedItem = txtForScanning.val().toUpperCase();
+    //       var arr = scannedItem.split(',');
+    //       itemVerification(arr);
+    //       txtForScanning.val("");
+    //     }, 500);
+    // });
 
 
     //DISAPPROVAL OF PRE-SHIPMENT
@@ -724,11 +822,73 @@
     //APPROVAL OF PRE-SHIPMENT
     $("#btn_approve_list_id").on('click', function(event){
       event.preventDefault();
-      $('#modalapproveId').modal('show');
+      let isInvalidCheck = $('#txtInvalidChecker').val();
+      if(isInvalidCheck == 0){
+        $('#modalapproveId').modal('show');
+      }
+      else{
+        $('#modalHasInvalidId').modal('show');
+      }
+    
     });
     $('#approveFormid').submit(function(event){
       event.preventDefault();
       approvePackingList();
+    });
+
+    $('#btnInvalidScanUserId').on('click', function(){
+      if($('#invalidRemarks').val() == ""){
+        $("#invalidRemarks").addClass('is-invalid');
+      }
+      else{
+        $("#invalidRemarks").removeClass('is-invalid');
+        $('#modalScanEmployeeId').modal('show');
+        $('#modalScanEmployeeId').on('shown.bs.modal', function () {
+            $('#txtScanEmployeeId').val("");
+            $('#txtScanEmployeeId').focus();
+        });
+      }
+    
+    });
+
+    $('#txtScanEmployeeId').on('keyup', function(e){
+
+      if(e.keyCode == 13 ){
+        $.ajax({
+          url: "get_authorize_by_id",
+          type: "get",
+          data: {
+            emp_id: $('#txtScanEmployeeId').val().toUpperCase()
+          },
+          dataType: "json",
+          success: function (response) {
+            
+
+            if(response['result'] == 1){
+              let scannedId = $('#txtScanEmployeeId').val();
+              let invalidRemarks = $('#invalidRemarks').val();
+              let invalidModule = 'mh';
+              let preshipmentId = $('#packingId').val();
+
+              addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId);
+              approvePackingList();
+              $('#modalScanEmployeeId').modal('hide');
+              $('#modalHasInvalidId').modal('hide');
+            }
+            else{
+              toastr.error('Invalid ID');
+              $('#modalScanEmployeeId').modal('hide');
+              setTimeout(() => {
+                
+                $('#modalScanEmployeeId').modal('show');
+              }, 400);
+            }
+
+            $('#txtScanEmployeeId').val("");
+            
+          }
+        });
+      }
     });
 
 

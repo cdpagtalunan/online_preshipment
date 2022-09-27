@@ -36,7 +36,7 @@ Route::get('/receiver-warehouse', function () {
 });
 
 
-
+//USER
 Route::get('/get_rapidx_user', 'UserController@get_rapidx_user');
 Route::get('/get_user', 'UserController@get_user');
 Route::post('/add_user', 'UserController@add_user');
@@ -45,6 +45,10 @@ Route::get('/get_user_details_for_edit', 'UserController@get_user_details_for_ed
 Route::get('/delete_user', 'UserController@delete_user');
 Route::get('/enable_user', 'UserController@enable_user');
 Route::get('/get_user_for_verify_login', 'UserController@get_user_for_verify_login');
+Route::get('/get_authorize_by_id', 'UserController@get_authorize_by_id');
+
+
+Route::post('/add_invalid_details', 'UserController@add_invalid_details');
 
 
 
@@ -61,6 +65,9 @@ Route::get('/getpreshipmentbyCtrlNoWhse', 'MHPreshipmentController@getpreshipmen
 Route::get('/get_for_whse_ext_transaction', 'MHPreshipmentController@get_for_whse_ext_transaction');
 
 Route::get('/get_for_qc_transaction', 'MHPreshipmentController@get_for_qc_transaction'); //change 07/14/2022
+Route::get('/insert_preshimentlist_from_mh_qr_checking', 'MHPreshipmentController@insert_preshimentlist_from_mh_qr_checking'); //change 07/26/2022
+
+Route::post('/add_invalid', 'MHPreshipmentController@add_invalid');
 
 
 
@@ -133,18 +140,16 @@ Route::get('/get_preshipment_done', 'WhsePreshipmentController@get_preshipment_d
 
 Route::get('/get_preshipment_for_whse_done', 'WhsePreshipmentController@get_preshipment_for_whse_done'); //change 07/14/2022
 
+Route::post('/add_invalid_whse', 'WhsePreshipmentController@add_invalid_whse'); //change 07/30/2022
+
+
+
 //EXPORTS
-
 Route::get('/export/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export');
-// Route::get('/export/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export');
-
-
 Route::get('/export_excel/{approving_id}', 'ExportController@export_excel');
-
 Route::get('/pdf_export/{approving_id}', 'ExportController@pdf_export');
 
 // AUTOMAILER
-
 Route::get('/mailer', function () {
     return view('automailer');
 });

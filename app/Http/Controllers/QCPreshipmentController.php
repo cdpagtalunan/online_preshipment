@@ -199,13 +199,14 @@ class QCPreshipmentController extends Controller
         $data = $request->all();
 
         // return $data;
-            try{
+            // try{
                 
 
                 RapidPreshipment::where('Packing_List_CtrlNo', $request->packingCtrlNo)
                 ->update([ // The update method expects an array of column and value pairs representing the columns that should be updated.
                     'rapidx_QCChecking' => '3',
-                    'remarks' => $request->remarks
+                    'remarks' => $request->remarks,
+                    'has_invalid' => '0'
                 ]);
                 
                 // return response()->json(['result' => "1"]);
@@ -243,6 +244,7 @@ class QCPreshipmentController extends Controller
                     $message->to($to_email);
                     $message->cc($cc_email);
                     $message->bcc('cpagtalunan@pricon.ph');
+                    $message->bcc('mrronquez@pricon.ph');
                     $message->subject("Online Preshipment QC Disapprove-".$packing_ctrl_num);
                 });
         
@@ -254,21 +256,16 @@ class QCPreshipmentController extends Controller
                 // }
 
                 
-            }
-            catch(\Exception $e) {
+            // }
+            // catch(\Exception $e) {
                
-                return response()->json(['result' => "0", 'tryCatchError' => $e->getMessage()]);
-            }
+            //     return response()->json(['result' => "0", 'tryCatchError' => $e->getMessage()]);
+            // }
     }
 
     public function approve_list_QC(Request $request){
         date_default_timezone_set('Asia/Manila');
         session_start();
-        // RapidPreshipment::where('packing_List_CtrlNo', $request->packingCtrlNo)
-        // ->update([
-        //     'rapidx_QCChecking' => '2'
-        // ]);
-        // return response()->json(['result' => 1,]);
 
 
         $getList= RapidPreshipmentList::where('fkControlNo',$request->packingCtrlNo)
@@ -280,19 +277,8 @@ class QCPreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
 
-        // $ctrlNo =  $getList[0]->fkControlNo;
-        
-        // foreach($getList as $PO){
-        //     $LastPONO = $PO->PONo;
-        // }
-
-        // $LastPONO 		= $LastPONO[0].$LastPONO[1];	//Check the OrderNo first 2 index. 
-        // $internal_invoice_check = array("PR","AD","SM","SP","PP","TS","WH"); // will check if the preshipment is an internal shipment of external shipment
-        
         $destination_check = array("Burn-in Sockets","Grinding","Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");// will check if the preshipment is an internal shipment of external shipment
-        // return  $getPackinglist[0]->Destination;
 
-        
         /*
             For checked_by in DB.
             to be reflected on preshipment export "checked by" column.
@@ -302,9 +288,9 @@ class QCPreshipmentController extends Controller
             // 112 - Nolasco Mendoza - PPS GRINDING
             // 29 - Jo Cahilig - PPS GRINDING BURNIN
         */
-        $pps_ts = array('CARLO','CHRISTIAN','CHE','ALLEN'); // 134 - Henry D. De Guzman
-        $pps_cn = array('ENRICO','MHALOU'); // 107 - Milly Laural
-        $pps_grinding = array('MAE ANN','JAYVEE'); // 112 - Nolasco Mendoza
+        $pps_ts = array('CARLO','CHRISTIAN','CHE','ALLEN','KYLE'); // 134 - Henry D. De Guzman
+        $pps_cn = array('ENRICO','MHALOU', 'INTON'); // 107 - Milly Laural
+        $pps_grinding = array('MAE ANN','JAYVEE','LUZ'); // 112 - Nolasco Mendoza
         $pps_grinding_burn_in = array('KATE'); // 29 - Jo Cahilig
         $pps_stamping = array('CHAN','MARK','ALBIE','JAYSON','ADRIAN','ARNEL','KERWIN'); // 134 - Henry D. De Guzman
         $checked_by = "";
@@ -329,15 +315,6 @@ class QCPreshipmentController extends Controller
             // return "pps_stamping";
             $checked_by = "134";
         }
-        // $ts = array("Burn-in Sockets","Grinding");
-        // $cn = array("Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");
-        // $checked_by = "";
-        // if(in_array($getPackinglist[0]->Destination,$ts)){
-        //     $checked_by = "134";
-        // }
-        // else if(in_array($getPackinglist[0]->Destination,$cn)){
-        //     $checked_by = "107";
-        // }
 
         // check if preshipment is external or internal
         if( in_array($getPackinglist[0]->Destination,$destination_check) ) {	
@@ -360,7 +337,8 @@ class QCPreshipmentController extends Controller
             
             RapidPreshipment::where('Packing_List_CtrlNo', $request->packingCtrlNo)
             ->update([ // The update method expects an array of column and value pairs representing the columns that should be updated.
-                'rapidx_QCChecking' => '2'
+                'rapidx_QCChecking' => '2',
+                'has_invalid' => '0'
             ]);
 
             $preshipment_details = PreshipmentApproving::with([
@@ -403,6 +381,7 @@ class QCPreshipmentController extends Controller
                 $message->to($to_email);
                 $message->cc($cc_email);
                 $message->bcc('cpagtalunan@pricon.ph');
+                $message->bcc('mrronquez@pricon.ph');
                 $message->subject("Online Preshipment for PPS-WHSE Acceptance-".$packing_ctrl_num);
             });
     
@@ -475,6 +454,7 @@ class QCPreshipmentController extends Controller
                 $message->to($to_email);
                 $message->cc($cc_email);
                 $message->bcc('cpagtalunan@pricon.ph');
+                $message->bcc('mrronquez@pricon.ph');
                 $message->subject("Online Preshipment Inspector Approval-".$packing_ctrl_num);
             });
     

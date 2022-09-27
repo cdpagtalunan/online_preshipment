@@ -165,4 +165,22 @@ $("#modalViewWhsePreshipmentForSupApproval").on('hidden.bs.modal', function () {
     resetSupervisorModalValues();
 });
 
-// modalViewWhsePreshipmentForSupApproval
+// SCRIPT TO ADD DETAILS FOR INVALID PRESHIPMENT
+
+function addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId,prodLine){
+    $.ajax({
+        url: "add_invalid_details",
+        type: "post",
+        data: {
+            emp_id          : scannedId,
+            remarks         : invalidRemarks,
+            invalid_module  : invalidModule,
+            preshipment_id  : preshipmentId
+        },
+        dataType: "json",
+        success: function (response) {
+            
+        }
+    });
+}
+

@@ -20,5 +20,8 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
+        'add_invalid',
+        'add_invalid_whse',
+        'add_invalid_details'
     ];
 }

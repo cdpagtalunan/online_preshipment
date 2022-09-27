@@ -16,6 +16,8 @@ use App\Model\RapidPreshipmentList;
 use App\Model\PreshipmentApproving;
 use App\Model\UserAccess;
 
+use App\Model\MhPreshipmentCheck;
+
 use DataTables;
 use Mail;
 
@@ -69,8 +71,12 @@ class MHPreshipmentController extends Controller
         $preshipment = RapidPreshipment::where('Packing_List_CtrlNo',$request->preshipment_ctrl_id)
         ->get();
 
+        $preshipment_list = MhPreshipmentCheck::where('fkControlNo',$preshipment[0]['Packing_List_CtrlNo'])
+        ->where('logdel', 0)
+        ->get();
+
         if(count($preshipment) > 0){
-            return response()->json(['response' => 1, 'preshipment' => $preshipment]);
+            return response()->json(['response' => 1, 'preshipment' => $preshipment , 'preshipmentList' => $preshipment_list]);
         }
         else{
             return response()->json(['response' => 0]);
@@ -99,8 +105,64 @@ class MHPreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
 
+        $rapid_preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlNo)
+        ->where('logdel', 0)
+        ->first();
       
         return DataTables::of($preshipment_list)
+
+        ->addColumn('hide_input', function($preshipment) {
+            $result = "";
+            /*
+                this is for the scanning of qr code for package qty.
+                this will get the last value of the array.
+                this will accept - or ~ only.
+            */
+            $result = "";
+
+            if($preshipment->PackageQty == "DO"){
+                $result .= "DO";
+            }
+
+            if (str_contains($preshipment->PackageQty, '-')){
+                $exploded = explode("-",$preshipment->PackageQty);
+                // $result .= $exploded[1];
+                $exploded_last_index = $exploded[1];
+                $package_qty_for_hidden_scan = "";
+
+                for($x = 1; $x<=$exploded_last_index; $x++){
+
+                    $package_qty_for_hidden_scan .= $x."/".$exploded_last_index."";
+                }
+                $result .= $package_qty_for_hidden_scan;
+            }
+            else if(str_contains($preshipment->PackageQty, '~')){
+                $exploded = explode("~",$preshipment->PackageQty);
+                // $result .=$exploded[1];
+                $exploded_last_index = $exploded[1];
+                $package_qty_for_hidden_scan = "";
+                for($x = 1; $x<=$exploded_last_index; $x++){
+                    $package_qty_for_hidden_scan .= $x."/".$exploded_last_index."";
+                }
+                $result .= $package_qty_for_hidden_scan;
+                // return $package_qty_for_hidden_scan;
+            }
+            else if($preshipment->PackageQty != "DO"){
+                $result .= $preshipment->PackageQty;
+            }
+
+            return $result;
+        })
+        ->addColumn('hide_stamping', function($preshipment) use ($rapid_preshipment){
+            $result = "";
+
+            if($rapid_preshipment->Stamping == 1){
+                $result .= "stamping";
+            }
+            
+            return $result;
+        })
+        ->rawColumns(['hide_input', 'hide_stamping'])
         ->make(true);
         
 
@@ -112,7 +174,8 @@ class MHPreshipmentController extends Controller
             try{
                 RapidPreshipment::where('Packing_List_CtrlNo', $request->packingCtrlNo)
                 ->update([ // The update method expects an array of column and value pairs representing the columns that should be updated.
-                    'rapidx_MHChecking' => '2'
+                    'rapidx_MHChecking' => '2',
+                    'has_invalid'       => '0'
                 ]);
                 
                 return response()->json(['result' => "1"]);
@@ -132,7 +195,9 @@ class MHPreshipmentController extends Controller
         RapidPreshipment::where('packing_List_CtrlNo', $request->packingCtrlNo)
         ->update([
             'rapidx_MHChecking' => '1',
-            'rapidx_QCChecking' => '1'
+            'rapidx_QCChecking' => '1',
+            'has_invalid'       => '0'
+
         ]);
     
         $get_to_emails = UserAccess::where('department', 'inspector')
@@ -173,6 +238,7 @@ class MHPreshipmentController extends Controller
             $message->to($to_email);
             $message->cc($cc_email);
             $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment for Inspection-".$packing_ctrl_num);
         });
     
@@ -314,7 +380,7 @@ class MHPreshipmentController extends Controller
     //change 07/14/2022
     public function get_for_qc_transaction(Request $request){
         $preshipment = RapidPreshipment::Where('rapidx_QCChecking', 1)
-        ->orWhere('remarks','!=','null')
+        // ->orWhere('remarks','!=','null')
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
         ->get();
@@ -354,11 +420,64 @@ class MHPreshipmentController extends Controller
         ->make(true);
     }
 
+    public function insert_preshimentlist_from_mh_qr_checking(Request $request){
+        $data = $request->all();
 
+        												
+        MhPreshipmentCheck::insert([
+            'fkControlNo' => $request->preshipment_ctrl_no,
+            'PONo' => $request->po_num,
+            'Partscode' => $request->partcode,
+            'DeviceName' => $request->device_name,
+            'LotNo' => $request->lot_no,
+            'Qty' => $request->qty,
+            'PackageCategory' => $request->package_category,
+            'PackageQty' => $request->package_qty
+        ]);
+    }
 
+    public function add_invalid(Request $request){
+        // $data = $request->all();
 
-    
-  
+        RapidPreshipment::where('id',$request->preshipment_id)
+        ->update([
+            'has_invalid' => 1
+        ]);
+        
+        $to_email = array();
 
+        if($request->from == 'MH'){
+            $get_user_email = UserAccess::where('department', 'material handler')
+            ->where('logdel',0)
+            ->distinct()
+            ->get('email');
+        }
+        else if($request->from == 'QC'){
+            $get_user_email = UserAccess::where('department', 'inspector')
+            ->where('logdel',0)
+            ->distinct()
+            ->get('email');
+        }
+
+        foreach($get_user_email as $email){
+            $to_email[] = $email->email;
+        }
+        
+        $data = array(
+            'invalid_from' => $request->from
+        );
+
+        Mail::send('mail.invalid_scan_mail', $data, function($message) use ($to_email){
+            $message->to($to_email);
+            // $message->cc($cc_email);
+            $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('mrronquez@pricon.ph');
+            $message->subject("Invalid Scanning Alert");
+        });
+
+        // return $to_email;
+
+        return response()->json(['result' => 1]);
+    }
     
 }
