@@ -27,13 +27,13 @@ class MHPreshipmentController extends Controller
     public function get_Preshipment(){
         $preshipment = RapidPreshipment::where('rapidx_MHChecking','0')
         // ->orWhere('rapidx_QCChecking', 1)
-        ->orWhere('remarks','!=','null')
+        // ->Where('remarks','!=','null') 
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
         ->get();
       
         return DataTables::of($preshipment)
-        ->addColumn('status', function($preshipment){
+        ->addColumn('status', function($preshipment){ 
             $result = "<center>";
             if($preshipment->rapidx_MHChecking == 0){
                 $result .='<span class="badge badge-warning">For MH Checking</span>';

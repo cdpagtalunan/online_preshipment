@@ -41,20 +41,20 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
     protected $get_rapid_preshipment_list;
 
 
-    
+
     function __construct($date, $get_preshipment,$get_rapid_preshipment_list)
     {
         $this->date = $date;
         $this->get_preshipment = $get_preshipment;
         $this->get_rapid_preshipment_list = $get_rapid_preshipment_list;
 
-        
+
     }
 
     public function view(): View {
-       
+
             return view('exports.preshipment', ['date' => $this->date, 'preshipment' => $this->get_preshipment, 'preshipment_list' => $this->get_rapid_preshipment_list]);
-        
+
 	}
 
     public function title(): string
@@ -65,7 +65,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
     //for designs
     public function registerEvents(): array
     {
-        
+
 
         $preshipment = $this->get_preshipment;
         $preshipment_list = $this->get_rapid_preshipment_list;
@@ -123,7 +123,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
         ];
 
         return [
-           
+
             AfterSheet::class => function(AfterSheet $event) use ($preshipment,$preshipment_list,$center_bottom, $bold,$styleBorderBottomThin,$styleBorderOutside,$styleBorderAll,$underline,$header_font)  {
                 $event->sheet->getPageSetup()->setFitToPage(true);
                 $event->sheet ->setShowGridlines(false);
@@ -152,9 +152,9 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 $event->sheet->getDelegate()->mergeCells('J8:J9');
                 $event->sheet->getDelegate()->mergeCells('K8:K9');
                 $event->sheet->getDelegate()->mergeCells('L8:L9');
-                
-                
-                
+
+
+
                 $event->sheet->getColumnDimension('A')->setWidth(8.1);
                 $event->sheet->getColumnDimension('B')->setWidth(7.5);
                 $event->sheet->getColumnDimension('C')->setWidth(22);
@@ -172,30 +172,30 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 $event->sheet->getColumnDimension('O')->setWidth(19);
                 $event->sheet->getColumnDimension('P')->setWidth(2);
                 $event->sheet->getColumnDimension('Q')->setWidth(17);
-                
-                
+
+
                 $event->sheet->setCellValue('M2',$preshipment->wbs_receiving_number);
                 $event->sheet->setCellValue('M3',$preshipment->rapid_invoice_number);
-                
-                
+
+
                 $event->sheet->setCellValue('A4',"DATE:");
                 $event->sheet->setCellValue('C4',$preshipment->preshipment->Date);
                 $event->sheet->getDelegate()->getStyle('C4:D4')->applyFromArray($styleBorderBottomThin);
-                
-                
+
+
                 $event->sheet->setCellValue('A5',"STATION:");
                 $event->sheet->setCellValue('C5',$preshipment->preshipment->Station);
                 $event->sheet->getDelegate()->getStyle('C5:D5')->applyFromArray($styleBorderBottomThin);
-                
-                
+
+
                 $event->sheet->setCellValue('H5',"PACKING LIST CONTROL NO.:");
                 $event->sheet->setCellValue('K5',$preshipment->preshipment->Destination."-".$preshipment->preshipment->Packing_List_CtrlNo);
                 $event->sheet->getDelegate()->getStyle('K5:L5')->applyFromArray($styleBorderBottomThin);
-                
+
                 $event->sheet->setCellValue('A6',"SHIPMENT DATE:");
                 $event->sheet->setCellValue('C6',$preshipment->preshipment->Shipment_Date);
                 $event->sheet->getDelegate()->getStyle('C6:D6')->applyFromArray($styleBorderBottomThin);
-                
+
                 $event->sheet->setCellValue('I6',"DESTINATION:");
                 $event->sheet->setCellValue('K6',$preshipment->preshipment->Destination);
                 $event->sheet->getDelegate()->getStyle('K6:L6')->applyFromArray($styleBorderBottomThin);
@@ -216,7 +216,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
 
                 $event->sheet->getDelegate()->getRowDimension(9)->setRowHeight(25);
 
-                
+
                 $event->sheet->setCellValue('M8',"QC PACKING INSPECTION");
 
                 $event->sheet->getDelegate()->mergeCells('M8:Q8');
@@ -295,7 +295,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 $event->sheet->getDelegate()->getStyle('Q'.$colno)->getFont()->setSize(12);
                 $event->sheet->getDelegate()->getStyle('Q'.$colno)->applyFromArray($underline);
                 $event->sheet->setCellValue('Q'.$colno,"TIME");
-                
+
                 $event->sheet->getDelegate()->mergeCells('I'.$colno.':L'.$colno);
 
 
@@ -326,7 +326,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 $event->sheet->getDelegate()->mergeCells('K'.$colno.':L'.$colno);
                 $event->sheet->getDelegate()->getStyle('K'.$colno.':L'.$colno)->applyFromArray($styleBorderBottomThin);
 
-              
+
 
 
 
@@ -339,19 +339,19 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
 
                 $event->sheet->getDelegate()->getStyle('Q'.$colno)->applyFromArray($styleBorderBottomThin);
                 $event->sheet->getDelegate()->getRowDimension($colno)->setRowHeight(30);
-                
+
 
                 $colno= $colno+1;
                 $event->sheet->setCellValue('I'.$colno,"UPLOADED BY:");
                 $date_upload = "";
                 $date_format_upload = "";
                 $time_format_upload = "";
-                $internal_invoice_check = array("TS","CN"); 
+                $internal_invoice_check = array("TS","CN");
                 $PO = $preshipment_list[0]['PONo'][0].$preshipment_list[0]['PONo'][1];
                 if(in_array($PO,$internal_invoice_check)){
-                    $event->sheet->setCellValue('K'.$colno,"N/A"); 
+                    $event->sheet->setCellValue('K'.$colno,"N/A");
                     $event->sheet->setCellValue('N'.$colno,"N/A");
-                    $event->sheet->setCellValue('Q'.$colno,"N/A");    
+                    $event->sheet->setCellValue('Q'.$colno,"N/A");
                 }
                 else if ($preshipment->whse_uploader_details != null) {
                     $event->sheet->setCellValue('K'.$colno,$preshipment->whse_uploader_details->rapidx_user_details->name);
@@ -360,7 +360,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                     $time_format_upload = date_format($date_upload, "H:i");
 
                     $event->sheet->setCellValue('N'.$colno,$date_format_upload);
-                    $event->sheet->setCellValue('Q'.$colno,$time_format_upload);    
+                    $event->sheet->setCellValue('Q'.$colno,$time_format_upload);
                 }
                 // if($preshipment->whse_uploader_details != null){
 
@@ -371,7 +371,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                 // }
 
 
-               
+
 
 
 
@@ -399,7 +399,7 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
                     $time_format_superior = date_format($date_superior, "H:i");
                 }
 
-              
+
 
 
                 $event->sheet->setCellValue('N'.$colno,$date_format_superior);
@@ -412,11 +412,11 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
 
                 $event->sheet->setCellValue('Q'.$colno,$time_format_superior);
                 $event->sheet->getDelegate()->getStyle('Q'.$colno)->applyFromArray($styleBorderBottomThin);
-                
+
                 $event->sheet->getDelegate()->getRowDimension($colno)->setRowHeight(30);
-                
-                
-                
+
+
+
                 $colno = $colno + 2;
 
                 $event->sheet->getDelegate()->getStyle('A4:Q'.$colno)->applyFromArray($styleBorderOutside);
@@ -427,9 +427,9 @@ class PreshipmentExport implements  FromView, WithTitle, WithEvents
 
 
 
-                
+
             },
-         
+
         ];
     }
 

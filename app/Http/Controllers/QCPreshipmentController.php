@@ -276,8 +276,24 @@ class QCPreshipmentController extends Controller
         $getPackinglist = RapidPreshipment::where('Packing_List_CtrlNo',$request->packingCtrlNo)
         ->where('logdel', 0)
         ->get();
-
-        $destination_check = array("Burn-in Sockets","Grinding","Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");// will check if the preshipment is an internal shipment of external shipment
+        
+        // will check if the preshipment is an internal shipment of external shipment
+        $destination_check = array(
+            "Burn-in Sockets",
+            "Grinding",
+            "Burn-in Memory Sockets",
+            "Burn-in Other Sockets",
+            "Grinding Multi-Spindle",
+            "Grinding Conventional",
+            "Flexicon & Connectors",
+            "FUS/FRS/FMS Connector",
+            "Card Connector",
+            "TC/DC Connector",
+            "Flexicon & TC/DC Connectors",
+            "CN171 Connector"
+        );
+        
+        // $destination_check = array("Burn-in Sockets","Grinding","Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");// will check if the preshipment is an internal shipment of external shipment
 
         /*
             For checked_by in DB.
@@ -314,6 +330,19 @@ class QCPreshipmentController extends Controller
         else if(in_array(strtoupper($getList[0]->PackedBy),$pps_stamping)){
             // return "pps_stamping";
             $checked_by = "134";
+        }
+
+
+        $check_double_data = PreshipmentApproving::where('fk_preshipment_id', $getPackinglist[0]->id)
+        ->where('logdel', 0)
+        ->get();
+
+        if(count($check_double_data) > 0){
+            PreshipmentApproving::where('fk_preshipment_id', $getPackinglist[0]->id)
+            ->where('logdel', 0)
+            ->update([
+                'logdel' => 1
+            ]);
         }
 
         // check if preshipment is external or internal

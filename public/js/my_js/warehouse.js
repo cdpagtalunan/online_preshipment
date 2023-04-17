@@ -70,10 +70,14 @@ function getPreshipmentDetailsForApproval(preshipmentId){
             $('#txtAcceptShipDestination').val(response['result']['preshipment']['Destination']);
             $('#txtAcceptShipQcChecker').val(response['result']['qc_approver_details']['rapidx_user_details']['name']);
 
-            var ts = ["Burn-in Sockets","Grinding"];
-            var cn = ["Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector"];
+            var ts = ["Burn-in Sockets","Grinding","Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
+            var cn = ["Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector", "Flexicon & TC/DC Connectors","CN171 Connector"];
             
-
+            /*
+                var ts = ["Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
+                var cn = ["Flexicon & TC/DC Connectors","Card Connectors","FUS/FRS/FMS Connector","CN171 Connector"];
+            
+            */
         
             if(jQuery.inArray(response['result']['preshipment']['Destination'], ts) != -1){
                 // console.log('ts');
