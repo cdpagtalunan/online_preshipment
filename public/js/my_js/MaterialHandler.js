@@ -44,6 +44,10 @@ function GetPreshipmentList(checksheetId){
         success: function(response){
             console.log(response);
             if(response['response'] == 1){
+                if(response['preshipment'][0]['grinding'] == 1){
+                    $('#btnScanItem').addClass('d-none');
+                    $('#divFooter').addClass('d-none');
+                }
                 // console.log(response['preshipment'][0]['Destination']);
                 $('#txtInvalidChecker').val(response['preshipment'][0]['has_invalid']);
                 $('#packingId').val(response['preshipment'][0]['id']);

@@ -27,7 +27,7 @@ class MHPreshipmentController extends Controller
     public function get_Preshipment(){
         $preshipment = RapidPreshipment::where('rapidx_MHChecking','0')
         // ->orWhere('rapidx_QCChecking', 1)
-        ->where('grinding','0') 
+        // ->Where('remarks','!=','null') 
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
         ->get();
@@ -83,6 +83,22 @@ class MHPreshipmentController extends Controller
 
         }
     }
+    // public function getpreshipmentbyCtrlNoWhse(Request $request){
+
+    //     $preshipment = RapidPreshipment::where('Packing_List_CtrlNo',$request->preshipment_ctrl_id)
+    //     ->get();
+
+    //     if(count($preshipment) > 0){
+    //         return response()->json(['response' => 1, 'preshipment' => $preshipment]);
+    //     }
+    //     else{
+    //         return response()->json(['response' => 0]);
+
+    //     }
+    // }
+
+    
+
     public function get_Preshipment_list(Request $request){
 
         $preshipment_list = RapidPreshipmentList::where('fkControlNo', $request->preshipmentCtrlNo)
@@ -462,27 +478,6 @@ class MHPreshipmentController extends Controller
         // return $to_email;
 
         return response()->json(['result' => 1]);
-    }
-
-    public function get_preshipment_grinding(){
-        $preshipment_grinding = RapidPreshipment::where('grinding','1')
-        ->orderBy('id', 'DESC')
-        ->where('logdel', 0)
-        ->get();
-
-        return DataTables::of($preshipment_grinding)
-        ->addColumn('status', function($preshipment_grinding){
-            $result = "";
-            $result .= '<center><span class="badge badge-success">Done</span></center>';
-            return $result;
-        })
-        ->addColumn('action', function($preshipment) {
-            $result = "";
-            $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandlerChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
-            return $result;
-        })
-        ->rawColumns(['status','action'])
-        ->make(true);
     }
     
 }

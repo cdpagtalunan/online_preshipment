@@ -63,11 +63,10 @@ Route::post('/approve_list', 'MHPreshipmentController@approve_list');
 Route::get('/get_for_whse_transaction', 'MHPreshipmentController@get_for_whse_transaction');
 Route::get('/getpreshipmentbyCtrlNoWhse', 'MHPreshipmentController@getpreshipmentbyCtrlNoWhse');
 Route::get('/get_for_whse_ext_transaction', 'MHPreshipmentController@get_for_whse_ext_transaction');
-
 Route::get('/get_for_qc_transaction', 'MHPreshipmentController@get_for_qc_transaction'); //change 07/14/2022
 Route::get('/insert_preshimentlist_from_mh_qr_checking', 'MHPreshipmentController@insert_preshimentlist_from_mh_qr_checking'); //change 07/26/2022
-
 Route::post('/add_invalid', 'MHPreshipmentController@add_invalid');
+Route::get('/get_preshipment_grinding', 'MHPreshipmentController@get_preshipment_grinding'); // Added 04/17/2023
 
 
 

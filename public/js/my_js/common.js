@@ -114,6 +114,8 @@ function resetMHModalValues() {
     // Reset values
 
     $('#form_packing_list')[0].reset();
+    $('#btnScanItem').removeClass('d-none');
+    $('#divFooter').removeClass('d-none');
     console.log('#form_packing_list has been reset');
     // $('#checkboxWhseApprover').prop('checked', false);
 }

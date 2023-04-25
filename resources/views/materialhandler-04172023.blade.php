@@ -55,10 +55,7 @@
                         </li>
                         <li class="nav-item">
                           <a class="nav-link" id="MH-whse-ext-tab" data-toggle="tab" href="#MH-ext-whse" role="tab" aria-controls="MH-ext-whse" aria-selected="false">External Transactions</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="MH-grinding-tab" data-toggle="tab" href="#MH-grinding" role="tab" aria-controls="MH-grinding" aria-selected="false">Grinding</a>
-                        </li>
+                      </li>
                 </ul>
                     
                 <div class="tab-content" id="myTabContent" >
@@ -149,30 +146,7 @@
                               </tbody>
                           </table>
                       </div>
-                    </div>
-                    
-                    
-                    <div class="tab-pane fade" id="MH-grinding" role="tabpanel" aria-labelledby="MH-grinding-tab">
-                      <div class="table responsive mt-2">
-                          <table id="tbl_preshipment_grinding" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
-                              <thead>
-                                  <tr>
-                                      <th>Status</th>
-                                      <th>Date</th>
-                                      <th>Station</th>
-                                      <th>Packing List Control No</th>
-                                      <th>Shipment Date</th>
-                                      <th>Destination</th>
-                                      <th>Action</th>
-                                      
-                                  </tr>
-                              </thead>
-                              <tbody>
-
-                              </tbody>
-                          </table>
-                      </div>
-                    </div>
+                    </div> 
 
 
                 </div>
@@ -272,7 +246,7 @@
                       </div>    
                       </div>
                       <div class="card-footer">
-                        <div style="float: right" id="divFooter">
+                        <div style="float: right">
                           <button class="btn btn-outline-danger" id="btn_disapprove_list_id"><i class="far fa-times-circle"></i> Disapprove</button>
                           <button type="submit" class="btn btn-outline-success " id="btn_approve_list_id" disabled><i class="far fa-check-circle"></i> Approve</button>
                         </div>
@@ -710,31 +684,6 @@
       "ordering"   : false,
       "ajax" : {
           url: "get_for_qc_transaction",
-          // data: function (param){
-          //   param.preshipmentCtrlNo = $("#packingCtrlNo_id").val();
-          // },
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "Date" },
-          { "data" : "Station" },
-          { "data" : "Packing_List_CtrlNo"},
-          { "data" : "Shipment_Date"},
-          { "data" : "Destination"},
-          { "data" : "action"},
-          
-      ],
-    });
-
-
-    //added 04/17/2023
-    dataTablePreshipmentGrinding = $("#tbl_preshipment_grinding").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      // "paging"     : false,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_preshipment_grinding",
           // data: function (param){
           //   param.preshipmentCtrlNo = $("#packingCtrlNo_id").val();
           // },
