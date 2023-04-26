@@ -78,18 +78,22 @@ function getPreshipmentDetailsForApproval(preshipmentId){
                 var cn = ["Flexicon & TC/DC Connectors","Card Connectors","FUS/FRS/FMS Connector","CN171 Connector"];
             
             */
-        
-            if(jQuery.inArray(response['result']['preshipment']['Destination'], ts) != -1){
-                // console.log('ts');
-                $('#txtAcceptShipSendTo').val('ts').trigger('change');
-
+            if(response['result']['preshipment']['for_pps_cn_transfer'] == 1){ // added 04-25-2023 for pps-ts to pps-cn transactions
+                // console.log('test');
+                $('#txtAcceptShipSendTo').val('pps-cn').trigger('change');
             }
-            else if(jQuery.inArray(response['result']['preshipment']['Destination'], cn) != -1){
-                // console.log('cn');
-                $('#txtAcceptShipSendTo').val('cn').trigger('change');
-
-
+            else{
+                if(jQuery.inArray(response['result']['preshipment']['Destination'], ts) != -1){
+                    // console.log('ts');
+                    $('#txtAcceptShipSendTo').val('ts').trigger('change');
+    
+                }
+                else if(jQuery.inArray(response['result']['preshipment']['Destination'], cn) != -1){
+                    // console.log('cn');
+                    $('#txtAcceptShipSendTo').val('cn').trigger('change');
+                }
             }
+            
 
         },
     });

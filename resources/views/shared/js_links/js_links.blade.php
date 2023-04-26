@@ -34,6 +34,6 @@
 <script src="{{ asset('public/js/my_js/User.js?n=6') }}"></script>
 <script src="{{ asset('public/js/my_js/inspector.js?n=101') }}"></script>
 <script src="{{ asset('public/js/my_js/MaterialHandler.js?n=27') }}"></script>
-<script src="{{ asset('public/js/my_js/warehouse.js?n=90') }}"></script>
+<script src="{{ asset('public/js/my_js/warehouse.js?n=92') }}"></script>
 <script src="{{ asset('public/js/my_js/common.js?n=13') }}"></script>
 

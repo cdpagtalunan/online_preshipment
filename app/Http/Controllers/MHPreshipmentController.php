@@ -245,7 +245,8 @@ class MHPreshipmentController extends Controller
             // 'Preshipment_for_approval',
             'preshipment',
         ])
-        ->whereIN('status', [0,1,2,3,4])
+        // ->whereIN('status', [0,1,2,3,4])
+        ->where('status', '!=', '5')
         ->where('logdel', 0)
         ->orderBy('fk_preshipment_id', 'DESC')
         ->get();
@@ -292,8 +293,11 @@ class MHPreshipmentController extends Controller
             else if($preshipment->status == 3){
                 $result .='<span class="badge badge-warning">For TS/CN Superior Approval</span>';
             }
-            else if($preshipment->status == 4){
+            else if($preshipment->status == 4 || 7){
                 $result .='<span class="badge badge-success">Done</span>';
+            }
+            else if($preshipment->status == 6){
+                $result .='<span class="badge badge-warning">For PPS-CN Receive</span>';
             }
             // else if($preshipment->status == 6){
             //     $result .='<span class="badge badge-danger">Disapproved</span>';

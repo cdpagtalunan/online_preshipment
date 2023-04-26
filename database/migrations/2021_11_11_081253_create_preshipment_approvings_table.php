@@ -16,7 +16,7 @@ class CreatePreshipmentApprovingsTable extends Migration
         Schema::create('preshipment_approvings', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('fk_preshipment_id')->unsigned();
-            $table->bigInteger('status')->dafault(0)->comment = '0-Approval of PPS-WHS, 1-Approval of TS/CN WHS, 2-Uploading of TS/CN WHSE, 3-Approval of WHS Supervisor, 4-approved by supervisor(internal), 5-approved by QC(external)';
+            $table->bigInteger('status')->dafault(0)->comment = '0-Approval of PPS-WHS, 1-Approval of TS/CN WHS, 2-Uploading of TS/CN WHSE, 3-Approval of WHS Supervisor, 4-approved by supervisor(internal), 5-approved by QC(external), 6-PPS-CN WHSE to receive, 7- pps cn received';
             $table->bigInteger('is_invalid')->default(0)->comment = '0-not invalid, 1-has invalid';
             $table->bigInteger('qc_checker')->nullable();
             $table->string('qc_checker_date_time')->nullable();

@@ -200,14 +200,29 @@ class WhsePreshipmentController extends Controller
 
         $data = $request->all();
         
-
-        PreshipmentApproving::where('id', $request->preshipment_approval_id)
-        ->update([
-            'status' => 1,
+        $update_array = array(
+            // 'status' => 1,
             'send_to' => $request->accept_shipment_send_to,
             'from_whse_noter' => $_SESSION['rapidx_user_id'],
             'from_whse_noter_date_time' => NOW()
-        ]);
+        );
+
+        if($request->accept_shipment_send_to == 'pps-cn'){
+            $update_array['status'] = 6;
+        }
+        else{
+            $update_array['status'] = 1;
+
+        }
+
+        PreshipmentApproving::where('id', $request->preshipment_approval_id)
+        // ->update([
+        //     'status' => 1,
+        //     'send_to' => $request->accept_shipment_send_to,
+        //     'from_whse_noter' => $_SESSION['rapidx_user_id'],
+        //     'from_whse_noter_date_time' => NOW()
+        // ]);
+        ->update($update_array);
 
         $preshipment_details = PreshipmentApproving::with([
             'preshipment'
@@ -222,6 +237,9 @@ class WhsePreshipmentController extends Controller
         }
         if($request->accept_shipment_send_to == 'cn'){
             $department = "CN WHSE";
+        }
+        if($request->accept_shipment_send_to == 'pps-cn'){
+            $department = "PPS-CN WHSE";
         }
 
         $get_to_emails = UserAccess::where('department', $department)
@@ -1335,7 +1353,7 @@ class WhsePreshipmentController extends Controller
             // if($whse_preshipment->status == 0){
             //     $result .='<span class="badge badge-warning">For Approval</span>';
             // }
-            if($whse_preshipment->status == 1){
+            if($whse_preshipment->status == 1 || $whse_preshipment->status == 6){
                 $result .='<span class="badge badge-warning">For '.strtoupper($whse_preshipment->send_to).'-Whse Approval</span>';
             }
             else if($whse_preshipment->status >= 2){
@@ -1408,6 +1426,88 @@ class WhsePreshipmentController extends Controller
             $message->bcc('mrronquez@pricon.ph');
             $message->subject("Invalid Scanning Alert");
         });
+        return response()->json(['result' => 1]);
+    }
+
+     // Added 04/25/2023
+     public function get_preshipment_for_whse_pps_cn_recieve(){
+        $preshipment = PreshipmentApproving::with([
+            'preshipment'
+        ])
+        ->where('status', 6)
+        ->where('logdel', 0)
+        ->get();
+
+        return DataTables::of($preshipment)
+        ->addColumn('status', function($preshipment){
+            return '<center><span class="badge badge-warning">For PPS-CN Whse Receiving</span></center>';
+        })
+        ->addColumn('action', function($preshipment){
+            $result = "";
+            $result .= "<center>";
+            $result .= '<button class="btn btn-primary btn-sm mr-1 btn-whs-view"  data-toggle="modal" data-target="#modalViewWhsePreshipment" preshipment-id="'.$preshipment->preshipment->id.'"><i class="fas fa-eye"></i></button>';
+            $result .= '<button class="btn btn-success btn-sm mr-1 btn-pps-cn-received" preshipment-id="'.$preshipment->id.'"><i class="fas fa-check-circle"></i></button>';
+            $result .= '<button class="btn btn-danger btn-sm"><i class="fas fa-times-circle" preshipment-id="'.$preshipment->preshipment->id.'"></i></button>';
+            $result .= "</center>";
+
+            return $result;
+        })
+        ->rawColumns(['status', 'action'])
+        ->make(true);
+        
+    }
+     // Added 04/25/2023
+    public function get_preshipment_whse_pps_cn_recieved(){
+        $preshipment = PreshipmentApproving::with([
+            'preshipment'
+        ])
+        ->where('status', 7)
+        ->where('logdel', 0)
+        ->get();
+
+        return DataTables::of($preshipment)
+        ->addColumn('status', function($preshipment){
+            return '<center><span class="badge badge-success">Received</span></center>';
+        })
+        ->addColumn('action', function($preshipment){
+            $result = "";
+            $result .= "<center>";
+            $result .= '<button class="btn btn-primary btn-sm mr-1 btn-whs-view"  data-toggle="modal" data-target="#modalViewWhsePreshipment" preshipment-id="'.$preshipment->preshipment->id.'"><i class="fas fa-eye"></i></button>';
+            
+            $result .= '<div class="btn-group">
+            <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
+            <i class="fas fa-lg fa-file-download"></i>
+            </button>';
+                $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
+
+                $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->id.'" target="_blank">Export Excel</a>';
+                $result .='<a class="dropdown-item text-center" href="pdf_export/'.$preshipment->id.'" target="_blank">Export PDF</a>';
+                
+                $result .= '</div>'; // dropdown-menu end
+            $result .= '</div>';
+            
+            $result .= "</center>";
+
+            return $result;
+        })
+        ->rawColumns(['status', 'action'])
+        ->make(true);
+        
+    }
+     // Added 04/25/2023
+    public function approve_pps_cn_transaction(Request $request){
+        session_start();
+        date_default_timezone_set('Asia/Manila');
+        $data = $request->all();
+
+        PreshipmentApproving::where('id', $request->approve_preshipment)
+        ->update([
+            'status' => 7,
+            'to_whse_noter' => $_SESSION['rapidx_user_id'],
+            'to_whse_noter_date_time' => NOW(),
+            'updated_at' => NOW()
+        ]);
+
         return response()->json(['result' => 1]);
     }
 }

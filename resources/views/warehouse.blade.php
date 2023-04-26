@@ -36,6 +36,12 @@
                                 <li class="nav-item">
                                     <a class="nav-link" id="delivered-tab" data-toggle="tab" href="#delivered" role="tab" aria-controls="delivered" aria-selected="false">Delivered</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="for-receive-tab" data-toggle="tab" href="#forReceive" role="tab" aria-controls="forReceive" aria-selected="false">For PPS-CN Receive</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="received-tab" data-toggle="tab" href="#received" role="tab" aria-controls="received" aria-selected="false">PPS-CN Received</a>
+                                </li>
                                 {{-- <li class="nav-item">
                                     <a class="nav-link" id="workloads-person-tab" data-toggle="tab" href="#workloadsPerson" role="tab" aria-controls="person" aria-selected="false">Person in Charge Tab</a>
                                 </li>
@@ -67,6 +73,49 @@
 
                                     <div class="table responsive mt-2">
                                         <table id="tbl_whse_preshipment_done" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Status</th>
+                                                    <th>Date</th>
+                                                    <th>Station</th>
+                                                    <th>Packing List Control No</th>
+                                                    <th>Shipment Date</th>
+                                                    <th>Destination</th>
+                                                    <th>Transfer Date and Time</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            
+                                        </table>
+                                    </div>
+                                </div>
+
+                                
+                                <div class="tab-pane fade" id="forReceive" role="tabpanel" aria-labelledby="for-recieve-tab">
+
+                                    <div class="table responsive mt-2">
+                                        <table id="tbl_whs_preshipment_for_receive" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Status</th>
+                                                    <th>Date</th>
+                                                    <th>Station</th>
+                                                    <th>Packing List Control No</th>
+                                                    <th>Shipment Date</th>
+                                                    <th>Destination</th>
+                                                    <th>Transfer Date and Time</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="received" role="tabpanel" aria-labelledby="received-tab">
+
+                                    <div class="table responsive mt-2">
+                                        <table id="tbl_whs_preshipment_received" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
                                             <thead>
                                                 <tr>
                                                     <th>Status</th>
@@ -274,6 +323,8 @@
                                         <select name="accept_shipment_send_to" id="txtAcceptShipSendTo" class="form-control" style="pointer-events: none;">
                                             <option value="cn" >CN Warehouse</option>
                                             <option value="ts" >TS Warehouse</option>
+                                            <option value="pps-cn" >PPS-CN Warehouse</option>
+
                                         </select>
                                         {{-- <input type="text" class="form-control" name="accept_shipment_send_to" readonly id="txtAcceptShipSendTo" aria-label="Default" aria-describedby="inputGroup-sizing-default"> --}}
                                     </div>
@@ -312,6 +363,37 @@
                                 <textarea name="pps_disapprove_remarks" id="ppsDisapproveRemarks" class="form-control" rows="5" required></textarea>
                             </div>
                             <div class="modal-footer">
+                                <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" class="btn btn-success">Yes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            {{-- MODAL APPROVE --}}
+            <div class="modal fade" id="modalPPSCNApprove" data-backdrop="static" style="overflow: auto;">
+                <div class="modal-dialog" style="margin-top: 5%;">
+                    <div class="modal-content">
+                        <form id="formPPSCNApprove">
+                            @csrf
+                            <div class="modal-header">
+                                
+                                <button id="close" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <input type="hidden" id="ApprovePreshipmentId" name="approve_preshipment">
+
+                                <h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you want to approve?</h5><br>
+                                {{-- <h6>Remarks:</h6> --}}
+                                {{-- <textarea name="pps_approve_remarks" id="ppsDisapproveRemarks" class="form-control" rows="5" required></textarea> --}}
+                            </div>
+                            <div class="modal-footer justify-content-between">
                                 <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
                                 <button type="submit" class="btn btn-success">Yes</button>
                             </div>
@@ -397,6 +479,49 @@ $(document).ready(function () {
       ],
     });
 
+    
+    //Added 04/25/2023
+    dataTableWhsePreshipmentForReceive = $("#tbl_whs_preshipment_for_receive").DataTable({
+      "processing" : true,
+      "serverSide" : true,
+      "ordering"  : false,
+      "ajax" : {
+          url: "get_preshipment_for_whse_pps_cn_recieve", 
+      },
+      "columns":[    
+          { "data" : "status"},
+          { "data" : "preshipment.Date" },
+          { "data" : "preshipment.Station" },
+          { "data" : "preshipment.Packing_List_CtrlNo"},
+          { "data" : "preshipment.Shipment_Date"},
+          { "data" : "preshipment.Destination"},
+          { "data" : "from_whse_noter_date_time"},
+          { "data" : "action"},
+          
+      ],
+    });
+
+    dataTableWhsePreshipmentReceived = $("#tbl_whs_preshipment_received").DataTable({
+      "processing" : true,
+      "serverSide" : true,
+      "ordering"  : false,
+      "ajax" : {
+          url: "get_preshipment_whse_pps_cn_recieved", 
+      },
+      "columns":[    
+          { "data" : "status"},
+          { "data" : "preshipment.Date" },
+          { "data" : "preshipment.Station" },
+          { "data" : "preshipment.Packing_List_CtrlNo"},
+          { "data" : "preshipment.Shipment_Date"},
+          { "data" : "preshipment.Destination"},
+          { "data" : "from_whse_noter_date_time"},
+          { "data" : "action"},
+          
+      ],
+    });
+
+
     $(document).on('click', '.btn-whs-view', function(){
         let preshipment_id = $(this).attr('preshipment-id');
         getPreshipmentDetailsById(preshipment_id);
@@ -427,6 +552,31 @@ $(document).ready(function () {
         event.preventDefault();
         disapprovePreshipment();
     });
+    
+    $(document).on('click', '.btn-pps-cn-received', function(){
+        let preshipmentId = $(this).attr('preshipment-id');
+        $('#modalPPSCNApprove').modal('show');
+        $('#ApprovePreshipmentId').val(preshipmentId);
+
+    });
+    $('#formPPSCNApprove').submit(function(e){
+        e.preventDefault();
+        // console.log($(this).serialize());
+        $.ajax({
+            type: "post",
+            url: "approve_pps_cn_transaction",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (response) {
+                if(response['result'] == 1){
+                    $('#modalPPSCNApprove').modal('hide');
+                    dataTableWhsePreshipmentForReceive.draw();
+                    dataTableWhsePreshipmentReceived.draw();
+                    toastr.success('Pre-shipment Received!');
+                }
+            }
+        });
+    })
 });
 </script>
 @endsection
