@@ -11,4 +11,8 @@ class RapidPreshipment extends Model
     protected $connection = "mysql_rapid";
     public $timestamps = false;
 
+
+    public function rapidx_preshipment_app_details(){
+        return $this->hasOne(PreshipmentApproving::class, 'fk_preshipment_id', 'id');
+    }
 }

@@ -119,7 +119,10 @@ class WhsePreshipmentController extends Controller
         // return $request->preshipmentCtrlNo;
 
         // $preshipment_list = PreshipmentList::where('fkcontrolNo',$request->preshipmentId)->get();
-        $preshipment_list = RapidPreshipmentList::where('fkcontrolNo',$request->preshipmentCtrlId)
+        $preshipment_list = RapidPreshipmentList::with([
+            'dieset_info'
+        ])
+        ->where('fkcontrolNo',$request->preshipmentCtrlId)
         ->where('logdel', 0)
         ->get();
 
@@ -163,7 +166,25 @@ class WhsePreshipmentController extends Controller
             }
             return $result;
         })
-        ->rawColumns(['hide_input'])
+        ->addcolumn('drawing_no', function($preshipment){
+            $result = "";
+
+            if(isset($preshipment->dieset_info)){
+                $result .= $preshipment->dieset_info->DrawingNo;
+            }
+
+            return $result;
+        })
+        ->addcolumn('rev', function($preshipment){
+            $result = "";
+
+            if(isset($preshipment->dieset_info)){
+                $result .= $preshipment->dieset_info->Rev;
+            }
+
+            return $result;
+        })
+        ->rawColumns(['hide_input','drawing_no','rev'])
         ->make(true);
 
 

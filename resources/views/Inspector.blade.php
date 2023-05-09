@@ -271,7 +271,9 @@
                         <th style="text-align: center;">Package Category</th>
                         <th style="text-align: center;">Package Qty</th>                           
                         <th style="text-align: center;">Weight By</th>                           
-                        <th style="text-align: center;">Packed By</th>                           
+                        <th style="text-align: center;">Packed By</th> 
+                        <th style="text-align: center;">Drawing No.</th>                           
+                        <th style="text-align: center;">Drawing Rev #</th>                          
                         <th style="text-align: center;">Remarks</th>                           
                         <th style="text-align: center;">hidden inputs</th>
                         <th style="text-align: center;">hidden stamping</th>
@@ -452,6 +454,8 @@
           { "data" : "PackageQty"},
           { "data" : "WeighedBy"},
           { "data" : "PackedBy"},
+          { "data" : "drawing_no"},
+          { "data" : "rev"},
           { "data" : "Remarks"},
           { "data" : "hide_input"},
           { "data" : "hide_stamping"},
@@ -460,7 +464,7 @@
       ],
       "columnDefs": [
       {
-        className: "d-none", "targets": [ 13,12 ]
+        className: "d-none", "targets": [ 14,15 ]
       }],
     }); 
 
@@ -587,6 +591,7 @@
           }
           else{
             var arr = scannedItem.split(', ');
+            console.log(arr);
 
             itemVerificationQC(arr);
           }

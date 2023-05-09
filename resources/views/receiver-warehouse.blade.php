@@ -281,7 +281,9 @@
                                         <th style="text-align: center;">Package Category</th>
                                         <th style="text-align: center;">Package Qty</th>                           
                                         <th style="text-align: center;">Weight By</th>                           
-                                        <th style="text-align: center;">Packed By</th>                           
+                                        <th style="text-align: center;">Packed By</th> 
+                                        <th style="text-align: center;">Drawing No.</th>                           
+                                        <th style="text-align: center;">Drawing Rev #</th>                           
                                         <th style="text-align: center;">Remarks</th>                           
                                         <th style="text-align: center; display: none;">hidden inputs</th>
                                                                 
@@ -1158,6 +1160,8 @@ $(document).ready(function () {
             { "data" : "PackageQty"},
             { "data" : "WeighedBy"},
             { "data" : "PackedBy"},
+            { "data" : "drawing_no"},
+            { "data" : "rev"},
             { "data" : "Remarks"},
             { "data" : "hide_input"},
             
@@ -1354,10 +1358,13 @@ $(document).ready(function () {
             var arr = scannedItem.split(',');
 
             if(arr.length == 7){
+                console.log("if",arr)
             itemVerificationTSCNWhse(arr);
             }
             else{
-            var arr = scannedItem.split(', ');
+                
+                var arr = scannedItem.split(', ');
+                console.log("else",arr)
             itemVerificationTSCNWhse(arr);
             }
           txtForScanning.val("");

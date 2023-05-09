@@ -15,6 +15,8 @@ use App\Model\RapidPreshipment;
 use App\Model\RapidPreshipmentList;
 use App\Model\PreshipmentApproving;
 use App\Model\UserAccess;
+use App\Model\RapidDieset;
+
 
 use App\Model\MhPreshipmentCheck;
 
@@ -85,7 +87,10 @@ class MHPreshipmentController extends Controller
     }
     public function get_Preshipment_list(Request $request){
 
-        $preshipment_list = RapidPreshipmentList::where('fkControlNo', $request->preshipmentCtrlNo)
+        $preshipment_list = RapidPreshipmentList::with([
+            'dieset_info'
+        ])
+        ->where('fkControlNo', $request->preshipmentCtrlNo)
         ->where('logdel', 0)
         ->get();
 
@@ -146,7 +151,25 @@ class MHPreshipmentController extends Controller
             
             return $result;
         })
-        ->rawColumns(['hide_input', 'hide_stamping'])
+        ->addcolumn('drawing_no', function($preshipment){
+            $result = "";
+
+            if(isset($preshipment->dieset_info)){
+                $result .= $preshipment->dieset_info->DrawingNo;
+            }
+
+            return $result;
+        })
+        ->addcolumn('rev', function($preshipment){
+            $result = "";
+
+            if(isset($preshipment->dieset_info)){
+                $result .= $preshipment->dieset_info->Rev;
+            }
+
+            return $result;
+        })
+        ->rawColumns(['hide_input', 'hide_stamping','drawing_no', 'rev'])
         ->make(true);
         
 

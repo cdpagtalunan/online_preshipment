@@ -15,6 +15,8 @@ class PreshipmentApproving extends Model
     // public function Preshipment_for_approval(){
     //     return $this->hasOne(Preshipment::class, 'id', 'fk_preshipment_id');
     // }
+    protected $table = "preshipment_approvings";
+    protected $connection = "mysql";
 
     public function preshipment(){
         return $this->hasOne(RapidPreshipment::class, 'id', 'fk_preshipment_id');

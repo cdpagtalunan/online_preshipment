@@ -186,3 +186,275 @@ function addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId,
     });
 }
 
+
+// function itemVerification(arr){
+//     toastr.options = {
+//         "closeButton": false,
+//         "debug": false,
+//         "newestOnTop": true,
+//         "progressBar": true,
+//         "positionClass": "toast-top-right",
+//         "preventDuplicates": false,
+//         "onclick": null,
+//         "showDuration": "300",
+//         "hideDuration": "1000",
+//         "timeOut": "1000",
+//         "extendedTimeOut": "1000",
+//         "showEasing": "swing",
+//         "hideEasing": "linear",
+//         "showMethod": "fadeIn",
+//         "hideMethod": "fadeOut",
+//     };
+
+
+//     let check_data = false;
+//     let isInvalid = $('#txtInvalidChecker').val();
+//     setTimeout(() => {
+//         $('#tbl_preshipment_list tbody tr').each(function(index, tr){
+           
+
+//             // var po_num = $(tr).find('td:eq(2)').text();
+//             // var partcode = $(tr).find('td:eq(3)').text();
+//             // var device_name = $(tr).find('td:eq(4)').text();
+//             // var lot_no = $(tr).find('td:eq(5)').text();
+//             // var qty = $(tr).find('td:eq(6)').text();
+//             // var package_category = $(tr).find('td:eq(7)').text();
+//             var po_num = $(tr).find('td:eq(2)').text().toUpperCase();
+//             var partcode = $(tr).find('td:eq(3)').text().toUpperCase();
+//             var device_name = $(tr).find('td:eq(4)').text().toUpperCase();
+//             var lot_no = $(tr).find('td:eq(5)').text().toUpperCase();
+//             var qty = $(tr).find('td:eq(6)').text().toUpperCase();
+//             var package_category = $(tr).find('td:eq(7)').text().toUpperCase();
+
+//             var package_qty = $(tr).find('td:eq(8)').text();
+
+
+//             var hdInputVal = $(tr).find('td:eq(12)').text();
+//             var hdStampingVal = $(tr).find('td:eq(13)').text();
+
+
+//             // var hdInputVal = tr1.getElementsByTagName("td")[11].innerHTML;
+//             console.log("is invalid: "+isInvalid);
+
+//             var checkedOk = $(tr).hasClass('checked-ok');
+//             console.log(checkedOk);
+//             if(arr[0].trim() == po_num && arr[1].trim() == partcode && arr[2].trim() == device_name && arr[3].trim() == lot_no && arr[4].trim() == qty && arr[5].trim() == package_category){
+//                 // console.log('qweqwe');
+//                 check_data = true;
+//                 // if(checkedOk != true){
+//                     if(hdStampingVal == 'stamping'){
+//                         let hiddenColumnId = $(tr).find('td:eq(1)').text();
+//                         console.log(hiddenColumnId);
+//                         $('#toScrollId').attr('href', "#"+hiddenColumnId);
+//                         $('#toScrollId')[0].click();
+//                         const element = document.getElementById('txtScanPreshipment')
+//                         // const element = document.getElementById('txtForScanner')
+//                         element.focus({
+//                             preventScroll: true
+//                         });
+    
+//                         setTimeout(() => {
+//                             $(tr).removeClass('checked-ng');
+//                             $(tr).addClass('checked-partial');
+//                             $(tr).find('td:eq(13)').text("");
+//                         }, 500);
+//                         return false;
+
+//                     }
+//                     else{
+//                         console.log(hdInputVal);
+//                         if(hdInputVal == "" || hdInputVal == 1){
+//                             if(arr[6].trim() == "1/1" || arr[6].trim() == "1"){
+//                                 // $(tr).removeClass('checked-ng');
+//                                 // $(tr).addClass('checked-ok');
+//                                 // $(tr).scrollIntoView({behavior: "smooth"});
+//                                 // tr.getElementsByTagName("td")[11].innerHTML = "0";
+//                                 $(tr).find('td:eq(12)').text("0");
+//                                 console.log("checked-green");
+                                
+//                                 let hiddenColumnId = $(tr).find('td:eq(1)').text();
+    
+//                                 console.log(hiddenColumnId);
+    
+//                                 $('#toScrollId').attr('href', "#"+hiddenColumnId);
+    
+//                                 $('#toScrollId')[0].click();
+    
+                            
+    
+//                                 saveInfoForMH(po_num,partcode,device_name,lot_no,qty,package_category,package_qty);
+//                                 // $('#btnScanItem')[0].click();
+//                                 const element = document.getElementById('txtScanPreshipment')
+//                                 // const element = document.getElementById('txtForScanner')
+    
+//                                 element.focus({
+//                                     preventScroll: true
+//                                 });
+    
+//                                 setTimeout(() => {
+//                                     $(tr).removeClass('checked-partial');
+//                                     $(tr).removeClass('checked-ng');
+//                                     $(tr).addClass('checked-ok');
+//                                 }, 500);
+//                                 return false;
+
+    
+//                             }
+//                             else{
+//                                 // $(tr).removeClass('checked-ng');
+//                                 // $(tr).addClass('checked-ok');
+//                                 // $(tr).scrollIntoView({behavior: "smooth"});
+//                                 // tr.getElementsByTagName("td")[11].innerHTML = "0";
+//                                 $(tr).find('td:eq(12)').text("0");
+    
+//                                 let hiddenColumnId = $(tr).find('td:eq(1)').text();
+//                                 console.log(hiddenColumnId);
+    
+//                                 $('#toScrollId').attr('href', "#"+hiddenColumnId);
+    
+//                                 $('#toScrollId')[0].click();
+                                
+    
+    
+    
+//                                 saveInfoForMH(po_num,partcode,device_name,lot_no,qty,package_category,package_qty);
+//                                 // $('#btnScanItem')[0].click();
+//                                 const element = document.getElementById('txtScanPreshipment')
+//                                 // const element = document.getElementById('txtForScanner')
+    
+//                                 element.focus({
+//                                     preventScroll: true
+//                                 });
+    
+//                                 setTimeout(() => {
+//                                     $(tr).removeClass('checked-partial');
+//                                     $(tr).removeClass('checked-ng');
+//                                     $(tr).addClass('checked-ok');
+//                                 }, 500);
+//                                 return false;
+
+    
+//                             }
+//                         }
+//                         // else if(hdInputVal > 1){
+//                         else if(hdInputVal != 1 && hdInputVal != "DO"){ // For preshipment with over (1~3)
+//                             if(hdInputVal != 0){
+//                                 // hdInputVal = hdInputVal - 1;
+//                                 // // tr.getElementsByTagName("td")[11].innerHTML = hdInputVal;
+//                                 // $(tr).find('td:eq(12)').text(hdInputVal);
+//                                 // console.log("checked need to scan "+hdInputVal+" more");
+    
+//                                 let replacedInputVal = "";
+    
+//                                 replacedInputVal = hdInputVal.replace(arr[6].trim(),'');
+//                                 console.log(hdInputVal);
+//                                 console.log(replacedInputVal);
+//                                 $(tr).find('td:eq(12)').text(replacedInputVal);
+//                                 $(tr).addClass('checked-partial');
+//                                 // $(tr).addClass('checked-ok');
+    
+//                                 // to replace the yellow highlight to green when all sticker count is scanned
+                                
+//                                 // For autoscrolling
+//                                 let hiddenColumnId = $(tr).find('td:eq(1)').text();
+//                                 console.log(hiddenColumnId);
+//                                 $('#toScrollId').attr('href', "#"+hiddenColumnId);
+                                
+//                                 $('#toScrollId')[0].click();
+//                                 const element = document.getElementById('txtScanPreshipment')
+//                                 // const element = document.getElementById('txtForScanner')
+                                
+//                                 element.focus({
+//                                     preventScroll: true
+//                                 });
+    
+    
+//                                 if(replacedInputVal == ""){
+//                                     $(tr).removeClass('checked-partial');
+//                                     // console.log('123');
+//                                     $(tr).addClass('checked-ok');
+//                                     saveInfoForMH(po_num,partcode,device_name,lot_no,qty,package_category,package_qty);
+//                                     return false;
+
+//                                 }
+//                                 return false;
+
+//                             }
+//                         }
+//                         else if(hdInputVal == "DO"){
+//                             if(arr[6].trim() == "1/1"){
+//                                 // $(tr).removeClass('checked-ng');
+//                                 // $(tr).addClass('checked-ok');
+//                                 // $(tr).scrollIntoView({behavior: "smooth"});
+//                                 // tr.getElementsByTagName("td")[11].innerHTML = "0";
+//                                 $(tr).find('td:eq(12)').text("0");
+    
+//                                 let hiddenColumnId = $(tr).find('td:eq(1)').text();
+//                                 console.log(hiddenColumnId);
+    
+//                                 $('#toScrollId').attr('href', "#"+hiddenColumnId);
+    
+//                                 $('#toScrollId')[0].click();
+                                
+    
+//                                 saveInfoForMH(po_num,partcode,device_name,lot_no,qty,package_category,package_qty);
+//                                 // $('#btnScanItem')[0].click();
+//                                 const element = document.getElementById('txtScanPreshipment')
+//                                 // const element = document.getElementById('txtForScanner')
+    
+//                                 element.focus({
+//                                     preventScroll: true
+//                                 });
+    
+//                                 setTimeout(() => {
+//                                     $(tr).removeClass('checked-partial');
+//                                     $(tr).removeClass('checked-ng');
+//                                     $(tr).addClass('checked-ok');
+//                                 }, 500);
+//                                 return false;
+
+    
+//                             }
+//                         }
+//                     }
+//                 // }
+//                 // else{
+//                     // check_data = false;
+//                     // toastr.error('Invalid! QR already scanned.');
+
+//                 // }
+//             }
+//             // else{
+//             //     check_data = false;
+
+//             // }
+//         });
+
+//         setTimeout(() => {
+//             if(arr.length <= 6){
+//                 toastr.error('Invalid! QR is not for Preshipment.');
+//                 console.log('invalid  QR is not for Preshipment');
+//             }
+//             else if(!check_data){
+//                 toastr.error('Invalid! No Data Found.')
+//                 console.log('invalid scanning data');
+//                 $.ajax({
+//                     url: "add_invalid",
+//                     type: "post",
+//                     data:{
+//                         preshipment_id: $('#packingId').val(),
+//                         from : 'MH',
+//                     },
+//                     dataType: "json",
+//                     success: function (response) {
+//                         $('#txtInvalidChecker').val('1').trigger('change');
+//                     }
+//                 });
+//             }
+//         }, 400);
+//     }, 400);
+
+
+
+// }
+

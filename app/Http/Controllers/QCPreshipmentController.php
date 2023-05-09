@@ -104,7 +104,10 @@ class QCPreshipmentController extends Controller
 
     public function get_Preshipment_list_QC(Request $request){
         
-        $preshipment_list = RapidPreshipmentList::where('fkControlNo', $request->preshipmentCtrlNo)
+        $preshipment_list = RapidPreshipmentList::with([
+            'dieset_info'
+        ])
+        ->where('fkControlNo', $request->preshipmentCtrlNo)
         ->where('logdel', 0)
         ->get();
 
@@ -189,7 +192,25 @@ class QCPreshipmentController extends Controller
             
             return $result;
         })
-        ->rawColumns(['hide_input', 'hide_stamping'])
+        ->addcolumn('drawing_no', function($preshipment){
+            $result = "";
+
+            if(isset($preshipment->dieset_info)){
+                $result .= $preshipment->dieset_info->DrawingNo;
+            }
+
+            return $result;
+        })
+        ->addcolumn('rev', function($preshipment){
+            $result = "";
+
+            if(isset($preshipment->dieset_info)){
+                $result .= $preshipment->dieset_info->Rev;
+            }
+
+            return $result;
+        })
+        ->rawColumns(['hide_input', 'hide_stamping','drawing_no', 'rev'])
         ->make(true);
         
     }
@@ -521,11 +542,19 @@ class QCPreshipmentController extends Controller
     
     //change 07/14/2022
     public function get_Preshipment_done(Request $request){
-        $preshipment = RapidPreshipment::whereIN('rapidx_QCChecking',['2'])
+        $preshipment = RapidPreshipment::with([
+            'rapidx_preshipment_app_details'
+        ])
+        ->where('rapidx_QCChecking',2)
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
         ->get();
 
+        // $preshipment = DB::connection('mysql_rapid', 'mysql')
+        // ->select("
+        //     SELECT * FROM tbl_PreShipment INNER JOIN preshipment_approvings ON tbl_PreShipment.id = preshipment_approvings.fk_preshipment_id
+        //     WHERE `rapidx_QCChecking` = '2' AND `logdel` = '0' ORDER BY `id` DESC
+        // ");
 
     
         return DataTables::of($preshipment)
@@ -546,23 +575,25 @@ class QCPreshipmentController extends Controller
         })
         ->addColumn('action', function($preshipment) {
 
-            $rapidx_preshipment = PreshipmentApproving::where('fk_preshipment_id',$preshipment->id)
-            ->where('logdel', 0)
-            ->first();
+            $result = "";
+           
+            // $rapidx_preshipment = PreshipmentApproving::where('fk_preshipment_id',$preshipment->id)
+            // ->where('logdel', 0)
+            // ->first();
 
 
-            $result = "<center>";
+            $result .= "<center>";
             
             $result .= '<button class="btn btn-primary btn-sm btn-openshipment mr-1"  data-toggle="modal" data-target="#modalViewQCChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button>';
-            if($rapidx_preshipment != null){
+            if($preshipment->rapidx_preshipment_app_details != null){
                 $result .= '<div class="btn-group">
                 <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
                 <i class="fas fa-lg fa-file-download"></i>
                 </button>';
                     $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
 
-                    $result .='<a class="dropdown-item text-center" href="export_excel/'.$rapidx_preshipment->id.'" target="_blank">Export Excel</a>';
-                    $result .='<a class="dropdown-item text-center" href="pdf_export/'.$rapidx_preshipment->id.'" target="_blank">Export PDF</a>';
+                    $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->rapidx_preshipment_app_details->id.'" target="_blank">Export Excel</a>';
+                    $result .='<a class="dropdown-item text-center" href="pdf_export/'.$preshipment->rapidx_preshipment_app_details->id.'" target="_blank">Export PDF</a>';
                     
                     $result .= '</div>'; // dropdown-menu end
                 $result .= '</div>';

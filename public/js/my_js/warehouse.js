@@ -153,15 +153,34 @@ function itemVerificationTSCNWhse(arr){
             var package_category = $(tr).find('td:eq(7)').text().toUpperCase();
             var package_qty = $(tr).find('td:eq(8)').text();
 
+            var drawing_no = $(tr).find('td:eq(11)').text().toUpperCase();
+            var drawing_rev_no = $(tr).find('td:eq(12)').text().toUpperCase();
 
-            var hdInputVal = $(tr).find('td:eq(12)').text();
+            var hdInputVal = $(tr).find('td:eq(14)').text();
 
             // var hdInputVal = tr1.getElementsByTagName("td")[11].innerHTML;
-            // console.log(arr[0].toUpperCase());
+            console.log("drawing_no:",drawing_no);
+            console.log("arr[8].trim():",arr[7].trim());
 
             var checkedOk = $(tr).hasClass('checked-ok');
             console.log('checking:'+checkedOk);
-            if(arr[0].trim() == po_num && arr[1].trim() == partcode && arr[2].trim() == device_name && arr[3].trim() == lot_no && arr[4].trim() == qty && arr[5].trim() == package_category){
+
+            if(arr[8] == undefined){
+                test = arr[8];
+            }
+            else{
+                test = arr[8].trim();
+            }
+            if(
+                arr[0].trim() == po_num && 
+                arr[1].trim() == partcode && 
+                arr[2].trim() == device_name && 
+                arr[3].trim() == lot_no && 
+                arr[4].trim() == qty && 
+                arr[5].trim() == package_category && 
+                (arr[7].trim() == drawing_no.trim() || arr[7].trim() == ',' || arr[7].trim() == "-") && 
+                (test == drawing_rev_no || test == undefined || test == "-")
+            ){
                 // if(checkedOk != true){
 
                 // }
@@ -174,7 +193,7 @@ function itemVerificationTSCNWhse(arr){
                             $(tr).addClass('checked-ok');
                             // $(tr).scrollIntoView({behavior: "smooth"});
                             // tr.getElementsByTagName("td")[11].innerHTML = "0";
-                            $(tr).find('td:eq(12)').text("0");
+                            $(tr).find('td:eq(14)').text("0");
                             console.log("checked-green");
                             
                             let hiddenColumnId = $(tr).find('td:eq(1)').text();
@@ -206,7 +225,7 @@ function itemVerificationTSCNWhse(arr){
                             $(tr).addClass('checked-ok');
                             // $(tr).scrollIntoView({behavior: "smooth"});
                             // tr.getElementsByTagName("td")[11].innerHTML = "0";
-                            $(tr).find('td:eq(12)').text("0");
+                            $(tr).find('td:eq(14)').text("0");
     
                             let hiddenColumnId = $(tr).find('td:eq(1)').text();
                             console.log(hiddenColumnId);
@@ -242,7 +261,7 @@ function itemVerificationTSCNWhse(arr){
                             replacedInputVal = hdInputVal.replace(arr[6].trim(),'');
                             console.log(hdInputVal);
                             console.log(replacedInputVal);
-                            $(tr).find('td:eq(12)').text(replacedInputVal);
+                            $(tr).find('td:eq(14)').text(replacedInputVal);
                             $(tr).addClass('checked-partial');
                             // $(tr).addClass('checked-ok');
     
@@ -282,7 +301,7 @@ function itemVerificationTSCNWhse(arr){
                             $(tr).addClass('checked-ok');
                             // $(tr).scrollIntoView({behavior: "smooth"});
                             // tr.getElementsByTagName("td")[11].innerHTML = "0";
-                            $(tr).find('td:eq(12)').text("0");
+                            $(tr).find('td:eq(14)').text("0");
     
                             let hiddenColumnId = $(tr).find('td:eq(1)').text();
                             console.log(hiddenColumnId);
