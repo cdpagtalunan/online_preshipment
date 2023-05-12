@@ -3,74 +3,99 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel; 
+
 
 use App\Model\RapidShipmentRecord;
 use App\Model\RapidPreshipmentList;
 use App\Model\PreshipmentApproving;
-use App\Exports\PendingExport;
+use App\Model\RapidPreshipment;
+use App\Model\UserAccess;
+
+
+use App\Exports\PendingTwoDaysExport;
+use App\Exports\PendingPastTwoDaysExport;
+
 
 use Carbon\Carbon;
 use Mail;
-use Excel;
-
-
 
 class MailerController extends Controller
 {
     public function automail_pending_preshipment(Request $request){
         date_default_timezone_set('Asia/Manila');
 
+        $result = array();
+
         $now = Carbon::today(); // GET THE DATE TODAY
         $now->addDays(-2);
-        $now = Carbon::parse($now)->format('Y-m-d');
+        $now_for_where = Carbon::parse($now)->format('Y-m-d 07:30:00');
+        $now_for_collect = Carbon::parse($now)->format('Y-m-d');
 
-
-        // return $now;
-
-        $get_pending_preshipments = PreshipmentApproving::with([
+        $get_pending_mh_preshipment = PreshipmentApproving::with([
             'preshipment',
-            // 'qc_approver_details',
-            // 'qc_approver_details.rapidx_user_details',
-            // 'from_user_details',
-            // 'from_user_details.rapidx_user_details',
-            // 'to_whse_noter_details',
-            // 'to_whse_noter_details.rapidx_user_details',
-            // 'whse_uploader_details',
-            // 'whse_uploader_details.rapidx_user_details',
-            // 'whse_superior_details',
-            // 'whse_superior_details.rapidx_user_details',
         ])
-        ->whereNotIn('status',[4,5])
+        ->whereIn('status',[1,2,3])
         ->where('logdel',0)
+        ->where('updated_at','<=', $now_for_where)
+        ->select('*', DB::raw('DATE(`created_at`) as petsa'))
         ->get();
 
-        $get_pending_preshipments = collect($get_pending_preshipments)->where('preshipment.Date', '>=', '2022-05-24')->where('preshipment.Date', '<=', $now)->flatten(1);
-        
+        $result['mh_2days_only'] = collect($get_pending_mh_preshipment)->whereIn('status', [1,2])->where('petsa','=' ,$now_for_collect)->flatten(0);
+        $result['mh_past_2days_only'] = collect($get_pending_mh_preshipment)->whereIn('status', [1,2])->where('petsa', '<', $now_for_collect)->flatten(0);
 
-        return $get_pending_preshipments;
-        
+        $result['supp_2days_only'] = collect($get_pending_mh_preshipment)->where('status', 3)->where('petsa','=' ,$now_for_collect)->flatten(0);
+        $result['supp_past_2days_only'] = collect($get_pending_mh_preshipment)->where('status', 3)->where('petsa','<', $now_for_collect)->flatten(0);
+
         $date_today = Carbon::today();
 
-        $filename = "Summary of Pending Pre-shipment" . Carbon::parse($date_today)->format('Y-m-d') . ".xlsx";
+        $filename_2days = "List of Pending Pre-shipment as of " . Carbon::parse($date_today)->format('Y-m-d') . ".xlsx";
+        $filename_past_2days = "List of Pending Pre-shipment after 2 days as of " . Carbon::parse($date_today)->format('Y-m-d') . ".xlsx";
+        // return $result;
 
-        Excel::store(new PendingExport($date_today,$get_pending_preshipments),$filename);
-
-
-
-        // return count($get_pending_preshipments);
-        // if(count($get_pending_preshipments) > 0){
-        //     $data = [
-        //         'datas' => $get_pending_preshipments
-        //     ];
-
-        //     $to_email = "cpagtalunan@pricon.ph";
-
-        //     Mail::send('mail.automail_pending', $data, function($message) use ($to_email) {
-        //         $message->to($to_email);
-        //         // $message->subject($subjects);
-        //         // $message->from("pmiissnotif@gmail.com","CHAS NOTICE: Present Employees without CHAS");
-        //     });
-        // }
+        $path = "/var/www/OnlinePreShipmentTest/storage/app/";
         
+        $user_details = DB::table('user_access')
+        ->select(DB::raw('distinct(email)'))
+        ->whereIn('department', ['CN WHSE','TS WHSE'])
+        ->where('logdel', 0)
+        ->get();
+        
+        $to_email = array();
+      
+        for($x = 0; $x<count($user_details); $x++){
+            array_push($to_email, $user_details[$x]->email);
+        }
+        if(count($result['mh_2days_only']) > 0 || count($result['supp_2days_only']) > 0){
+            Excel::store(new PendingTwoDaysExport($date_today,$result),$filename_2days);
+
+            // $to_email = "cpagtalunan@pricon.ph";
+            $attachment_path = $path.$filename_2days;
+            $data = ['data' => "0"];
+
+            Mail::send('mail.automail_pending', $data, function($message) use ($to_email, $attachment_path) {
+                // $message->to($to_email);
+                $message->attach($attachment_path);
+                $message->subject("ALERT !! -- Pending Preshipment! <Do Not Reply>");
+                $message->bcc('cpagtalunan@pricon.ph');
+            });
+
+
+        }
+        if(count($result['mh_past_2days_only']) > 0 || count($result['supp_past_2days_only']) > 0){
+            Excel::store(new PendingPastTwoDaysExport($date_today,$result),$filename_past_2days);
+            
+            $attachment_path = $path.$filename_past_2days;
+            $data = ['data' => "1"];
+            Mail::send('mail.automail_pending', $data, function($message) use ($to_email, $attachment_path) {
+                // $message->to($to_email);
+                $message->attach($attachment_path);
+                // $message->cc('rnsunga@pricon.ph');
+                $message->bcc('cpagtalunan@pricon.ph');
+                $message->subject("ALERT !! -- Pending Preshipment Past 2 days! <Do Not Reply>");
+            });
+        }
     }
 }

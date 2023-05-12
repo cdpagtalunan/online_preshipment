@@ -16,47 +16,17 @@
                         <div class="col-sm-12">
                             <label style="font-size: 18px;">Dear Ma'am / Sir,</label><br>
                             <label style="font-size: 18px;">Good day!</label><br>
-                            <label style="font-size: 18px;">Please be reminded on the pending Pre-shipments with below details;</label>
+                            @if ($data == 0)
+                                <label style="font-size: 18px;">Please be reminded on the pending pre-shipments;</label>
+                            
+                            @elseif ($data == 1)
+                                <label style="font-size: 18px;">Please be reminded on the pending pre-shipments that past 2 days;</label>
+                            @endif
                             <br>
+                            <label style="font-size: 18px;">Please see Attached File.</label>
+
                             <hr>
                         </div>
-
-                        {{-- <div class="col-sm-12">
-                            <div class="form-group row">
-                                <label class="col-sm-12 col-form-label"><b>Preshipment</b></label>
-                            </div>
-                        </div> --}}
-                        <br>
-                        <br>
-
-                        <div>
-                            <table align="center" border="1" cellpadding="0" cellspacing="0" style="width:100%;">
-                                <caption><strong>Pre-shipment Details</strong></caption>
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                        <th>Station</th>
-                                        <th>Packing List Control No</th>
-                                        <th>Shipment Date</th>
-                                        <th>Destination</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($datas as $data)
-                                        <tr>
-                                            <td></td>
-                                            <td>{{ $data->Date }}</td>
-                                            <td>{{ $data->Station }}</td>
-                                            <td>{{ $data->Packing_List_CtrlNo }}</td>
-                                            <td>{{ $data->Shipment_Date }}</td>
-                                            <td>{{ $data->Destination }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        
                         <div class="col-sm-12">
                             <div class="form-group row">
                                 <label class="col-sm-12 col-form-label">For more info, please log-in to your Rapidx account. Go to http://rapidx/ and Online Pre-shipment </label>
