@@ -496,6 +496,7 @@ function getPreshipmentDetailsForUpload(id){
             $('#txtApprovingStation').val(response['approvingDetails']['preshipment']['Station']);
             $('#txtApprovingDestination').val(response['approvingDetails']['preshipment']['Destination']);
             $('#txtApprovingCheckBy').val(response['approvingDetails']['from_user_details']['rapidx_user_details']['name']);
+            $('#txtPreshipmentTotalQty').val(response['preshipment_total']);
 
             // $('#txtApprovingInvoinceNo').val(response['approvingDetails']['preshipment_for_approval']['packing_list_ctrlNo']);
             
@@ -753,4 +754,49 @@ function rejectPreshipment(){
     });
 }
 
+// script for checking of variance on wbs before approving of uploaded file
+function checkWBSVariance(rapidxPreshipmentId, receivingNumber, invoiceNumber, isLocalReceiving, totalQty, stat){
+    $.ajax({
+        type: "get",
+        url: "check_wbs_variance",
+        data: {
+            'rapidx_preshipment_id' : rapidxPreshipmentId,
+            'receiving_number'      : receivingNumber,
+            'invoice_number'        : invoiceNumber,
+            'is_local_rec'          : isLocalReceiving,
+            'total_qty'             : totalQty
+        },
+        dataType: "json",
+        success: function (response) {
+            let id, idButton, message;
+            if(stat == 1){
+                id = '#modalDoneUpload';
+                idButton = '#btnYesDoneUpload';
+                message = "Are you sure you are done uploading?";
+            
+            }
+            else{
+                id = '#modalSuperiorApprove';   
+                idButton = '#btnSuppYes';
+                message = "Are you sure you want to approve this?";
 
+            }
+
+            if(response['result'] != '0'){ // with variance
+                // console.log('with variance');
+                $(`${idButton}`).prop('disabled', true);
+                $(`${id} .modal-content .modal-body .modal-title`).text(response['msg']);
+                $(`${id} .modal-content .modal-header`).addClass('bg-danger');
+
+            }
+            else{ // w/o variance
+                // console.log('without variance');
+                $(`${idButton}`).prop('disabled', false);
+                $(`${id} .modal-content .modal-body .modal-title`).text(message);
+                $(`${id} .modal-content .modal-header`).removeClass('bg-danger');
+            }
+
+            console.log(id);
+        }
+    });
+}

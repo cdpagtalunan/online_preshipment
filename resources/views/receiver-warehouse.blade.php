@@ -343,6 +343,7 @@
                                         <input type="hidden" id="txtApprovingID" name="approving_id">
                                         <input type="hidden" id="txtPreshipmentId" name="preshipment_id">
                                         <input type="hidden" id="txtPreshipmentProductLine" name="preshipment_product_line">
+                                        <input type="hidden" id="txtPreshipmentTotalQty" name="preshipment_total_qty">
                                         
                                         <div class="input-group input-group-sm mb-3 d-none">
                                             <div class="input-group-prepend w-50">
@@ -419,7 +420,7 @@
                                             
                                         </div>   
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" name="checkbox_local_mat" value="1" id="chckWbsLocalMatRecId">
+                                            <input class="form-check-input" type="checkbox" name="checkbox_local_mat" value="0" id="chckWbsLocalMatRecId">
                                             <label class="form-check-label" for="chckWbsLocalMatRecId">
                                                 For Local Material Receiving
                                             </label>
@@ -972,12 +973,12 @@
                                 <input type="hidden" id="DoneUploadInvoiceNum" name="done_upload_invoice_number">
                                 <input type="hidden" id="DoneUploadReceivingNum" name="done_upload_receiving_number">
 
-                                <h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you are done uploading?</h5>
+                                <center><h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you are done uploading?</h5></center>
                                
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer justify-content-between">
                                 <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
-                                <button type="submit" class="btn btn-success">Yes</button>
+                                <button type="submit" class="btn btn-success" id="btnYesDoneUpload" title="asd">Yes</button>
                             </div>
                         </form>
                     </div>
@@ -998,12 +999,12 @@
                            
                             <div class="modal-body">
                                 <input type="hidden" id="txtSuperiorApprovingTblId" name="superior_approving_tbl_id">
-                                <h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you want to approve this?</h5>
+                                <center><h5 class="modal-title"><i class="fa fa-pencil-square"></i>Are you sure you want to approve this?</h5></center>
                                
                             </div>
                             <div class="modal-footer">
                                 <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
-                                <button type="submit" class="btn btn-success">Yes</button>
+                                <button type="submit" class="btn btn-success" id="btnSuppYes">Yes</button>
                             </div>
                         </form>
                     </div>
@@ -1112,6 +1113,7 @@
 
 <script>
 $(document).ready(function () {
+    let tblApprovingPrehipmentId, tblApprovingInvoiceNum, tblApprovingReceivingNum, totalQty, isLocalReceiving;
     dataTableWhsePreshipment = $("#tbl_whse_preshipment").DataTable({
       "processing" : true,
       "serverSide" : true,
@@ -1487,10 +1489,13 @@ $(document).ready(function () {
     });
 
     $('#btnDoneUpload').on('click', function(){
-        let tblApprovingPrehipmentId = $('#txtApprovingID').val();
-        let tblApprovingInvoiceNum = $('#txtApprovingInvoinceNo').val();
-        let tblApprovingReceivingNum = $('#txtApprovingReceivingNo').val();
+        tblApprovingPrehipmentId = $('#txtApprovingID').val();
+        tblApprovingInvoiceNum = $('#txtApprovingInvoinceNo').val();
+        tblApprovingReceivingNum = $('#txtApprovingReceivingNo').val();
+        isLocalReceiving = $('input[name="checkbox_local_mat"]').val();
+        totalQty = $('#txtPreshipmentTotalQty').val();
 
+        checkWBSVariance(tblApprovingPrehipmentId, tblApprovingReceivingNum, tblApprovingInvoiceNum, isLocalReceiving, totalQty, 1); // additional 05/09/2023
 
         $('#DoneUploadId').val(tblApprovingPrehipmentId);
         $('#DoneUploadInvoiceNum').val(tblApprovingInvoiceNum);
@@ -1531,9 +1536,22 @@ $(document).ready(function () {
     });
 
     $('#btnSuperiorApprove').on('click', function(){
-        let approvingId = $('#txtApprovingId').val();
+        tblApprovingPrehipmentId = $('#txtApprovingId').val();
+        tblApprovingInvoiceNum = $('#txtApprovingSuperiorInvoiceNum').val();
+        tblApprovingReceivingNum = $('#txtApprovingSuperiorReceivingNum').val();
+        totalQty = $('#txtApprovingSuperiorPreshipmentQty').val();
 
-        $('#txtSuperiorApprovingTblId').val(approvingId);
+        let splitted = tblApprovingReceivingNum.split("-");
+        if(splitted[0] == 'MAT'){
+            isLocalReceiving = 0;
+        }
+        else{
+            isLocalReceiving = 1;
+        }
+
+        checkWBSVariance(tblApprovingPrehipmentId, tblApprovingReceivingNum, tblApprovingInvoiceNum, isLocalReceiving, totalQty, 2); // additional 05/09/2023
+
+        $('#txtSuperiorApprovingTblId').val(tblApprovingPrehipmentId);
     });
 
     $('#btnSuperiorDisapprove').on('click', function(){
@@ -1565,9 +1583,11 @@ $(document).ready(function () {
     $('#chckWbsLocalMatRecId').on('click', function(){
         if($('input[name="checkbox_local_mat"]').is(':checked')){
             $('#txtApprovingInvoinceNo').prop('readonly', false);
+            $('input[name="checkbox_local_mat"]').val('1');
         }
         else{
             $('#txtApprovingInvoinceNo').prop('readonly', true);
+            $('input[name="checkbox_local_mat"]').val('0');
         }
     });
 });
