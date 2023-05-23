@@ -21,6 +21,8 @@ use App\Model\SubsystemWbsTS;
 use App\Model\SubsystemWbsLocalTS;
 use App\Model\SubsystemWbsLocalCN;
 use App\Model\WhsePreshipmentCheck;
+use App\Model\RapidStamping;
+
 
 use DataTables;
 use Mail;
@@ -126,6 +128,12 @@ class WhsePreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
 
+        
+        $preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlId)
+        ->where('logdel', 0)
+        ->first();
+
+
         return DataTables::of($preshipment_list)
         ->addColumn('hide_input', function($preshipment_list) {
             $result = "";
@@ -166,24 +174,70 @@ class WhsePreshipmentController extends Controller
             }
             return $result;
         })
-        ->addcolumn('drawing_no', function($preshipment){
+        ->addcolumn('drawing_no', function($preshipment_list) use ($preshipment){
             $result = "";
 
-            if(isset($preshipment->dieset_info)){
-                $result .= $preshipment->dieset_info->DrawingNo;
+           
+            if($preshipment->Stamping == 0){
+                if(isset($preshipment_list->dieset_info)){
+                    $result .= $preshipment_list->dieset_info->DrawingNo;
+                }
+    
+            }
+            else{
+                $stamping = RapidStamping::where('device_code', $preshipment_list->Partscode)
+                ->where('logdel', 0)
+                ->first();
+
+                if(isset($stamping)){
+                    $result .= $stamping->drawing_no;
+                }
+              
             }
 
             return $result;
         })
-        ->addcolumn('rev', function($preshipment){
+        ->addcolumn('rev', function($preshipment_list) use ($preshipment){
             $result = "";
 
-            if(isset($preshipment->dieset_info)){
-                $result .= $preshipment->dieset_info->Rev;
+           
+
+            if($preshipment->Stamping == 0){
+                if(isset($preshipment_list->dieset_info)){
+                    $result .= $preshipment_list->dieset_info->Rev;
+                }
+            }
+            else{
+                $stamping = RapidStamping::where('device_code', $preshipment_list->Partscode)
+                ->where('logdel', 0)
+                ->first();
+
+                if(isset($stamping)){
+                    $result .= $stamping->rev;
+                }
             }
 
             return $result;
         })
+        /* old Code */
+        // ->addcolumn('drawing_no', function($preshipment){
+        //     $result = "";
+
+        //     if(isset($preshipment->dieset_info)){
+        //         $result .= $preshipment->dieset_info->DrawingNo;
+        //     }
+
+        //     return $result;
+        // })
+        // ->addcolumn('rev', function($preshipment){
+        //     $result = "";
+
+        //     if(isset($preshipment->dieset_info)){
+        //         $result .= $preshipment->dieset_info->Rev;
+        //     }
+
+        //     return $result;
+        // })
         ->rawColumns(['hide_input','drawing_no','rev'])
         ->make(true);
 
@@ -619,9 +673,13 @@ class WhsePreshipmentController extends Controller
         ])
         ->where('id', $request->id)
         ->first();
+
+        $preshipment_list_total_qty = RapidPreshipmentList::where('fkControlNo',$preshipment_approving_details->preshipment->Packing_List_CtrlNo)
+        ->where('logdel',0)
+        ->sum('Qty');
         // return $preshipment_approving_details;
 
-        return response()->json(['approvingDetails' => $preshipment_approving_details]);
+        return response()->json(['approvingDetails' => $preshipment_approving_details , 'preshipment_total' => $preshipment_list_total_qty]);
     }
 
     public function get_preshipment_list_for_whse_for_upload(Request $request){
@@ -1530,5 +1588,71 @@ class WhsePreshipmentController extends Controller
         ]);
 
         return response()->json(['result' => 1]);
+    }
+
+    
+    public function check_wbs_variance(Request $request){
+
+        $result = array();
+        $preshipment_send_to = PreshipmentApproving::where('id', $request->rapidx_preshipment_id)
+        ->where('logdel',0)
+        ->first('send_to');
+
+
+        if($request->is_local_rec == 0){ // FOR MAT
+            $table_name = 'tbl_wbs_material_receiving';
+            $column_name = 'receive_no';
+        }
+        else{ // FOR LOCAL
+            $table_name = 'tbl_wbs_local_receiving_batch';
+            $column_name = 'wbs_loc_id';
+        }
+
+        if($preshipment_send_to->send_to == "cn"){ // FOR WBS CN
+            $db_name = 'mysql_subsystem_wbs_cn';
+        }
+        else{ // FOR WBS TS
+            $db_name = 'mysql_subsystem_wbs_ts';
+        }
+
+
+        if($request->receiving_number == "" && $request->invoice_number == ""){ // for preshipment that has TS-WHSE or CN-WHSE in PO Number
+            $result['result'] = 0;
+            $result['msg'] = "Preshipment has TS-WHSE or CN-WHSE";
+        }
+        else{
+
+            $wbs_details = DB::connection($db_name)
+            ->select("
+            SELECT * FROM $table_name
+            WHERE `$column_name` = '$request->receiving_number'
+            ");
+
+            if($table_name == "tbl_wbs_material_receiving"){
+                if($wbs_details[0]->total_var == 0 && $wbs_details[0]->status == 'X'){ // No Variance and status is closed
+                    $result['result'] = 0;
+                    $result['msg'] = "Status is closed and no variance";
+                }
+                else{ // With Variance or Status is not closed
+                    $result['result'] = 1;
+                    $result['msg'] = "Please check Variance and Status on WBS!";
+                }
+            }
+            else{
+                $sum = collect($wbs_details)->sum('qty');
+
+                if($request->total_qty == $sum){
+                    $result['result'] = 0;
+                    $result['msg'] = "no variance";
+                }
+                else{
+                    $result['result'] = 1;
+                    $result['msg'] = "Please check WBS Total Quantity";
+                }
+            }
+        }
+       
+
+        return response()->json($result);
     }
 }

@@ -144,8 +144,7 @@ Route::post('/add_invalid_whse', 'WhsePreshipmentController@add_invalid_whse'); 
 Route::get('/get_preshipment_for_whse_pps_cn_recieve', 'WhsePreshipmentController@get_preshipment_for_whse_pps_cn_recieve'); //added 04/25/2023
 Route::get('/get_preshipment_whse_pps_cn_recieved', 'WhsePreshipmentController@get_preshipment_whse_pps_cn_recieved'); //added 04/25/2023
 Route::post('/approve_pps_cn_transaction', 'WhsePreshipmentController@approve_pps_cn_transaction'); //added 04/25/2023
-
-
+Route::get('/check_wbs_variance', 'WhsePreshipmentController@check_wbs_variance'); //added 05/09/2023
 
 //EXPORTS
 Route::get('/export/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export');

@@ -15,6 +15,8 @@ use App\Model\RapidPreshipment;
 use App\Model\RapidPreshipmentList;
 use App\Model\PreshipmentApproving;
 use App\Model\UserAccess;
+use App\Model\RapidStamping;
+
 
 
 use DataTables;
@@ -192,24 +194,66 @@ class QCPreshipmentController extends Controller
             
             return $result;
         })
-        ->addcolumn('drawing_no', function($preshipment){
+        ->addcolumn('drawing_no', function($preshipment) use ($rapid_preshipment){
             $result = "";
 
-            if(isset($preshipment->dieset_info)){
-                $result .= $preshipment->dieset_info->DrawingNo;
+            if($rapid_preshipment->Stamping == 0){
+                if(isset($preshipment->dieset_info)){
+                    $result .= $preshipment->dieset_info->DrawingNo;
+                }
             }
+            else{
+                $stamping = RapidStamping::where('device_code', $preshipment->Partscode)
+                ->where('logdel', 0)
+                ->first();
 
+                if(isset($stamping)){
+                    $result .= $stamping->drawing_no;
+                }
+              
+            }
+            
             return $result;
         })
-        ->addcolumn('rev', function($preshipment){
+        ->addcolumn('rev', function($preshipment) use ($rapid_preshipment){
             $result = "";
 
-            if(isset($preshipment->dieset_info)){
-                $result .= $preshipment->dieset_info->Rev;
+            if($rapid_preshipment->Stamping == 0){
+                if(isset($preshipment->dieset_info)){
+                    $result .= $preshipment->dieset_info->Rev;
+                }
             }
+            else{
+                $stamping = RapidStamping::where('device_code', $preshipment->Partscode)
+                ->where('logdel', 0)
+                ->first();
 
+                if(isset($stamping)){
+                    $result .= $stamping->rev;
+                }
+            }
+          
             return $result;
         })
+        /* Old Code */
+        // ->addcolumn('drawing_no', function($preshipment){
+        //     $result = "";
+
+        //     if(isset($preshipment->dieset_info)){
+        //         $result .= $preshipment->dieset_info->DrawingNo;
+        //     }
+
+        //     return $result;
+        // })
+        // ->addcolumn('rev', function($preshipment){
+        //     $result = "";
+
+        //     if(isset($preshipment->dieset_info)){
+        //         $result .= $preshipment->dieset_info->Rev;
+        //     }
+
+        //     return $result;
+        // })
         ->rawColumns(['hide_input', 'hide_stamping','drawing_no', 'rev'])
         ->make(true);
         

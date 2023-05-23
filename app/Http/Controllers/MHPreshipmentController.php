@@ -151,24 +151,68 @@ class MHPreshipmentController extends Controller
             
             return $result;
         })
-        ->addcolumn('drawing_no', function($preshipment){
+        ->addcolumn('drawing_no', function($preshipment) use ($rapid_preshipment){
             $result = "";
 
-            if(isset($preshipment->dieset_info)){
-                $result .= $preshipment->dieset_info->DrawingNo;
+            if($rapid_preshipment->Stamping == 0){
+                if(isset($preshipment->dieset_info)){
+                    $result .= $preshipment->dieset_info->DrawingNo;
+                }
             }
+            else{
+                $stamping = RapidStamping::where('device_code', $preshipment->Partscode)
+                ->where('logdel', 0)
+                ->first();
 
+                if(isset($stamping)){
+                    $result .= $stamping->drawing_no;
+                }
+              
+            }
+            
             return $result;
         })
-        ->addcolumn('rev', function($preshipment){
+        ->addcolumn('rev', function($preshipment) use ($rapid_preshipment){
             $result = "";
 
-            if(isset($preshipment->dieset_info)){
-                $result .= $preshipment->dieset_info->Rev;
+            if($rapid_preshipment->Stamping == 0){
+                if(isset($preshipment->dieset_info)){
+                    $result .= $preshipment->dieset_info->Rev;
+                }
             }
+            else{
+                $stamping = RapidStamping::where('device_code', $preshipment->Partscode)
+                ->where('logdel', 0)
+                ->first();
 
+                if(isset($stamping)){
+                    // $exploded_drawing = explode(' ', $stamping->drawing_no);
+                    $result .= $stamping->rev;
+                    // $result .= $stamping->drawing_no;
+                }
+            }
+          
             return $result;
         })
+        /* old code */
+        // ->addcolumn('drawing_no', function($preshipment){
+        //     $result = "";
+
+        //     if(isset($preshipment->dieset_info)){
+        //         $result .= $preshipment->dieset_info->DrawingNo;
+        //     }
+
+        //     return $result;
+        // })
+        // ->addcolumn('rev', function($preshipment){
+        //     $result = "";
+
+        //     if(isset($preshipment->dieset_info)){
+        //         $result .= $preshipment->dieset_info->Rev;
+        //     }
+
+        //     return $result;
+        // })
         ->rawColumns(['hide_input', 'hide_stamping','drawing_no', 'rev'])
         ->make(true);
         
