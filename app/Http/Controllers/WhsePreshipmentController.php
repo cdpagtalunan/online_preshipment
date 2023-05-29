@@ -1526,7 +1526,7 @@ class WhsePreshipmentController extends Controller
             $result .= "<center>";
             $result .= '<button class="btn btn-primary btn-sm mr-1 btn-whs-view"  data-toggle="modal" data-target="#modalViewWhsePreshipment" preshipment-id="'.$preshipment->preshipment->id.'"><i class="fas fa-eye"></i></button>';
             $result .= '<button class="btn btn-success btn-sm mr-1 btn-pps-cn-received" preshipment-id="'.$preshipment->id.'"><i class="fas fa-check-circle"></i></button>';
-            $result .= '<button class="btn btn-danger btn-sm"><i class="fas fa-times-circle" preshipment-id="'.$preshipment->preshipment->id.'"></i></button>';
+            $result .= '<button class="btn btn-danger btn-sm btn-pps-cn-received-disapprove"  preshipment-id="'.$preshipment->id.'"><i class="fas fa-times-circle"></i></button>';
             $result .= "</center>";
 
             return $result;

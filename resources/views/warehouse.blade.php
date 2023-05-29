@@ -372,8 +372,6 @@
             </div>
 
 
-            
-
             {{-- MODAL APPROVE --}}
             <div class="modal fade" id="modalPPSCNApprove" data-backdrop="static" style="overflow: auto;">
                 <div class="modal-dialog" style="margin-top: 5%;">
@@ -401,7 +399,6 @@
                     </div>
                 </div>
             </div>
-
             
         </div>
     </section>
@@ -576,7 +573,13 @@ $(document).ready(function () {
                 }
             }
         });
-    })
+    });
+    $(document).on('click','.btn-pps-cn-received-disapprove', function(){
+        let ppsCNTransactionId = $(this).attr('preshipment-id');
+        console.log(ppsCNTransactionId);
+        $('#modalWhsDisapprove').modal('show');
+        $('#disPreshipmentId').val(ppsCNTransactionId);
+    });
 });
 </script>
 @endsection
