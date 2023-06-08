@@ -436,7 +436,8 @@
       "ordering"   : false,
       "searching": false,
       "ajax" : {
-          url: "get_Preshipment_list_QC",
+          // url: "get_Preshipment_list_QC",
+          url: "get_Preshipment_list",
           data: function (param){
             param.preshipmentCtrlNo = $("#packingCtrlNo_id").val();
           },

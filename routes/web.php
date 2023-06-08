@@ -51,13 +51,12 @@ Route::get('/get_authorize_by_id', 'UserController@get_authorize_by_id');
 Route::post('/add_invalid_details', 'UserController@add_invalid_details');
 
 
-
-
+Route::get('/get_Preshipment_list', 'CommonController@get_Preshipment_list');
 
 // Material Handler
 Route::get('/get_Preshipment', 'MHPreshipmentController@get_Preshipment');
 Route::get('/getpreshipmentbyCtrlNo', 'MHPreshipmentController@getpreshipmentbyCtrlNo');
-Route::get('/get_Preshipment_list', 'MHPreshipmentController@get_Preshipment_list');
+// Route::get('/get_Preshipment_list', 'MHPreshipmentController@get_Preshipment_list');
 Route::post('/disapprove_list', 'MHPreshipmentController@disapprove_list');
 Route::post('/approve_list', 'MHPreshipmentController@approve_list');
 Route::get('/get_for_whse_transaction', 'MHPreshipmentController@get_for_whse_transaction');
@@ -73,7 +72,7 @@ Route::get('/get_preshipment_grinding', 'MHPreshipmentController@get_preshipment
 //INSPECTOR
 Route::get('/get_Preshipment_QC', 'QCPreshipmentController@get_Preshipment_QC');
 Route::get('/getpreshipmentbyCtrlNo_QC', 'QCPreshipmentController@getpreshipmentbyCtrlNo_QC');
-Route::get('/get_Preshipment_list_QC', 'QCPreshipmentController@get_Preshipment_list_QC');
+// Route::get('/get_Preshipment_list_QC', 'QCPreshipmentController@get_Preshipment_list_QC');
 Route::get('/disapprove_list_QC', 'QCPreshipmentController@disapprove_list_QC');
 Route::post('/approve_list_QC', 'QCPreshipmentController@approve_list_QC');
 
@@ -88,7 +87,7 @@ Route::get('/get_Preshipment_done', 'QCPreshipmentController@get_Preshipment_don
 Route::get('/get_preshipment_for_whse', 'WhsePreshipmentController@get_preshipment_for_whse');
 Route::get('/get_preshipment_by_id_for_whse', 'WhsePreshipmentController@get_preshipment_by_id_for_whse');
 
-Route::get('/get_preshipment_list_for_whse', 'WhsePreshipmentController@get_preshipment_list_for_whse');
+// Route::get('/get_preshipment_list_for_whse', 'WhsePreshipmentController@get_preshipment_list_for_whse');
 
 Route::get('/get_preshipment_by_id_for_approval_whse', 'WhsePreshipmentController@get_preshipment_by_id_for_approval_whse');
 
@@ -148,6 +147,7 @@ Route::get('/check_wbs_variance', 'WhsePreshipmentController@check_wbs_variance'
 
 //EXPORTS
 Route::get('/export/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export');
+Route::get('/export_test/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export_test');
 Route::get('/export_excel/{approving_id}', 'ExportController@export_excel');
 Route::get('/pdf_export/{approving_id}', 'ExportController@pdf_export');
 

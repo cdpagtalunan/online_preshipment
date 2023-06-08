@@ -33,7 +33,6 @@ $user_level = 0;
         </script>
     @endif
 @endif
- 
     <!DOCTYPE html>
     <html>
     <head>

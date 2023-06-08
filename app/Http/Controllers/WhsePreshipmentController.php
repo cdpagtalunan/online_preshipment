@@ -116,133 +116,133 @@ class WhsePreshipmentController extends Controller
     }
 
 
-    public function get_preshipment_list_for_whse(Request $request){
+    // public function get_preshipment_list_for_whse(Request $request){
 
-        // return $request->preshipmentCtrlNo;
+    //     // return $request->preshipmentCtrlNo;
 
-        // $preshipment_list = PreshipmentList::where('fkcontrolNo',$request->preshipmentId)->get();
-        $preshipment_list = RapidPreshipmentList::with([
-            'dieset_info'
-        ])
-        ->where('fkcontrolNo',$request->preshipmentCtrlId)
-        ->where('logdel', 0)
-        ->get();
+    //     // $preshipment_list = PreshipmentList::where('fkcontrolNo',$request->preshipmentId)->get();
+    //     $preshipment_list = RapidPreshipmentList::with([
+    //         'dieset_info'
+    //     ])
+    //     ->where('fkcontrolNo',$request->preshipmentCtrlId)
+    //     ->where('logdel', 0)
+    //     ->get();
 
         
-        $preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlId)
-        ->where('logdel', 0)
-        ->first();
+    //     $preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlId)
+    //     ->where('logdel', 0)
+    //     ->first();
 
 
-        return DataTables::of($preshipment_list)
-        ->addColumn('hide_input', function($preshipment_list) {
-            $result = "";
-            /*
-                this is for the scanning of qr code for package qty.
-                this will get the last value of the array.
-                this will accept - or ~ only.
-            */
-            if($preshipment_list->PackageQty == "DO"){
-                $result .= "DO";
-            }
+    //     return DataTables::of($preshipment_list)
+    //     ->addColumn('hide_input', function($preshipment_list) {
+    //         $result = "";
+    //         /*
+    //             this is for the scanning of qr code for package qty.
+    //             this will get the last value of the array.
+    //             this will accept - or ~ only.
+    //         */
+    //         if($preshipment_list->PackageQty == "DO"){
+    //             $result .= "DO";
+    //         }
 
-            if (str_contains($preshipment_list->PackageQty, '-')){
-                $exploded = explode("-",$preshipment_list->PackageQty);
-                // $result .= $exploded[1];
-                $exploded_last_index = $exploded[1];
-                $test = "";
+    //         if (str_contains($preshipment_list->PackageQty, '-')){
+    //             $exploded = explode("-",$preshipment_list->PackageQty);
+    //             // $result .= $exploded[1];
+    //             $exploded_last_index = $exploded[1];
+    //             $test = "";
 
-                for($x = 1; $x<=$exploded_last_index; $x++){
+    //             for($x = 1; $x<=$exploded_last_index; $x++){
 
-                    $test .= $x."/".$exploded_last_index."";
-                }
-                $result .= $test;
-            }
-            else if(str_contains($preshipment_list->PackageQty, '~')){
-                $exploded = explode("~",$preshipment_list->PackageQty);
-                // $result .=$exploded[1];
-                $exploded_last_index = $exploded[1];
-                $test = "";
-                for($x = 1; $x<=$exploded_last_index; $x++){
-                    $test .= $x."/".$exploded_last_index."";
-                }
-                $result .= $test;
-                // return $test;
-            }
-            else if($preshipment_list->PackageQty != "DO"){
-                $result .= $preshipment_list->PackageQty;
-            }
-            return $result;
-        })
-        ->addcolumn('drawing_no', function($preshipment_list) use ($preshipment){
-            $result = "";
+    //                 $test .= $x."/".$exploded_last_index."";
+    //             }
+    //             $result .= $test;
+    //         }
+    //         else if(str_contains($preshipment_list->PackageQty, '~')){
+    //             $exploded = explode("~",$preshipment_list->PackageQty);
+    //             // $result .=$exploded[1];
+    //             $exploded_last_index = $exploded[1];
+    //             $test = "";
+    //             for($x = 1; $x<=$exploded_last_index; $x++){
+    //                 $test .= $x."/".$exploded_last_index."";
+    //             }
+    //             $result .= $test;
+    //             // return $test;
+    //         }
+    //         else if($preshipment_list->PackageQty != "DO"){
+    //             $result .= $preshipment_list->PackageQty;
+    //         }
+    //         return $result;
+    //     })
+    //     ->addcolumn('drawing_no', function($preshipment_list) use ($preshipment){
+    //         $result = "";
 
            
-            if($preshipment->Stamping == 0){
-                if(isset($preshipment_list->dieset_info)){
-                    $result .= $preshipment_list->dieset_info->DrawingNo;
-                }
+    //         if($preshipment->Stamping == 0 && $preshipment->for_pps_cn_transfer == 0){
+    //             if(isset($preshipment_list->dieset_info)){
+    //                 $result .= $preshipment_list->dieset_info->DrawingNo;
+    //             }
     
-            }
-            else{
-                $stamping = RapidStamping::where('device_code', $preshipment_list->Partscode)
-                ->where('logdel', 0)
-                ->first();
+    //         }
+    //         else{
+    //             $stamping = RapidStamping::where('device_code', '%'.$preshipment_list->Partscode.'%')
+    //             ->where('logdel', 0)
+    //             ->first();
 
-                if(isset($stamping)){
-                    $result .= $stamping->drawing_no;
-                }
+    //             if(isset($stamping)){
+    //                 $result .= $stamping->drawing_no;
+    //             }
               
-            }
+    //         }
 
-            return $result;
-        })
-        ->addcolumn('rev', function($preshipment_list) use ($preshipment){
-            $result = "";
+    //         return $result;
+    //     })
+    //     ->addcolumn('rev', function($preshipment_list) use ($preshipment){
+    //         $result = "";
 
            
 
-            if($preshipment->Stamping == 0){
-                if(isset($preshipment_list->dieset_info)){
-                    $result .= $preshipment_list->dieset_info->Rev;
-                }
-            }
-            else{
-                $stamping = RapidStamping::where('device_code', $preshipment_list->Partscode)
-                ->where('logdel', 0)
-                ->first();
+    //         if($preshipment->Stamping == 0 && $preshipment->for_pps_cn_transfer == 0){
+    //             if(isset($preshipment_list->dieset_info)){
+    //                 $result .= $preshipment_list->dieset_info->Rev;
+    //             }
+    //         }
+    //         else{
+    //             $stamping = RapidStamping::where('device_code', '%'.$preshipment_list->Partscode.'%')
+    //             ->where('logdel', 0)
+    //             ->first();
 
-                if(isset($stamping)){
-                    $result .= $stamping->rev;
-                }
-            }
+    //             if(isset($stamping)){
+    //                 $result .= $stamping->rev;
+    //             }
+    //         }
 
-            return $result;
-        })
-        /* old Code */
-        // ->addcolumn('drawing_no', function($preshipment){
-        //     $result = "";
+    //         return $result;
+    //     })
+    //     /* old Code */
+    //     // ->addcolumn('drawing_no', function($preshipment){
+    //     //     $result = "";
 
-        //     if(isset($preshipment->dieset_info)){
-        //         $result .= $preshipment->dieset_info->DrawingNo;
-        //     }
+    //     //     if(isset($preshipment->dieset_info)){
+    //     //         $result .= $preshipment->dieset_info->DrawingNo;
+    //     //     }
 
-        //     return $result;
-        // })
-        // ->addcolumn('rev', function($preshipment){
-        //     $result = "";
+    //     //     return $result;
+    //     // })
+    //     // ->addcolumn('rev', function($preshipment){
+    //     //     $result = "";
 
-        //     if(isset($preshipment->dieset_info)){
-        //         $result .= $preshipment->dieset_info->Rev;
-        //     }
+    //     //     if(isset($preshipment->dieset_info)){
+    //     //         $result .= $preshipment->dieset_info->Rev;
+    //     //     }
 
-        //     return $result;
-        // })
-        ->rawColumns(['hide_input','drawing_no','rev'])
-        ->make(true);
+    //     //     return $result;
+    //     // })
+    //     ->rawColumns(['hide_input','drawing_no','rev'])
+    //     ->make(true);
 
 
-    }
+    // }
 
     public function get_preshipment_by_id_for_approval_whse(Request $request){
         $preshipment_details = PreshipmentApproving::with([
@@ -1628,8 +1628,30 @@ class WhsePreshipmentController extends Controller
             WHERE `$column_name` = '$request->receiving_number'
             ");
 
+           
+            // $result['variance'] = $variance;
             if($table_name == "tbl_wbs_material_receiving"){
-                if($wbs_details[0]->total_var == 0 && $wbs_details[0]->status == 'X'){ // No Variance and status is closed
+
+                // THIS IS A QUERY FROM WBS MATERIAL RECEIVING TO GET VARIANCE
+                $mrs = DB::connection($db_name)
+                ->select("SELECT IFNULL(mrs.variance,s.qty) AS variance
+                        FROM tbl_wbs_material_receiving_summary s
+                        LEFT JOIN
+                        (SELECT rs.wbs_mr_id, rs.item, SUM(b.qty) as received_qty, (rs.qty - SUM(b.qty)) as variance
+                        FROM tbl_wbs_material_receiving_summary rs
+                            LEFT JOIN tbl_wbs_material_receiving_batch b
+                            ON b.wbs_mr_id = rs.wbs_mr_id AND b.item = rs.item
+                        WHERE b.wbs_mr_id = '".$request->receiving_number."'
+                        GROUP BY rs.item)mrs ON s.wbs_mr_id = mrs.wbs_mr_id
+                        AND s.item = mrs.item
+                        WHERE s.wbs_mr_id = '".$request->receiving_number."'");
+    
+                $variance = 0;
+                foreach ($mrs as $key => $mr) {
+                    $variance += $mr->variance;
+                }
+
+                if($variance == 0 && $wbs_details[0]->status == 'X'){ // No Variance and status is closed
                     $result['result'] = 0;
                     $result['msg'] = "Status is closed and no variance";
                 }

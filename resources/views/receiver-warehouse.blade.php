@@ -1144,10 +1144,11 @@ $(document).ready(function () {
         "ordering"  : false,
             "paging" : false,
         "ajax" : {
-            url: "get_preshipment_list_for_whse",
+            // url: "get_preshipment_list_for_whse",
+            url: "get_Preshipment_list",
             data: function (param){
                 // param.preshipmentId = $("#preshipmentId").val();
-                param.preshipmentCtrlId = $("#packingControlNoId").val();
+                param.preshipmentCtrlNo = $("#packingControlNoId").val();
             },
         },
         "columns":[    

@@ -726,6 +726,7 @@ function disapprovePreshipment(){
                 toastr.success('Preshipment disapproved!')
                 $('#modalWhsDisapprove').modal('hide');
                 dataTableWhsePreshipment.draw();
+                dataTableWhsePreshipmentForReceive.draw();
             }
             else{
                 toastr.error('Error please contact administrator!');
