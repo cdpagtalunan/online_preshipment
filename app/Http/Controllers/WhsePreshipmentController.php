@@ -385,7 +385,7 @@ class WhsePreshipmentController extends Controller
         ])
         // ->whereIn('status', [1,2,3,4])
         ->whereIn('status', [1,2,3]) //change 07/13/2022
-        ->orderBy('fk_preshipment_id', 'DESC')
+        ->orderBy('fk_preshipment_id', 'ASC')
         ->where('logdel', 0)
         ->get();
 

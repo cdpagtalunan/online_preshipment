@@ -31,7 +31,7 @@
 <script>
     $(document).ready(function(){
         setInterval(myTimer, 1000);
-            sendEmailForPendingShipment();
+        // sendEmailForPendingShipment();
         
         function myTimer() {
             const d = new Date();
@@ -42,10 +42,10 @@
                     second: '2-digit'
             });
             $("#time").html(current_time);
-            // if(current_time == "08:30:00 AM"){
-            //     sendEmailForPendingShipment();
-            // }
-            // sendEmailForPendingShipment();
+            if(current_time == "08:00:00 AM"){
+                console.log('will send mail');
+                sendEmailForPendingShipment();
+            }
         }
 
         function sendEmailForPendingShipment(){
@@ -55,7 +55,6 @@
                 // data: $('#formApproveWhse').serialize(),
                 dataType: "json",
                 success : function(){
-
                 }
             })
         }
