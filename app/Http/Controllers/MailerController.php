@@ -76,7 +76,7 @@ class MailerController extends Controller
             $data = ['data' => "0"];
 
             Mail::send('mail.automail_pending', $data, function($message) use ($to_email, $attachment_path) {
-                $message->to($to_email);
+                $message->to($to_email,'kaapines@pricon.ph');
                 $message->attach($attachment_path);
                 $message->subject("ALERT !! -- Pending Preshipment! <Do Not Reply>");
                 $message->bcc('cpagtalunan@pricon.ph');
@@ -90,7 +90,7 @@ class MailerController extends Controller
             $attachment_path = $path.$filename_past_2days;
             $data = ['data' => "1"];
             Mail::send('mail.automail_pending', $data, function($message) use ($to_email, $attachment_path) {
-                $message->to($to_email);
+                $message->to($to_email,'kaapines@pricon.ph');
                 $message->cc('rnsunga@pricon.ph');
                 $message->attach($attachment_path);
                 $message->bcc('cpagtalunan@pricon.ph');
