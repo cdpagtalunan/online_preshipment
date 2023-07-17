@@ -964,6 +964,7 @@
                         <form action="post" id="doneUploadId">
                             @csrf
                             <div class="modal-header">
+                                <h4 id="modalHeader"></h4>
                                 <button id="close" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -1130,7 +1131,7 @@ $(document).ready(function () {
           { "data" : "preshipment.Station" },
           { "data" : "preshipment_ctrl_num"},
         //   { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "rapid_invoice_number"},
+          { "data" : "rapid_invoice_num"},
           { "data" : "preshipment.Shipment_Date"},
           { "data" : "preshipment.Destination"},
           { "data" : "action"},
