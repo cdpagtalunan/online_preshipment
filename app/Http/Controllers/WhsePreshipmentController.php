@@ -94,8 +94,8 @@ class WhsePreshipmentController extends Controller
         // ])
         // ->where('id', $request->preshipment_id)
         // ->first();
-        
-      
+
+
         // $preshipment_id = Preshipment::where('id', $approver->fk_preshipment_id)->first();
 
 
@@ -109,7 +109,7 @@ class WhsePreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
 
-        
+
 
         return response()->json(['result' => 1, 'preshipment' => $preshipment, 'preshipmentList' => $preshipment_list]);
         // return response()->json(['result' => 1, 'preshipment' => $preshipment_id, 'approver' => $approver]);
@@ -128,7 +128,7 @@ class WhsePreshipmentController extends Controller
     //     ->where('logdel', 0)
     //     ->get();
 
-        
+
     //     $preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlId)
     //     ->where('logdel', 0)
     //     ->first();
@@ -177,12 +177,12 @@ class WhsePreshipmentController extends Controller
     //     ->addcolumn('drawing_no', function($preshipment_list) use ($preshipment){
     //         $result = "";
 
-           
+
     //         if($preshipment->Stamping == 0 && $preshipment->for_pps_cn_transfer == 0){
     //             if(isset($preshipment_list->dieset_info)){
     //                 $result .= $preshipment_list->dieset_info->DrawingNo;
     //             }
-    
+
     //         }
     //         else{
     //             $stamping = RapidStamping::where('device_code', '%'.$preshipment_list->Partscode.'%')
@@ -192,7 +192,7 @@ class WhsePreshipmentController extends Controller
     //             if(isset($stamping)){
     //                 $result .= $stamping->drawing_no;
     //             }
-              
+
     //         }
 
     //         return $result;
@@ -200,7 +200,7 @@ class WhsePreshipmentController extends Controller
     //     ->addcolumn('rev', function($preshipment_list) use ($preshipment){
     //         $result = "";
 
-           
+
 
     //         if($preshipment->Stamping == 0 && $preshipment->for_pps_cn_transfer == 0){
     //             if(isset($preshipment_list->dieset_info)){
@@ -256,7 +256,7 @@ class WhsePreshipmentController extends Controller
         ->where('fk_preshipment_id', $request->preshipmentId)
         ->where('logdel', 0)
         ->first();
-        
+
         // return $preshipment_details;
 
 
@@ -274,7 +274,7 @@ class WhsePreshipmentController extends Controller
         session_start();
 
         $data = $request->all();
-        
+
         $update_array = array(
             // 'status' => 1,
             'send_to' => $request->accept_shipment_send_to,
@@ -305,7 +305,7 @@ class WhsePreshipmentController extends Controller
         ->where('id', $request->preshipment_approval_id)
         ->where('logdel', 0)
         ->first();
-        
+
         $department = "";
         if($request->accept_shipment_send_to == 'ts'){
             $department = "TS WHSE";
@@ -324,7 +324,7 @@ class WhsePreshipmentController extends Controller
         $get_cc_emails = UserAccess::where('department', 'PPS WHSE')
         ->where('logdel',0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
 
@@ -342,11 +342,11 @@ class WhsePreshipmentController extends Controller
 
         $data = array('data' => $preshipment_details, 'product_line' => $product_line_details);
 
-       
+
         // $to_email = ['cbretusto@pricon.ph'];
         // $cc_email = ['cpagtalunan@pricon.ph'];
 
-        
+
         Mail::send('mail.from_whse_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line_details){
             $message->to($to_email);
             $message->cc($cc_email);
@@ -428,8 +428,8 @@ class WhsePreshipmentController extends Controller
             }
         }
 
-        
-      
+
+
         // return $dept_array;
 
 
@@ -437,6 +437,13 @@ class WhsePreshipmentController extends Controller
         ->addColumn('preshipment_ctrl_num', function($whse_preshipment){
             $result ="";
             $result .= $whse_preshipment->preshipment->Destination."-".$whse_preshipment->preshipment->Packing_List_CtrlNo;
+            return $result;
+        })
+        ->addColumn('rapid_invoice_num', function($whse_preshipment){
+            $result = "";
+            if($whse_preshipment->status == 3){
+                $result = $whse_preshipment->rapid_invoice_number;
+            }
             return $result;
         })
         ->addColumn('status', function($whse_preshipment){
@@ -459,14 +466,14 @@ class WhsePreshipmentController extends Controller
             if($whse_preshipment->remarks != null){
                 $result .= '<br><strong>Remarks:</strong><br>'.$whse_preshipment->remarks;
             }
-          
-          
+
+
             $result .="</center>";
 
             return $result;
         })
         ->addColumn('action', function($whse_preshipment) use ($user_details) {
-            $result = "<center>";    
+            $result = "<center>";
 
             if($whse_preshipment->status == 1){
                 $result .= '<button class="btn btn-primary mr-1 btn-sm btn-whs-view-for-receiving " data-toggle="modal" data-target="#modalViewWhsePreshipmentReceiving" preshipment-id="'.$whse_preshipment->id.'"> <i class="fa fa-eye"></i></button>';
@@ -487,17 +494,17 @@ class WhsePreshipmentController extends Controller
             //     $result .= '<button class="btn btn-primary mr-1 btn-sm btn-whs-view" data-toggle="modal" data-target="#modalViewPreshipmentOnly"  preshipment-id="'.$whse_preshipment->id.'">  <i class="fa fa-eye"></i></button>';
             // }
 
-            
+
             if($whse_preshipment->status != 1){
                 $result .= '<div class="btn-group">
                 <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Action">
                 <i class="fas fa-lg fa-file-download"></i>
                 </button>';
                     $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
-    
+
                     $result .='<a class="dropdown-item text-center" href="export_excel/'.$whse_preshipment->id.'" target="_blank">Export Excel</a>';
                     $result .='<a class="dropdown-item text-center" href="pdf_export/'.$whse_preshipment->id.'" target="_blank">Export PDF</a>';
-                    
+
                     $result .= '</div>'; // dropdown-menu end
                 $result .= '</div>';
             }
@@ -512,12 +519,12 @@ class WhsePreshipmentController extends Controller
             return $result;
 
         })
-        ->rawColumns(['status','action','preshipment_ctrl_num'])
+        ->rawColumns(['status','action','preshipment_ctrl_num', 'rapid_invoice_num'])
         ->make(true);
 
     }
 
-    // Function for accepting of preshipment on TS/CN warehouse 
+    // Function for accepting of preshipment on TS/CN warehouse
     public function accept_preshipment(Request $request){
         date_default_timezone_set('Asia/Manila');
         session_start();
@@ -530,20 +537,20 @@ class WhsePreshipmentController extends Controller
         ])
         ->where('id', $request->accept_preshipment)
         ->first();
-            
+
         $getList= RapidPreshipmentList::where('fkControlNo',$get_preshipment->preshipment->Packing_List_CtrlNo)
         ->where('logdel', 0)
-        ->get(); 
+        ->get();
 
         $ctrlNo =  $getList[0]->fkControlNo;
-        
+
         // return $getList;
         foreach($getList as $PO){
             $LastPONO = $PO->PONo;
         }
 
-        $LastPONO 		= $LastPONO[0].$LastPONO[1];	//Check the OrderNo first 2 index. 
-        $internal_invoice_check = array("TS","WH"); 
+        $LastPONO 		= $LastPONO[0].$LastPONO[1];	//Check the OrderNo first 2 index.
+        $internal_invoice_check = array("TS","WH");
 
         $array_database_val = array(
             'to_whse_noter' => $_SESSION['rapidx_user_id'],
@@ -557,7 +564,7 @@ class WhsePreshipmentController extends Controller
         else{
             $array_database_val['status'] = 2;
         }
-        
+
         // END
 
         PreshipmentApproving::where('id', $request->accept_preshipment)
@@ -591,7 +598,7 @@ class WhsePreshipmentController extends Controller
         if($preshipment_details->send_to == 'cn'){
             $department = "CN WHSE";
         }
-         
+
         $get_to_emails = UserAccess::where('department', 'material handler')
         ->where('logdel', 0)
         ->get();
@@ -599,10 +606,10 @@ class WhsePreshipmentController extends Controller
         $get_cc_emails = UserAccess::where('department', $department)
         ->where('logdel', 0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
-        
+
         foreach($get_to_emails as $get_to_email){
             $to_email[] = $get_to_email->email;
         }
@@ -613,7 +620,7 @@ class WhsePreshipmentController extends Controller
         // $to_email = ['cbretusto@pricon.ph'];
         // $cc_email = ['cpagtalunan@pricon.ph'];
 
-        
+
         Mail::send('mail.receiver_whse_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line){
             $message->to($to_email);
             $message->cc($cc_email);
@@ -627,8 +634,8 @@ class WhsePreshipmentController extends Controller
         // else{
             return response()->json(['result' => 1]);
         // }
-        
-        
+
+
         /*
             code email for ppc to be notify for generation of invoice number
         */
@@ -652,9 +659,9 @@ class WhsePreshipmentController extends Controller
         $preshipment_list = WhsePreshipmentCheck::where('fkControlNo',$preshipment->Packing_List_CtrlNo)
         ->where('logdel', 0)
         ->get();
-        
+
         // return $preshipment_list;
-      
+
         // $preshipment_id = Preshipment::where('id', $approver->fk_preshipment_id)->first();
 
 
@@ -705,16 +712,16 @@ class WhsePreshipmentController extends Controller
         ->where('id', $request->id)
         ->first();
 
-        
+
         $invoice_ctrl_no = RapidShipmentInvoice::where('id_tbl_PreShipment', $approving_details->fk_preshipment_id)
         ->where('logdel', 0)
         ->first();
 
         // return $invoice_ctrl_no;
-        
+
 
         return response()->json(['ctrlNo' => $invoice_ctrl_no, 'approvingDetails' => $approving_details]);
-        
+
     }
     //Function of TS/CN Warehouse for done uploading
     public function done_upload_preshipment(Request $request){
@@ -753,7 +760,7 @@ class WhsePreshipmentController extends Controller
         if($preshipment_details->send_to == 'cn'){
             $department = "CN WHSE";
         }
-         
+
         $get_to_emails = UserAccess::where('department', $department)
         ->where('approver', 1)
         ->where('logdel', 0)
@@ -762,21 +769,21 @@ class WhsePreshipmentController extends Controller
         $get_cc_emails = UserAccess::where('department', $department)
         ->where('logdel', 0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
-        
+
         foreach($get_to_emails as $get_to_email){
             $to_email[] = $get_to_email->email;
         }
         foreach($get_cc_emails as $get_cc_email){
             $cc_email[] = $get_cc_email->email;
         }
-       
+
         // $to_email = ['cbretusto@pricon.ph'];
         // $cc_email = ['cpagtalunan@pricon.ph'];
 
-        
+
         Mail::send('mail.done_upload_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line_details){
             $message->to($to_email);
             $message->cc($cc_email);
@@ -804,16 +811,16 @@ class WhsePreshipmentController extends Controller
 
             'to_whse_noter_details',
             'to_whse_noter_details.rapidx_user_details',
-            
+
             'whse_uploader_details',
             'whse_uploader_details.rapidx_user_details',
-            
+
             // 'whse_superior_details'
         ])
         ->where('id', $request->id)
         ->get();
 
-        
+
         $preshipment_list_total_qty = RapidPreshipmentList::where('fkControlNo',$tbl_approving_details[0]->preshipment->Packing_List_CtrlNo)
         ->where('logdel',0)
         ->sum('Qty');
@@ -893,7 +900,7 @@ class WhsePreshipmentController extends Controller
         $data = array('data' => $preshipment_details, 'product_line' => $product_line_details);
 
 
-        
+
         $department = "";
         if($preshipment_details->send_to == 'ts'){
             $department = "TS WHSE";
@@ -901,7 +908,7 @@ class WhsePreshipmentController extends Controller
         if($preshipment_details->send_to == 'cn'){
             $department = "CN WHSE";
         }
-         
+
         $get_to_emails = UserAccess::where('department', 'material handler')
         ->where('logdel', 0)
         ->get();
@@ -910,21 +917,21 @@ class WhsePreshipmentController extends Controller
         ->where('approver', 1)
         ->where('logdel', 0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
-        
+
         foreach($get_to_emails as $get_to_email){
             $to_email[] = $get_to_email->email;
         }
         foreach($get_cc_emails as $get_cc_email){
             $cc_email[] = $get_cc_email->email;
         }
-       
+
         // $to_email = ['cbretusto@pricon.ph'];
         // $cc_email = ['cpagtalunan@pricon.ph'];
 
-        
+
         Mail::send('mail.superior_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line_details){
             $message->to($to_email);
             $message->cc($cc_email);
@@ -979,10 +986,10 @@ class WhsePreshipmentController extends Controller
         // $get_cc_emails = UserAccess::where('department', 'PPS WHSE')
         // ->where('logdel', 0)
         // ->get();
-        
+
         $to_email = array();
         // $cc_email = array();
-        
+
         foreach($get_to_emails as $get_to_email){
             $to_email[] = $get_to_email->email;
         }
@@ -1000,10 +1007,10 @@ class WhsePreshipmentController extends Controller
 
         // return $preshipment_details;
         $packing_ctrl_num = $get_preshipment_fk_id->preshipment->Destination."-".$get_preshipment_fk_id->preshipment->Packing_List_CtrlNo;
-        
+
         $data = array('data' => $preshipment_details,'remarks' => $request->pps_disapprove_remarks, 'position' => $department);
 
-        
+
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$packing_ctrl_num){
             $message->to($to_email);
             // $message->cc($cc_email);
@@ -1022,7 +1029,7 @@ class WhsePreshipmentController extends Controller
 
 
 
-        
+
         // $get_ctrl_num = PreshipmentApproving::where('id',$request->superior_disapproving_tbl_id)
         // ->first('fk_preshipment_id');
 
@@ -1087,7 +1094,7 @@ class WhsePreshipmentController extends Controller
         //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
         // }
 
-        
+
         $dept_array = array();
         if(count($user_details) > 1){
             for($x = 0; $x<count($user_details);$x++){
@@ -1117,9 +1124,9 @@ class WhsePreshipmentController extends Controller
                 $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
             }
         }
-      
+
         // return $dept_array;
-        
+
         return DataTables::of($whse_preshipment)
         ->addColumn('preshipment_ctrl_num', function($whse_preshipment){
             $result = "";
@@ -1159,7 +1166,7 @@ class WhsePreshipmentController extends Controller
             'preshipment'
         ])
         ->where('id', $request->disapprove_preshipment)->first();
-        
+
         RapidPreshipment::where('id', $get_preshipment_fk_id->fk_preshipment_id)
         ->update([
             'to_edit' => 1,
@@ -1181,10 +1188,10 @@ class WhsePreshipmentController extends Controller
         $get_cc_emails = UserAccess::where('department', 'PPS WHSE')
         ->where('logdel', 0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
-        
+
         foreach($get_to_emails as $get_to_email){
             $to_email[] = $get_to_email->email;
         }
@@ -1200,10 +1207,10 @@ class WhsePreshipmentController extends Controller
 
         $packing_ctrl_num = $get_preshipment_fk_id->preshipment->Destination."-".$get_preshipment_fk_id->preshipment->Packing_List_CtrlNo;
         // return $packing_ctrl_num;
-        
+
         $data = array('data' => $preshipment_details,'remarks' => $request->pps_disapprove_remarks, 'position' => "PPS WHSE");
 
-        
+
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
             $message->to($to_email);
             $message->cc($cc_email);
@@ -1220,9 +1227,9 @@ class WhsePreshipmentController extends Controller
     public function whse_reject_preshipment(Request $request){
         $data = $request->all();
 
-        
+
         $get_preshipment_fk_id = PreshipmentApproving::where('id', $request->reject_preshipment)->first();
-        
+
         // return $get_preshipment_fk_id;
         RapidPreshipment::where('id', $get_preshipment_fk_id->fk_preshipment_id)
         ->update([
@@ -1252,10 +1259,10 @@ class WhsePreshipmentController extends Controller
         $get_cc_emails = UserAccess::where('department', $department)
         ->where('logdel', 0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
-        
+
         foreach($get_to_emails as $get_to_email){
             $to_email[] = $get_to_email->email;
         }
@@ -1271,10 +1278,10 @@ class WhsePreshipmentController extends Controller
 
         $packing_ctrl_num = $get_preshipment_fk_id->preshipment->Destination."-".$get_preshipment_fk_id->preshipment->Packing_List_CtrlNo;
         // return $packing_ctrl_num;
-        
+
         $data = array('data' => $preshipment_details,'remarks' => $request->pps_disapprove_remarks, 'position' => $department);
 
-        
+
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$department){
             $message->to($to_email);
             $message->cc($cc_email);
@@ -1282,7 +1289,7 @@ class WhsePreshipmentController extends Controller
             $message->bcc('mrronquez@pricon.ph');
             $message->subject("Online Preshipment ".$department." Disapprove-".$packing_ctrl_num);
         });
-    
+
 
         return response()->json(['result' => 1]);
     }
@@ -1290,7 +1297,7 @@ class WhsePreshipmentController extends Controller
     public function insert_preshipmentlist_for_whse_check(Request $request){
         $data = $request->all();
 
-        // return $data;							
+        // return $data;
         WhsePreshipmentCheck::insert([
             'fkControlNo' => $request->preshipment_ctrl_no,
             'PONo' => $request->po_num,
@@ -1320,13 +1327,13 @@ class WhsePreshipmentController extends Controller
             'preshipment'
         ])
         // ->whereIn('status', [1,2,3,4])
-        ->whereIn('status', [4]) 
+        ->whereIn('status', [4])
         // ->orderByRaw('ISNULL(remarks)', 'DESC')
         ->orderBy('fk_preshipment_id', 'DESC')
         ->where('logdel', 0)
         ->get();
 
-        
+
         $whse_preshipment = collect($whse_preshipment);
 
 
@@ -1368,7 +1375,7 @@ class WhsePreshipmentController extends Controller
                 $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
             }
         }
-      
+
         // return $dept_array;
 
         return DataTables::of($whse_preshipment)
@@ -1380,27 +1387,27 @@ class WhsePreshipmentController extends Controller
         ->addColumn('status', function($whse_preshipment){
             $result = "<center>";
 
-        
+
                 $result .='<span class="badge badge-success"> Done </span>';
             $result .="</center>";
 
             return $result;
         })
         ->addColumn('action', function($whse_preshipment) use ($user_details) {
-            $result = "<center>";    
+            $result = "<center>";
 
-            
+
                 $result .= '<button class="btn btn-primary mr-1 btn-sm btn-whs-view" data-toggle="modal" data-target="#modalViewPreshipmentOnly"  preshipment-id="'.$whse_preshipment->id.'">  <i class="fa fa-eye"></i></button>';
-            
+
                 $result .= '<div class="btn-group">
                 <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Action">
                 <i class="fas fa-lg fa-file-download"></i>
                 </button>';
                     $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
-    
+
                     $result .='<a class="dropdown-item text-center" href="export_excel/'.$whse_preshipment->id.'" target="_blank">Export Excel</a>';
                     $result .='<a class="dropdown-item text-center" href="pdf_export/'.$whse_preshipment->id.'" target="_blank">Export PDF</a>';
-                    
+
                     $result .= '</div>'; // dropdown-menu end
                 $result .= '</div>';
             $result .='</center>';
@@ -1493,7 +1500,7 @@ class WhsePreshipmentController extends Controller
         foreach($get_user_email as $email){
             $to_email[] = $email->email;
         }
-        
+
         $data = array(
             'invalid_from' => $request->from
         );
@@ -1533,13 +1540,14 @@ class WhsePreshipmentController extends Controller
         })
         ->rawColumns(['status', 'action'])
         ->make(true);
-        
+
     }
      // Added 04/25/2023
     public function get_preshipment_whse_pps_cn_recieved(){
         $preshipment = PreshipmentApproving::with([
             'preshipment'
         ])
+        ->orderBy('fk_preshipment_id', 'DESC')
         ->where('status', 7)
         ->where('logdel', 0)
         ->get();
@@ -1552,7 +1560,7 @@ class WhsePreshipmentController extends Controller
             $result = "";
             $result .= "<center>";
             $result .= '<button class="btn btn-primary btn-sm mr-1 btn-whs-view"  data-toggle="modal" data-target="#modalViewWhsePreshipment" preshipment-id="'.$preshipment->preshipment->id.'"><i class="fas fa-eye"></i></button>';
-            
+
             $result .= '<div class="btn-group">
             <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
             <i class="fas fa-lg fa-file-download"></i>
@@ -1561,17 +1569,17 @@ class WhsePreshipmentController extends Controller
 
                 $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->id.'" target="_blank">Export Excel</a>';
                 $result .='<a class="dropdown-item text-center" href="pdf_export/'.$preshipment->id.'" target="_blank">Export PDF</a>';
-                
+
                 $result .= '</div>'; // dropdown-menu end
             $result .= '</div>';
-            
+
             $result .= "</center>";
 
             return $result;
         })
         ->rawColumns(['status', 'action'])
         ->make(true);
-        
+
     }
      // Added 04/25/2023
     public function approve_pps_cn_transaction(Request $request){
@@ -1590,7 +1598,7 @@ class WhsePreshipmentController extends Controller
         return response()->json(['result' => 1]);
     }
 
-    
+
     public function check_wbs_variance(Request $request){
 
         $result = array();
@@ -1628,7 +1636,7 @@ class WhsePreshipmentController extends Controller
             WHERE `$column_name` = '$request->receiving_number'
             ");
 
-           
+
             // $result['variance'] = $variance;
             if($table_name == "tbl_wbs_material_receiving"){
 
@@ -1645,13 +1653,17 @@ class WhsePreshipmentController extends Controller
                         GROUP BY rs.item)mrs ON s.wbs_mr_id = mrs.wbs_mr_id
                         AND s.item = mrs.item
                         WHERE s.wbs_mr_id = '".$request->receiving_number."'");
-    
+
                 $variance = 0;
                 foreach ($mrs as $key => $mr) {
                     $variance += $mr->variance;
                 }
 
-                if($variance == 0 && $wbs_details[0]->status == 'X'){ // No Variance and status is closed
+                if($wbs_details[0]->total_qty != $request->total_qty){
+                    $result['result'] = 1;
+                    $result['msg'] = "Please check QTY DISCREPANCY.";
+                }
+                else if($variance == 0 && $wbs_details[0]->status == 'X'){ // No Variance and status is closed
                     $result['result'] = 0;
                     $result['msg'] = "Status is closed and no variance";
                 }
@@ -1673,7 +1685,7 @@ class WhsePreshipmentController extends Controller
                 }
             }
         }
-       
+
 
         return response()->json($result);
     }

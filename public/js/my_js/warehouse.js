@@ -786,6 +786,8 @@ function checkWBSVariance(rapidxPreshipmentId, receivingNumber, invoiceNumber, i
             if(response['result'] != '0'){ // with variance
                 // console.log('with variance');
                 $(`${idButton}`).prop('disabled', true);
+                $(`${idButton}`).hide();
+                $('#modalHeader').text('ALERT!')
                 $(`${id} .modal-content .modal-body .modal-title`).text(response['msg']);
                 $(`${id} .modal-content .modal-header`).addClass('bg-danger');
 
@@ -793,6 +795,8 @@ function checkWBSVariance(rapidxPreshipmentId, receivingNumber, invoiceNumber, i
             else{ // w/o variance
                 // console.log('without variance');
                 $(`${idButton}`).prop('disabled', false);
+                $(`${idButton}`).show();
+                $('#modalHeader').text('')
                 $(`${id} .modal-content .modal-body .modal-title`).text(message);
                 $(`${id} .modal-content .modal-header`).removeClass('bg-danger');
             }
