@@ -440,7 +440,8 @@
 
                                             <button class="btn btn-info btn-sm" id="btnDownloadForWbs"><i class="fas fa-lg fa-file-csv"></i> Download for WBS</button>
                                            
-                                            <button class="btn btn-outline-success btn-sm" id="btnDoneUpload" data-toggle="modal" data-target="#modalDoneUpload"> Done Upload</button>
+                                            {{-- <button class="btn btn-outline-success btn-sm" id="btnDoneUpload" data-toggle="modal" data-target="#modalDoneUpload"> Done Upload</button> --}}
+                                            <button class="btn btn-outline-success btn-sm" id="btnDoneUpload"><i class="" id="btnDoneUploadIcon"></i> Done Upload</button>
                                             
                                             
                                             {{-- <a href="export" class="btn btn-info btn-sm" target="_blank"><i class="fas fa-lg fa-file-csv"></i> Download for WBS</a> --}}
@@ -634,7 +635,8 @@
                                             {{-- <button class="btn btn-info btn-sm float-right" id=""><i class="fas fa-lg fa-file-csv"></i> Download for WBS</button> --}}
 
                                             <button class="btn btn-outline-danger" data-toggle="modal" id="btnSuperiorDisapprove" data-target="#modalSuperiorDisapprove">Disapprove</button>
-                                            <button class="btn btn-outline-success" data-toggle="modal" id="btnSuperiorApprove" data-target="#modalSuperiorApprove">Approve</button>
+                                            {{-- <button class="btn btn-outline-success" data-toggle="modal" id="btnSuperiorApprove" data-target="#modalSuperiorApprove">Approve</button> --}}
+                                            <button class="btn btn-outline-success" id="btnSuperiorApprove"><i class="" id="btnSuperiorApproveIcon"></i>Approve</button>
                                         </div>
                                     </div>
                                     
@@ -961,7 +963,7 @@
             <div class="modal fade" id="modalDoneUpload" data-backdrop="static" style="overflow: auto;">
                 <div class="modal-dialog" style="margin-top: 5%;"> 
                     <div class="modal-content">
-                        <form action="post" id="doneUploadId">
+                        <form action="post" id="formDoneUploadId">
                             @csrf
                             <div class="modal-header">
                                 <h4 id="modalHeader"></h4>
@@ -979,7 +981,7 @@
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
-                                <button type="submit" class="btn btn-success" id="btnYesDoneUpload" title="asd">Yes</button>
+                                <button type="submit" class="btn btn-success" id="btnYesDoneUpload" disabled>Yes</button>
                             </div>
                         </form>
                     </div>
@@ -1005,7 +1007,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button id="close" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Cancel</button>
-                                <button type="submit" class="btn btn-success" id="btnSuppYes">Yes</button>
+                                <button type="submit" class="btn btn-success" id="btnSuppYes" disabled>Yes</button>
                             </div>
                         </form>
                     </div>
@@ -1174,30 +1176,29 @@ $(document).ready(function () {
 
   
     dataTableWhsePreshipmentListForUpload = $("#tbl_whs_preshipment_list_for_upload").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ajax" : {
-          url: "get_preshipment_list_for_whse_for_upload",
-          data: function (param){
-            // param.preshipmentId = $("#txtPreshipmentId").val();
-            param.preshipmentId = $("#txtApprovingPackingListControlNo").val();
-          },
-      },
-      "columns":[    
-          { "data" : "Master_CartonNo"},
-          { "data" : "ItemNo" },
-          { "data" : "PONo" },
-          { "data" : "Partscode"},
-          { "data" : "DeviceName"},
-          { "data" : "LotNo"},
-          { "data" : "Qty"},
-          { "data" : "PackageCategory"},
-          { "data" : "PackageQty"},
-          { "data" : "WeighedBy"},
-          { "data" : "PackedBy"},
-          { "data" : "Remarks"},
-          
-      ],
+        "processing" : true,
+        "serverSide" : true,
+        "ajax" : {
+            url: "get_preshipment_list_for_whse_for_upload",
+            data: function (param){
+                // param.preshipmentId = $("#txtPreshipmentId").val();
+                param.preshipmentId = $("#txtApprovingPackingListControlNo").val();
+            },
+        },
+        "columns":[    
+            { "data" : "Master_CartonNo"},
+            { "data" : "ItemNo" },
+            { "data" : "PONo" },
+            { "data" : "Partscode"},
+            { "data" : "DeviceName"},
+            { "data" : "LotNo"},
+            { "data" : "Qty"},
+            { "data" : "PackageCategory"},
+            { "data" : "PackageQty"},
+            { "data" : "WeighedBy"},
+            { "data" : "PackedBy"},
+            { "data" : "Remarks"},
+        ],
     });
 
     dataTableWhseSuperiorPreshipmentList = $("#tbl_whse_superior_preshipment_list").DataTable({
@@ -1502,11 +1503,11 @@ $(document).ready(function () {
         $('#DoneUploadId').val(tblApprovingPrehipmentId);
         $('#DoneUploadInvoiceNum').val(tblApprovingInvoiceNum);
         $('#DoneUploadReceivingNum').val(tblApprovingReceivingNum);
-
+        
 
     })
 
-    $('#doneUploadId').submit(function(event){
+    $('#formDoneUploadId').submit(function(event){
         event.preventDefault();
         doneUploadingPreshipmentList();
     });

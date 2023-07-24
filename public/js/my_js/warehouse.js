@@ -597,7 +597,7 @@ function doneUploadingPreshipmentList(){
     $.ajax({
         url: "done_upload_preshipment",
         method: "post",
-        data: $('#doneUploadId').serialize(),
+        data: $('#formDoneUploadId').serialize(),
         dataType: "json",
         success: function(response){
             if(response['result'] == 1){
@@ -768,6 +768,16 @@ function checkWBSVariance(rapidxPreshipmentId, receivingNumber, invoiceNumber, i
             'total_qty'             : totalQty
         },
         dataType: "json",
+        beforeSend: function(){
+            $('#btnYesDoneUpload').prop('disabled', true);
+            $('#btnSuppYes').prop('disabled', true);
+
+            $('#btnDoneUpload').prop('disabled', true);
+            $("#btnDoneUploadIcon").addClass('fa fa-spinner fa-pulse');
+
+            $('#btnSuperiorApprove').prop('disabled', true);
+            $("#btnSuperiorApproveIcon").addClass('fa fa-spinner fa-pulse');
+        },
         success: function (response) {
             let id, idButton, message;
             if(stat == 1){
@@ -785,21 +795,29 @@ function checkWBSVariance(rapidxPreshipmentId, receivingNumber, invoiceNumber, i
 
             if(response['result'] != '0'){ // with variance
                 // console.log('with variance');
-                $(`${idButton}`).prop('disabled', true);
                 $(`${idButton}`).hide();
                 $('#modalHeader').text('ALERT!')
                 $(`${id} .modal-content .modal-body .modal-title`).text(response['msg']);
                 $(`${id} .modal-content .modal-header`).addClass('bg-danger');
+                $(`${idButton}`).prop('disabled', true);
 
             }
             else{ // w/o variance
                 // console.log('without variance');
-                $(`${idButton}`).prop('disabled', false);
                 $(`${idButton}`).show();
                 $('#modalHeader').text('')
                 $(`${id} .modal-content .modal-body .modal-title`).text(message);
                 $(`${id} .modal-content .modal-header`).removeClass('bg-danger');
+                $(`${idButton}`).prop('disabled', false);
             }
+
+            $(`${id}`).modal('show');
+
+            $('#btnDoneUpload').prop('disabled', false);
+            $("#btnDoneUploadIcon").removeClass('fa fa-spinner fa-pulse');
+            $('#btnSuperiorApprove').prop('disabled', false);
+            $("#btnSuperiorApproveIcon").removeClass('fa fa-spinner fa-pulse');
+
 
             console.log(id);
         }

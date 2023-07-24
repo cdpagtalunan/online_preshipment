@@ -190,7 +190,7 @@ function addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId,
 function resetDoneModal() {
     // Reset values
 
-    $('#doneUploadId')[0].reset();
+    $('#formDoneUploadId')[0].reset();
     
     $('#modalDoneUpload .modal-content .modal-body .modal-title').text('Are you sure you are done uploading?');
     $('#modalDoneUpload .modal-content .modal-header').removeClass('bg-danger');
