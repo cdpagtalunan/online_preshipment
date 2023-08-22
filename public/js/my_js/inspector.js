@@ -149,21 +149,21 @@ function itemVerificationQC(arr){
             // var qty = $(tr).find('td:eq(6)').text();
             // var package_category = $(tr).find('td:eq(7)').text();
 
-            var po_num = $(tr).find('td:eq(2)').text().toUpperCase();
-            var partcode = $(tr).find('td:eq(3)').text().toUpperCase();
-            var device_name = $(tr).find('td:eq(4)').text().toUpperCase();
-            var lot_no = $(tr).find('td:eq(5)').text().toUpperCase();
-            var qty = $(tr).find('td:eq(6)').text().toUpperCase();
-            var package_category = $(tr).find('td:eq(7)').text().toUpperCase();
+            var po_num = $(tr).find('td:eq(2)').text().trim().toUpperCase();
+            var partcode = $(tr).find('td:eq(3)').text().trim().toUpperCase();
+            var device_name = $(tr).find('td:eq(4)').text().trim().toUpperCase();
+            var lot_no = $(tr).find('td:eq(5)').text().trim().toUpperCase();
+            var qty = $(tr).find('td:eq(6)').text().trim().toUpperCase();
+            var package_category = $(tr).find('td:eq(7)').text().trim().toUpperCase();
 
-            var package_qty = $(tr).find('td:eq(8)').text();
+            var package_qty = $(tr).find('td:eq(8)').text().trim();
 
-            var drawing_no = $(tr).find('td:eq(11)').text().toUpperCase();
-            var drawing_rev_no = $(tr).find('td:eq(12)').text().toUpperCase();
+            var drawing_no = $(tr).find('td:eq(11)').text().trim().toUpperCase();
+            var drawing_rev_no = $(tr).find('td:eq(12)').text().trim().toUpperCase();
 
 
-            var hdInputVal = $(tr).find('td:eq(14)').text();
-            var hdStampingVal = $(tr).find('td:eq(15)').text();
+            var hdInputVal = $(tr).find('td:eq(14)').text().trim();
+            var hdStampingVal = $(tr).find('td:eq(15)').text().trim();
 
 
             // var hdInputVal = tr1.getElementsByTagName("td")[11].innerHTML;
