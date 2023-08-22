@@ -15,11 +15,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\Exportable;
 // use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
 
-class ExportMHTwoDays implements  FromView, WithTitle, WithEvents
+class ExportSuppOneDayCN implements  FromView, WithTitle, WithEvents, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -27,12 +28,12 @@ class ExportMHTwoDays implements  FromView, WithTitle, WithEvents
 
     use Exportable;
     protected $date;
-    protected $pending_preshipment;
+    protected $preshipment_records;
 
-    function __construct($date, $pending_preshipment)
+    function __construct($date, $preshipment_records)
     {
         $this->date = $date;
-        $this->preshipment_records = $pending_preshipment;
+        $this->preshipment_records = $preshipment_records;
         // $this->packing_list_ctrl_num = $packing_list_ctrl_num;
         // $this->packingListProductLine = $packingListProductLine;
 
@@ -40,12 +41,12 @@ class ExportMHTwoDays implements  FromView, WithTitle, WithEvents
     }
 
     public function view(): View {
-            return view('exports.pending_twodays_mh', ['date' => $this->date]); 
+            return view('exports.pending_oneday_supp', ['date' => $this->date]); 
 	}
 
     public function title(): string
     {
-        return 'WHSE MH Pendings';
+        return 'WHSE Superior Pendings';
     }
     public function registerEvents(): array
     {
@@ -89,7 +90,7 @@ class ExportMHTwoDays implements  FromView, WithTitle, WithEvents
                 ){
                 // $event->sheet->setCellValue('A4',count($preshipment_records1));
 
-                $event->sheet->setCellValue('A1', 'List Of Pending Preshipments on WHSE MH');
+                $event->sheet->setCellValue('A1', 'List Of Pending Preshipments on CN WHSE Superior');
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray($header_font); 
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray($center); 
                 $event->sheet->getDelegate()->mergeCells('A1:D1');
@@ -127,13 +128,8 @@ class ExportMHTwoDays implements  FromView, WithTitle, WithEvents
                 for($x = 0; $x < count($preshipment_records1); $x++){
                     $event->sheet->setCellValue('A'.$row_num, $preshipment_records1[$x]['preshipment']['Destination']."-".$preshipment_records1[$x]['preshipment']['Packing_List_CtrlNo']);
                     
-                    if($preshipment_records1[$x]['status'] == 1){
-                        $event->sheet->setCellValue('B'.$row_num, "For Checking");
-                    }
-                    else if($preshipment_records1[$x]['status'] == 2){
-                        $event->sheet->setCellValue('B'.$row_num, "Waiting For Upload");
-                    }
-
+                    $event->sheet->setCellValue('B'.$row_num, "For Supervisors Approval");
+    
                     $shipdate = date_create($preshipment_records1[$x]['preshipment']['Shipment_Date']);
 
                     $shipment_date_format = date_format($shipdate, "m-d-Y");

@@ -550,7 +550,10 @@ class WhsePreshipmentController extends Controller
         }
 
         $LastPONO 		= $LastPONO[0].$LastPONO[1];	//Check the OrderNo first 2 index.
-        $internal_invoice_check = array("TS","WH");
+        /*
+            * This will identify PO No. of preshipment list if its CN-WHSE-*** or TS-WHSE-*** or WHSE-****
+        */
+        $internal_invoice_check = array("TS","WH","CN"); 
 
         $array_database_val = array(
             'to_whse_noter' => $_SESSION['rapidx_user_id'],

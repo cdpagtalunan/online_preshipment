@@ -15,13 +15,13 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-use App\Exports\Sheets\ExportMHTwoDays;
-use App\Exports\Sheets\ExportSuppTwoDays;
+use App\Exports\Sheets\ExportMHOneDayTS;
+use App\Exports\Sheets\ExportSuppOneDayTS;
 
 
 
 
-class PendingTwoDaysExport implements WithMultipleSheets
+class PendingOneDayExportTS implements WithMultipleSheets
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -47,9 +47,10 @@ class PendingTwoDaysExport implements WithMultipleSheets
     public function sheets(): array
     {
         $sheets = [];
+        
 
-    	$sheets[] = new ExportMHTwoDays($this->date, $this->pending_preshipment['mh_2days_only']);
-    	$sheets[] = new ExportSuppTwoDays($this->date, $this->pending_preshipment['supp_2days_only']);
+    	$sheets[] = new ExportMHOneDayTS($this->date, $this->pending_preshipment['mh_1day_only_ts']);
+    	$sheets[] = new ExportSuppOneDayTS($this->date, $this->pending_preshipment['supp_1day_only_ts']);
         // $sheets[] = new PMIRecordsSheet($this->date, $this->subcon_employees, 'SUBCON EMPLOYEES', 1);
     	// $sheets[] = new PMIRecordsPerSectionSheet($this->date, $this->subcon_employees_per_section, 'SUBCON EMPLOYEES PER SECTION', 1);
         // $sheets[] = new PMISuspectedEmployeesSheet($this->date, $this->suspected_employees, 'COVID-19 SUSPECTED EMPLOYEES');

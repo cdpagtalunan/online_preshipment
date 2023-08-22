@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 
 use Carbon\Carbon;
 
-class ExportMHPastTwoDays implements  FromView, WithTitle, WithEvents
+class ExportMHOneDayTS implements  FromView, WithTitle, WithEvents
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -42,7 +42,7 @@ class ExportMHPastTwoDays implements  FromView, WithTitle, WithEvents
     }
 
     public function view(): View {
-            return view('exports.pending_twodays_mh', ['date' => $this->date]); 
+            return view('exports.pending_oneday_mh', ['date' => $this->date]); 
 	}
 
     public function title(): string
@@ -91,7 +91,7 @@ class ExportMHPastTwoDays implements  FromView, WithTitle, WithEvents
                 ){
                 // $event->sheet->setCellValue('A4',count($preshipment_records1));
 
-                $event->sheet->setCellValue('A1', 'List Of Pending Preshipments on WHSE MH');
+                $event->sheet->setCellValue('A1', 'List Of Pending Preshipments on TS WHSE MH');
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray($header_font); 
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray($center); 
                 $event->sheet->getDelegate()->mergeCells('A1:D1');

@@ -20,7 +20,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
 
-class ExportSuppPastTwoDays implements  FromView, WithTitle, WithEvents, ShouldAutoSize
+class ExportSuppOneDayTS implements  FromView, WithTitle, WithEvents, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -41,7 +41,7 @@ class ExportSuppPastTwoDays implements  FromView, WithTitle, WithEvents, ShouldA
     }
 
     public function view(): View {
-            return view('exports.pending_twodays_supp', ['date' => $this->date]); 
+            return view('exports.pending_oneday_supp', ['date' => $this->date]); 
 	}
 
     public function title(): string
@@ -90,7 +90,7 @@ class ExportSuppPastTwoDays implements  FromView, WithTitle, WithEvents, ShouldA
                 ){
                 // $event->sheet->setCellValue('A4',count($preshipment_records1));
 
-                $event->sheet->setCellValue('A1', 'List Of Pending Preshipments on WHSE Superior');
+                $event->sheet->setCellValue('A1', 'List Of Pending Preshipments on TS WHSE Superior');
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray($header_font); 
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray($center); 
                 $event->sheet->getDelegate()->mergeCells('A1:D1');
