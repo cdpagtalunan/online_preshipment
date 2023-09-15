@@ -846,10 +846,10 @@ class WhsePreshipmentController extends Controller
         // SubsystemWbsCN
         // SubsystemWbsTS
         if($request->product_line == 'cn'){
-            $receiving_number = SubsystemWbsCN::where('invoice_no', $request->ctrl_number)->first('receive_no');
+            $receiving_number = SubsystemWbsCN::where('invoice_no', $request->ctrl_number)->where('status', '!=', 'C')->first('receive_no');
         }
         else if($request->product_line == 'ts'){
-            $receiving_number = SubsystemWbsTS::where('invoice_no', $request->ctrl_number)->first('receive_no');
+            $receiving_number = SubsystemWbsTS::where('invoice_no', $request->ctrl_number)->where('status', '!=', 'C')->first('receive_no');
         }
         else{
             $receiving_number = "";
