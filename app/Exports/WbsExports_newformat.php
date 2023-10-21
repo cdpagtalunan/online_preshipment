@@ -106,7 +106,8 @@ class WbsExports_newformat implements  FromView, WithTitle, WithEvents, ShouldAu
                             $event->sheet->setCellValue('E'.$colno,$this->return_package_category($rapid_shipment_records1[$i]['ControlNumber'],$rapid_shipment_records1[$i]['OrderNo'],$rapid_shipment_records1[$i]['ItemCode'],$rapid_shipment_records1[$i]['LotNo'], $rapid_shipment_records1[$i]['ShipoutQty']));
                             // $event->sheet->setCellValue('F'.$colno,$this->return_package_qty($packing_list_ctrl_num,$rapid_shipment_records1[$i]['OrderNo'],$rapid_shipment_records1[$i]['ItemCode'],$rapid_shipment_records1[$i]['LotNo']));
                             $event->sheet->setCellValue('F'.$colno, 1);
-                            $event->sheet->setCellValueExplicit('G'.$colno, $rapid_shipment_records1[$i]['LotNo']." ".$count,DataType::TYPE_STRING);
+                            // $event->sheet->setCellValueExplicit('G'.$colno, $rapid_shipment_records1[$i]['LotNo']." ".$count,DataType::TYPE_STRING);
+                            $event->sheet->setCellValueExplicit('G'.$colno, $rapid_shipment_records1[$i]['LotNo'],DataType::TYPE_STRING);
                             $event->sheet->setCellValue('H'.$colno,'PPS');
                             $event->sheet->setCellValue('I'.$colno,$this->return_iqc_matix( $rapid_shipment_records1[$i]['ItemCode']));
                             $event->sheet->setCellValue('J'.$colno,$rapid_shipment_records1[$i]['DateIssued']);

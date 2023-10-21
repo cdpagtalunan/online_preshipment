@@ -439,6 +439,7 @@
                                         <div class="d-flex justify-content-between">
 
                                             <button class="btn btn-info btn-sm" id="btnDownloadForWbs"><i class="fas fa-lg fa-file-csv"></i> Download for WBS</button>
+                                            <button class="btn btn-info btn-sm" id="btnDownloadForWbs123"><i class="fas fa-lg fa-file-csv"></i> Download for WBS test</button>
                                            
                                             {{-- <button class="btn btn-outline-success btn-sm" id="btnDoneUpload" data-toggle="modal" data-target="#modalDoneUpload"> Done Upload</button> --}}
                                             <button class="btn btn-outline-success btn-sm" id="btnDoneUpload"><i class="" id="btnDoneUploadIcon"></i> Done Upload</button>
@@ -1490,6 +1491,15 @@ $(document).ready(function () {
         // window.location.href = `export/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`;
         window.open(`export/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`, '_blank');
     });
+
+     $('#btnDownloadForWbs123').on('click', function(){
+         let invoiceNum = $('#txtApprovingInvoinceNo').val();
+         let packingListCtrlNo = $('#txtApprovingPackingListControlNo').val();
+         let packingListProductLine = $('#txtPreshipmentProductLine').val();
+
+        //window.location.href = `export/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`;
+        window.open(`export_test/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`, '_blank');
+     });
 
     $('#btnDoneUpload').on('click', function(){
         tblApprovingPrehipmentId = $('#txtApprovingID').val();

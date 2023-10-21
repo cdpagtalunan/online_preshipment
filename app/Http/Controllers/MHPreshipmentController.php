@@ -551,7 +551,20 @@ class MHPreshipmentController extends Controller
         })
         ->addColumn('action', function($preshipment) {
             $result = "";
-            $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
+            
+            $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment mr-1"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button>';
+            $result .= '<div class="btn-group">
+            <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
+            <i class="fas fa-lg fa-file-download"></i>
+            </button>';
+                $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
+
+                // $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->id.'" target="_blank">Export Excel</a>';
+                $result .='<a class="dropdown-item text-center" href="pdf_export_grinding/'.$preshipment->id.'" target="_blank">Export PDF</a>';
+                
+                $result .= '</div>'; // dropdown-menu end
+            $result .= '</div>';
+            $result .= '</center>';
             return $result;
         })
         ->rawColumns(['status','action'])

@@ -4,28 +4,29 @@ namespace App\Http\Controllers;
 
 
 // use DB;
-use Illuminate\Support\Facades\DB;
-
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel; 
-use App\Exports\WbsExports;
-use App\Exports\WbsExports_newformat;
-use App\Exports\PreshipmentExport;
-
-use App\Model\RapidShipmentRecord;
-use App\Model\RapidPreshipmentList;
-use App\Model\WbsIqcMatrix;
-use App\Model\PreshipmentApproving;
-
-
 use PDF;
-use DOMElement;
+
 use DOMXPath;
+use DOMElement;
 use Dompdf\Dompdf;
 use Dompdf\Helpers;
 use Dompdf\Exception;
+
 use Dompdf\FontMetrics;
+use App\Exports\WbsExports;
+use App\Model\WbsIqcMatrix;
 use Dompdf\Frame\FrameTree;
+
+
+use Illuminate\Http\Request;
+use App\Model\RapidPreshipment;
+use App\Exports\PreshipmentExport;
+use App\Model\RapidShipmentRecord;
+use Illuminate\Support\Facades\DB;
+use App\Model\PreshipmentApproving;
+use App\Model\RapidPreshipmentList;
+use App\Exports\WbsExports_newformat;
+use Maatwebsite\Excel\Facades\Excel; 
 
 
 
@@ -92,11 +93,12 @@ class ExportController extends Controller
         ->where('id', $approving_id)
         ->where('logdel', 0)
         ->first();
-
+        
+    
+       
         $get_rapid_preshipment_list = RapidPreshipmentList::where('fkControlNo', $get_preshipment->preshipment->Packing_List_CtrlNo)
         ->where('logdel', 0)
         ->get();
-
         // return $get_preshipment;
         $remove_special_char = preg_replace('/[\/:*?"<>|]/', '', $get_preshipment->preshipment->Destination);
         $download_name = $remove_special_char.'-'.$get_preshipment->preshipment->Packing_List_CtrlNo;
@@ -138,10 +140,31 @@ class ExportController extends Controller
         $get_rapid_preshipment_list = RapidPreshipmentList::where('fkControlNo', $get_preshipment->preshipment->Packing_List_CtrlNo)
         ->where('logdel', 0)
         ->get();
-        // return $get_preshipment;
+
 
         $pdf = PDF::loadView('pdf_preshipment', 
         array('preshipment' =>  $get_preshipment,
+            'preshipment_list' => $get_rapid_preshipment_list
+        ));
+        $pdf->setPaper('A4', 'Landscape');
+
+        return $pdf->stream();
+    }
+
+    public function pdf_export_grinding(Request $request, $id){ // EXPORT FOR GRINDING ONLY
+        // return $id;
+        $preshipment = RapidPreshipment::with([
+            'rapid_shipment_invoice_details'
+        ])
+        ->where('id', $id)->first();
+
+        $get_rapid_preshipment_list = RapidPreshipmentList::where('fkControlNo', $preshipment->Packing_List_CtrlNo)
+        ->where('logdel', 0)
+        ->get();
+        // return $preshipment;
+
+        $pdf = PDF::loadView('pdf_preshipment_grinding', 
+        array('preshipment' =>  $preshipment,
             'preshipment_list' => $get_rapid_preshipment_list
         ));
         $pdf->setPaper('A4', 'Landscape');

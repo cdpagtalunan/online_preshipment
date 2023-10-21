@@ -14,14 +14,14 @@ $user_level = 0;
         @if (count($_SESSION['rapidx_user_accesses']) > 0)
             @for ($index = 0; $index < count($_SESSION['rapidx_user_accesses']); $index++)
                 @if ($_SESSION['rapidx_user_accesses'][$index]['module_id'] == 14)
-                    @php
-                        $isAuthorized = true;
-                        $user_level = $_SESSION['rapidx_user_accesses'][$index]['user_level_id'];
-                    @endphp
-                @break
-            @endif
-        @endfor
-
+                        @php
+                            $isAuthorized = true;
+                            $user_level = $_SESSION['rapidx_user_accesses'][$index]['user_level_id'];
+                        @endphp
+                    @break
+                @endif
+                
+            @endfor
         @if (!$isAuthorized)
             <script type="text/javascript">
                 window.location = '../RapidX/';

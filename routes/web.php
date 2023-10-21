@@ -149,6 +149,7 @@ Route::get('/check_wbs_variance', 'WhsePreshipmentController@check_wbs_variance'
 Route::get('/export/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export');
 Route::get('/export_test/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export_test');
 Route::get('/export_excel/{approving_id}', 'ExportController@export_excel');
+Route::get('/pdf_export_grinding/{approving_id}', 'ExportController@pdf_export_grinding');
 Route::get('/pdf_export/{approving_id}', 'ExportController@pdf_export');
 
 // AUTOMAILER
