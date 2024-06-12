@@ -91,6 +91,24 @@
                             </div>
 
                             <div class="tab-pane fade" id="done" role="tabpanel" aria-labelledby="done-tab">
+                              <div class="row mt-1">
+                                <div class="col-md-4">
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">Set Date</span>
+                                    </div>
+                                    <input type="date" class="form-control" id="dateFrom">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">-</span>
+                                    </div>
+                                    <input type="date" class="form-control" id="dateTo">
+                                    <div class="input-group-append">
+                                      <button class="btn btn-secondary" type="button" id="btnSearchDone"><i class="fas fa-search"></i></button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
                               <div class="table responsive mt-2">
                                   <table id="tblDonePreshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
                                       <thead>
@@ -469,25 +487,7 @@
       }],
     }); 
 
-    //change 07/14/2022
-    dataTablePreshipmentDone = $("#tblDonePreshipment").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_Preshipment_done", 
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "Date" },
-          { "data" : "Station" },
-          { "data" : "Packing_List_CtrlNo"},
-          { "data" : "Shipment_Date"},
-          { "data" : "Destination"},
-          { "data" : "action"},
-          
-      ],
-    }); 
+    
 
       
     //SCRIPT TO SHOW QR FOR PRESHIPMENT TO START THE SCANNING PROCESS
@@ -681,6 +681,39 @@
       }
     });
 
+    $('#done-tab').on('click', function(){
+      drawDoneTable();
+    })
+    $('#btnSearchDone').on('click', function(){
+      drawDoneTable();
+    })
+
+    function drawDoneTable(){
+      //change 07/14/2022
+      dataTablePreshipmentDone = $("#tblDonePreshipment").DataTable({
+        "processing" : true,
+        "serverSide" : true,
+        "ordering"   : false,
+        "bDestroy"  : true,
+        "ajax" : {
+            url: "get_Preshipment_done",
+            data: function (param){
+              param.dateTo = $("#dateTo").val();
+              param.dateFrom = $("#dateFrom").val();
+            }
+        },
+        "columns":[    
+            { "data" : "status"},
+            { "data" : "Date" },
+            { "data" : "Station" },
+            { "data" : "Packing_List_CtrlNo"},
+            { "data" : "Shipment_Date"},
+            { "data" : "Destination"},
+            { "data" : "action"},
+            
+        ],
+      }); 
+    }
   });
 
 </script>

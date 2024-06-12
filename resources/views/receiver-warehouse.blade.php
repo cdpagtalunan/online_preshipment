@@ -439,7 +439,8 @@
                                         <div class="d-flex justify-content-between">
 
                                             <button class="btn btn-info btn-sm" id="btnDownloadForWbs"><i class="fas fa-lg fa-file-csv"></i> Download for WBS</button>
-                                            <button class="btn btn-info btn-sm" id="btnDownloadForWbs123"><i class="fas fa-lg fa-file-csv"></i> Download for WBS test</button>
+
+                                            <button class="btn btn-info btn-sm d-none" id="btnDownloadForWbsTS"><i class="fas fa-lg fa-file-csv"></i> Download for WBS TS</button>
                                            
                                             {{-- <button class="btn btn-outline-success btn-sm" id="btnDoneUpload" data-toggle="modal" data-target="#modalDoneUpload"> Done Upload</button> --}}
                                             <button class="btn btn-outline-success btn-sm" id="btnDoneUpload"><i class="" id="btnDoneUploadIcon"></i> Done Upload</button>
@@ -1118,294 +1119,358 @@
 <script>
 $(document).ready(function () {
     let tblApprovingPrehipmentId, tblApprovingInvoiceNum, tblApprovingReceivingNum, totalQty, isLocalReceiving;
+    
     dataTableWhsePreshipment = $("#tbl_whse_preshipment").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"  : false,
-      "ajax" : {
-          url: "get_preshipment_for_ts_cn_whse",
-        //   data : function(param){
-        //     param.login_id = $('#login_id').val();
-        //   }
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment_ctrl_num"},
-        //   { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "rapid_invoice_num"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "action"},
-          
-      ],
+        "processing": true,
+        "serverSide": true,
+        "ordering": false,
+        "ajax": {
+            url: "get_preshipment_for_ts_cn_whse",
+            //   data : function(param){
+            //     param.login_id = $('#login_id').val();
+            //   }
+        },
+        "columns": [{
+                "data": "status"
+            },
+            {
+                "data": "preshipment.Date"
+            },
+            {
+                "data": "preshipment.Station"
+            },
+            {
+                "data": "preshipment_ctrl_num"
+            },
+            //   { "data" : "preshipment.Packing_List_CtrlNo"},
+            {
+                "data": "rapid_invoice_num"
+            },
+            {
+                "data": "preshipment.Shipment_Date"
+            },
+            {
+                "data": "preshipment.Destination"
+            },
+            {
+                "data": "action"
+            },
+
+        ],
     });
 
     dataTableWhsePreshipmentList = $("#tbl_whs_preshipment_list").DataTable({
-        "processing" : true,
-        "serverSide" : true,
-        "ordering"  : false,
-            "paging" : false,
-        "ajax" : {
+        "processing": true,
+        "serverSide": true,
+        "ordering": false,
+        "paging": false,
+        "ajax": {
             // url: "get_preshipment_list_for_whse",
             url: "get_Preshipment_list",
-            data: function (param){
+            data: function (param) {
                 // param.preshipmentId = $("#preshipmentId").val();
                 param.preshipmentCtrlNo = $("#packingControlNoId").val();
             },
         },
-        "columns":[    
-            { "data" : "Master_CartonNo"},
-            { "data" : "ItemNo" },
-            { "data" : "PONo" },
-            { "data" : "Partscode"},
-            { "data" : "DeviceName"},
-            { "data" : "LotNo"},
-            { "data" : "Qty"},
-            { "data" : "PackageCategory"},
-            { "data" : "PackageQty"},
-            { "data" : "WeighedBy"},
-            { "data" : "PackedBy"},
-            { "data" : "drawing_no"},
-            { "data" : "rev"},
-            { "data" : "Remarks"},
-            { "data" : "hide_input"},
-            
+        "columns": [{
+                "data": "Master_CartonNo"
+            },
+            {
+                "data": "ItemNo"
+            },
+            {
+                "data": "PONo"
+            },
+            {
+                "data": "Partscode"
+            },
+            {
+                "data": "DeviceName"
+            },
+            {
+                "data": "LotNo"
+            },
+            {
+                "data": "Qty"
+            },
+            {
+                "data": "PackageCategory"
+            },
+            {
+                "data": "PackageQty"
+            },
+            {
+                "data": "WeighedBy"
+            },
+            {
+                "data": "PackedBy"
+            },
+            {
+                "data": "drawing_no"
+            },
+            {
+                "data": "rev"
+            },
+            {
+                "data": "Remarks"
+            },
+            {
+                "data": "hide_input"
+            },
+
         ],
     });
 
-  
+
     dataTableWhsePreshipmentListForUpload = $("#tbl_whs_preshipment_list_for_upload").DataTable({
-        "processing" : true,
-        "serverSide" : true,
-        "ajax" : {
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
             url: "get_preshipment_list_for_whse_for_upload",
-            data: function (param){
+            data: function (param) {
                 // param.preshipmentId = $("#txtPreshipmentId").val();
                 param.preshipmentId = $("#txtApprovingPackingListControlNo").val();
             },
         },
-        "columns":[    
-            { "data" : "Master_CartonNo"},
-            { "data" : "ItemNo" },
-            { "data" : "PONo" },
-            { "data" : "Partscode"},
-            { "data" : "DeviceName"},
-            { "data" : "LotNo"},
-            { "data" : "Qty"},
-            { "data" : "PackageCategory"},
-            { "data" : "PackageQty"},
-            { "data" : "WeighedBy"},
-            { "data" : "PackedBy"},
-            { "data" : "Remarks"},
+        "columns": [{
+                "data": "Master_CartonNo"
+            },
+            {
+                "data": "ItemNo"
+            },
+            {
+                "data": "PONo"
+            },
+            {
+                "data": "Partscode"
+            },
+            {
+                "data": "DeviceName"
+            },
+            {
+                "data": "LotNo"
+            },
+            {
+                "data": "Qty"
+            },
+            {
+                "data": "PackageCategory"
+            },
+            {
+                "data": "PackageQty"
+            },
+            {
+                "data": "WeighedBy"
+            },
+            {
+                "data": "PackedBy"
+            },
+            {
+                "data": "Remarks"
+            },
         ],
     });
 
     dataTableWhseSuperiorPreshipmentList = $("#tbl_whse_superior_preshipment_list").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ajax" : {
-          url: "get_preshipment_list_for_whse_superior",
-          data: function (param){
-            param.preshipmentId = $("#txtApprovingSuperiorCtrlNum").val();
-          },
-      },
-      "columns":[    
-          { "data" : "Master_CartonNo"},
-          { "data" : "ItemNo" },
-          { "data" : "PONo" },
-          { "data" : "Partscode"},
-          { "data" : "DeviceName"},
-          { "data" : "LotNo"},
-          { "data" : "Qty"},
-          { "data" : "PackageCategory"},
-          { "data" : "PackageQty"},
-          { "data" : "WeighedBy"},
-          { "data" : "PackedBy"},
-          { "data" : "Remarks"},
-          
-      ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            url: "get_preshipment_list_for_whse_superior",
+            data: function (param) {
+                param.preshipmentId = $("#txtApprovingSuperiorCtrlNum").val();
+            },
+        },
+        "columns": [{
+                "data": "Master_CartonNo"
+            },
+            {
+                "data": "ItemNo"
+            },
+            {
+                "data": "PONo"
+            },
+            {
+                "data": "Partscode"
+            },
+            {
+                "data": "DeviceName"
+            },
+            {
+                "data": "LotNo"
+            },
+            {
+                "data": "Qty"
+            },
+            {
+                "data": "PackageCategory"
+            },
+            {
+                "data": "PackageQty"
+            },
+            {
+                "data": "WeighedBy"
+            },
+            {
+                "data": "PackedBy"
+            },
+            {
+                "data": "Remarks"
+            },
+
+        ],
     });
 
 
     dataTableWhseViewPreshipmentList = $("#tbl_view_preshipment_list").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ajax" : {
-          url: "get_preshipmentlist_for_view",
-          data: function (param){
-            param.preshipmentId = $("#txtViewCtrlNo").val();
-          },
-      },
-      "columns":[    
-          { "data" : "Master_CartonNo"},
-          { "data" : "ItemNo" },
-          { "data" : "PONo" },
-          { "data" : "Partscode"},
-          { "data" : "DeviceName"},
-          { "data" : "LotNo"},
-          { "data" : "Qty"},
-          { "data" : "PackageCategory"},
-          { "data" : "PackageQty"},
-          { "data" : "WeighedBy"},
-          { "data" : "PackedBy"},
-          { "data" : "Remarks"},
-          
-      ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            url: "get_preshipmentlist_for_view",
+            data: function (param) {
+                param.preshipmentId = $("#txtViewCtrlNo").val();
+            },
+        },
+        "columns": [{
+                "data": "Master_CartonNo"
+            },
+            {
+                "data": "ItemNo"
+            },
+            {
+                "data": "PONo"
+            },
+            {
+                "data": "Partscode"
+            },
+            {
+                "data": "DeviceName"
+            },
+            {
+                "data": "LotNo"
+            },
+            {
+                "data": "Qty"
+            },
+            {
+                "data": "PackageCategory"
+            },
+            {
+                "data": "PackageQty"
+            },
+            {
+                "data": "WeighedBy"
+            },
+            {
+                "data": "PackedBy"
+            },
+            {
+                "data": "Remarks"
+            },
+
+        ],
     });
 
-    dataTableWhseForApproval= $("#tbl_whse_for_approver").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_preshipment_of_ts_cn_for_approval",
-      },
-      "columns":[    
-        { "data" : "status"},
-        { "data" : "preshipment.Date" },
-        { "data" : "preshipment.Station" },
-        { "data" : "preshipment_ctrl_num"},
-        // { "data" : "preshipment.Packing_List_CtrlNo"},
-        { "data" : "rapid_invoice_number"},
-        { "data" : "preshipment.Shipment_Date"},
-        { "data" : "preshipment.Destination"},
-          { "data" : "action"},
-        //   { "data" : "action"},
-          
-      ],
-    });
-       // change 07/13/2022
-       dataTableWhseDone= $("#tbl_whse_done_preshipment").DataTable({
-      "processing" : true,
-      "serverSide" : true,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_preshipment_done",
-      },
-      "columns":[    
-        { "data" : "status"},
-        { "data" : "preshipment.Date" },
-        { "data" : "preshipment.Station" },
-        { "data" : "preshipment_ctrl_num"},
-        // { "data" : "preshipment.Packing_List_CtrlNo"},
-        { "data" : "rapid_invoice_number"},
-        { "data" : "preshipment.Shipment_Date"},
-        { "data" : "preshipment.Destination"},
-          { "data" : "action"},
-        //   { "data" : "action"},
-          
-      ],
+    $('#btnScanItem').on('click', function () {
+        $('#qrDiv').css('display', 'block');
+        // $('#test').modal('show');
+
+        $('#txtForScanner').focus();
+        // $('#close').disable();
+        $('#close').attr('disabled', 'disabled');
+        $('#btn_disapprove_list_id').attr('disabled', 'disabled');
+        $('#btn_approve_list_id').attr('disabled', 'disabled');
+        $('#btnDoneScan').removeClass("d-none");
+
+
     });
 
-    
-
-
-    $('#btnScanItem').on('click',function(){
-      $('#qrDiv').css('display','block');
-      // $('#test').modal('show');
-      
-      $('#txtForScanner').focus();
-      // $('#close').disable();
-      $('#close').attr('disabled','disabled');
-      $('#btn_disapprove_list_id').attr('disabled','disabled');
-      $('#btn_approve_list_id').attr('disabled','disabled');
-      $('#btnDoneScan').removeClass("d-none");
-
-     
-    });
-
-    $('#btnDoneScan').on('click', function(){
+    $('#btnDoneScan').on('click', function () {
 
         let test = [];
 
         $('#btnDoneScan').addClass("d-none");
-        $('#qrDiv').css('display','none');
+        $('#qrDiv').css('display', 'none');
         // $('#close').attr('disabled','disabled');
         $('#close').removeAttr('disabled');
         // $('#btn_disapprove_list_id').removeAttr('disabled');
         // $('#btn_approve_list_id').removeAttr('disabled');
-        $('#tbl_whs_preshipment_list tr').each(function(row, tr){
-            
-            if(row>0){
+        $('#tbl_whs_preshipment_list tr').each(function (row, tr) {
+
+            if (row > 0) {
                 highlight = $(tr).hasClass('checked-ok');
-                if(highlight == false){
-                $(tr).addClass('checked-ng');
+                if (highlight == false) {
+                    $(tr).addClass('checked-ng');
                 }
                 test.push(highlight);
             }
             row++;
-                
+
         });
-        if(jQuery.inArray(false, test) == -1){
-        // console.log('enable button');
-        $('#btnAcceptPreshipment').prop('disabled', false);
-        }
-        else{
-        $('#btnAcceptPreshipment').prop('disabled', true);
+        if (jQuery.inArray(false, test) == -1) {
+            // console.log('enable button');
+            $('#btnAcceptPreshipment').prop('disabled', false);
+        } else {
+            $('#btnAcceptPreshipment').prop('disabled', true);
         }
 
 
     });
 
     //FOR BARCODE SCANNING
-    var timer = '', scannedItem = "";
-    $('input#txtForScanner').keypress( function() {
-      
-      var txtForScanning = $(this); // copy of this object for further usage
-     
+    var timer = '',
+        scannedItem = "";
+    $('input#txtForScanner').keypress(function () {
+
+        var txtForScanning = $(this); // copy of this object for further usage
+
         clearTimeout(timer);
-        timer = setTimeout(function() {
-          scannedItem = txtForScanning.val().toUpperCase();
-          console.log(scannedItem);
-        //   var arr = scannedItem.split(', ');
-        //   itemVerificationTSCNWhse(arr);
+        timer = setTimeout(function () {
+            scannedItem = txtForScanning.val().toUpperCase();
+            console.log(scannedItem);
+            //   var arr = scannedItem.split(', ');
+            //   itemVerificationTSCNWhse(arr);
             var arr = scannedItem.split(',');
 
-            if(arr.length == 7){
-                console.log("if",arr)
-            itemVerificationTSCNWhse(arr);
-            }
-            else{
-                
+            if (arr.length == 7) {
+                console.log("if", arr)
+                itemVerificationTSCNWhse(arr);
+            } else {
+
                 var arr = scannedItem.split(', ');
-                console.log("else",arr)
-            itemVerificationTSCNWhse(arr);
+                console.log("else", arr)
+                itemVerificationTSCNWhse(arr);
             }
-          txtForScanning.val("");
+            txtForScanning.val("");
         }, 500);
     });
 
 
-    $(document).on('click', '.btn-whs-view-for-receiving', function(){
+    $(document).on('click', '.btn-whs-view-for-receiving', function () {
         let preshipment_id = $(this).attr('preshipment-id');
         // console.log(preshipment_id);
         getPreshipmentDetailsByIdForReceiving(preshipment_id);
         // dataTableWhsePreshipmentList.draw();
         $('#btnAcceptPreshipment').prop('disabled', true);
 
-       
+
     });
 
-    $('#btnAcceptPreshipment').on('click', function(){
+    $('#btnAcceptPreshipment').on('click', function () {
         let preshipmentId = $('#preshipmentId').val();
         $('#acceptPreshipmentId').val(preshipmentId);
         let isInvalidCheck = $('#txtInvalidChecker').val();
-        if(isInvalidCheck == 0){
+        if (isInvalidCheck == 0) {
             $('#modalApproveId').modal('show');
-        }
-        else{
+        } else {
             $('#modalHasInvalidId').modal('show');
         }
         // console.log(preshipmentId);
     });
 
-    $('#btnInvalidScanUserId').on('click', function(){
-        if($('#invalidRemarks').val() == ""){
-        $("#invalidRemarks").addClass('is-invalid');
-        }
-        else{
+    $('#btnInvalidScanUserId').on('click', function () {
+        if ($('#invalidRemarks').val() == "") {
+            $("#invalidRemarks").addClass('is-invalid');
+        } else {
             $("#invalidRemarks").removeClass('is-invalid');
             $('#modalScanEmployeeId').modal('show');
             $('#modalScanEmployeeId').on('shown.bs.modal', function () {
@@ -1415,75 +1480,74 @@ $(document).ready(function () {
         }
     });
 
-    $('#txtScanEmployeeId').on('keyup', function(e){
+    $('#txtScanEmployeeId').on('keyup', function (e) {
 
-      if(e.keyCode == 13 ){
-        $.ajax({
-          url: "get_authorize_by_id",
-          type: "get",
-          data: {
-            emp_id: $('#txtScanEmployeeId').val().toUpperCase()
-          },
-          dataType: "json",
-          success: function (response) {
-            // acceptPreshipment();
-            // $('#txtScanEmployeeId').val("");
-            // $('#modalScanEmployeeId').modal('hide');
-            // $('#modalHasInvalidId').modal('hide');
+        if (e.keyCode == 13) {
+            $.ajax({
+                url: "get_authorize_by_id",
+                type: "get",
+                data: {
+                    emp_id: $('#txtScanEmployeeId').val().toUpperCase()
+                },
+                dataType: "json",
+                success: function (response) {
+                    // acceptPreshipment();
+                    // $('#txtScanEmployeeId').val("");
+                    // $('#modalScanEmployeeId').modal('hide');
+                    // $('#modalHasInvalidId').modal('hide');
 
-            if(response['result'] == 1){
-              let scannedId = $('#txtScanEmployeeId').val();
-              let invalidRemarks = $('#invalidRemarks').val();
-              let invalidModule = $('#txtPreshipmentProductLine').val()+'-whse';
-              let preshipmentId = $('#preshipmentId').val();
+                    if (response['result'] == 1) {
+                        let scannedId = $('#txtScanEmployeeId').val();
+                        let invalidRemarks = $('#invalidRemarks').val();
+                        let invalidModule = $('#txtPreshipmentProductLine').val() + '-whse';
+                        let preshipmentId = $('#preshipmentId').val();
 
-              addInvalidDetails(scannedId,invalidRemarks,invalidModule,preshipmentId);
-              acceptPreshipment();
+                        addInvalidDetails(scannedId, invalidRemarks, invalidModule, preshipmentId);
+                        acceptPreshipment();
 
-              $('#modalScanEmployeeId').modal('hide');
-              $('#modalHasInvalidId').modal('hide');
-            }
-            else{
-              toastr.error('Invalid ID');
-              $('#modalScanEmployeeId').modal('hide');
-              setTimeout(() => {
-                
-                $('#modalScanEmployeeId').modal('show');
-              }, 400);
-            }
+                        $('#modalScanEmployeeId').modal('hide');
+                        $('#modalHasInvalidId').modal('hide');
+                    } else {
+                        toastr.error('Invalid ID');
+                        $('#modalScanEmployeeId').modal('hide');
+                        setTimeout(() => {
 
-            $('#txtScanEmployeeId').val("");
-            
-          }
-        });
-      }
+                            $('#modalScanEmployeeId').modal('show');
+                        }, 400);
+                    }
+
+                    $('#txtScanEmployeeId').val("");
+
+                }
+            });
+        }
     });
 
-    $('#acceptFormid').submit(function(event){
+    $('#acceptFormid').submit(function (event) {
         event.preventDefault();
         acceptPreshipment();
     });
 
-    $('#btnRejectPreshipmentId').on('click', function(){
+    $('#btnRejectPreshipmentId').on('click', function () {
         let preshipmentId = $('#preshipmentId').val();
         $('#rejectPreshipmentId').val(preshipmentId);
     });
 
-   
 
-    $(document).on('click', '.btn-whs-view-for-upload', function(){
+
+    $(document).on('click', '.btn-whs-view-for-upload', function () {
         let preshipmentId = $(this).attr('preshipment-id');
         getPreshipmentDetailsForUpload(preshipmentId);
         getInvoiceCtrlNo(preshipmentId);
     });
 
-    $(document).on('click', '.btn-whse-reject', function(){
+    $(document).on('click', '.btn-whse-reject', function () {
         let preshipmentId = $(this).attr('preshipment-id');
         $('#rejectPreshipmentId').val(preshipmentId);
     });
 
 
-    $('#btnDownloadForWbs').on('click', function(){
+    $('#btnDownloadForWbs').on('click', function () {
         let invoiceNum = $('#txtApprovingInvoinceNo').val();
         let packingListCtrlNo = $('#txtApprovingPackingListControlNo').val();
         let packingListProductLine = $('#txtPreshipmentProductLine').val();
@@ -1492,16 +1556,16 @@ $(document).ready(function () {
         window.open(`export/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`, '_blank');
     });
 
-     $('#btnDownloadForWbs123').on('click', function(){
-         let invoiceNum = $('#txtApprovingInvoinceNo').val();
-         let packingListCtrlNo = $('#txtApprovingPackingListControlNo').val();
-         let packingListProductLine = $('#txtPreshipmentProductLine').val();
+    $('#btnDownloadForWbsTS').on('click', function () {
+        let invoiceNum = $('#txtApprovingInvoinceNo').val();
+        let packingListCtrlNo = $('#txtApprovingPackingListControlNo').val();
+        let packingListProductLine = $('#txtPreshipmentProductLine').val();
 
         //window.location.href = `export/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`;
         window.open(`export_test/${invoiceNum}/${packingListCtrlNo}/${packingListProductLine}`, '_blank');
-     });
+    });
 
-    $('#btnDoneUpload').on('click', function(){
+    $('#btnDoneUpload').on('click', function () {
         tblApprovingPrehipmentId = $('#txtApprovingID').val();
         tblApprovingInvoiceNum = $('#txtApprovingInvoinceNo').val();
         tblApprovingReceivingNum = $('#txtApprovingReceivingNo').val();
@@ -1513,31 +1577,30 @@ $(document).ready(function () {
         $('#DoneUploadId').val(tblApprovingPrehipmentId);
         $('#DoneUploadInvoiceNum').val(tblApprovingInvoiceNum);
         $('#DoneUploadReceivingNum').val(tblApprovingReceivingNum);
-        
+
 
     })
 
-    $('#formDoneUploadId').submit(function(event){
+    $('#formDoneUploadId').submit(function (event) {
         event.preventDefault();
         doneUploadingPreshipmentList();
     });
 
 
-    $(document).on('click', '.btn-whs-view-for-superior-approval' , function(){
+    $(document).on('click', '.btn-whs-view-for-superior-approval', function () {
         let preshipmentListApprovingId = $(this).attr('preshipment-id');
 
         getPreshipmentDetailsbyIdForSuperior(preshipmentListApprovingId);
     });
 
-    $('#iconRefresh').on('click', function(){
-        if($('input[name="checkbox_local_mat"]').is(':checked')){
+    $('#iconRefresh').on('click', function () {
+        if ($('input[name="checkbox_local_mat"]').is(':checked')) {
             // $('#txtApprovingInvoinceNo').prop('readonly', false);
             let invoiceNum = $('#txtApprovingInvoinceNo').val();
             let productLine = $('#txtPreshipmentProductLine').val();
             // console.log(invoiceNum+"qwe"+productLine);
-            getWBSLocalReceivingNumber(invoiceNum,productLine);
-        }
-        else{
+            getWBSLocalReceivingNumber(invoiceNum, productLine);
+        } else {
             // $('#txtApprovingInvoinceNo').prop('readonly', true);
             let approvingId = $('#txtApprovingID').val();
             getPreshipmentDetailsForUpload(approvingId);
@@ -1548,17 +1611,16 @@ $(document).ready(function () {
 
     });
 
-    $('#btnSuperiorApprove').on('click', function(){
+    $('#btnSuperiorApprove').on('click', function () {
         tblApprovingPrehipmentId = $('#txtApprovingId').val();
         tblApprovingInvoiceNum = $('#txtApprovingSuperiorInvoiceNum').val();
         tblApprovingReceivingNum = $('#txtApprovingSuperiorReceivingNum').val();
         totalQty = $('#txtApprovingSuperiorPreshipmentQty').val();
 
         let splitted = tblApprovingReceivingNum.split("-");
-        if(splitted[0] == 'MAT'){
+        if (splitted[0] == 'MAT') {
             isLocalReceiving = 0;
-        }
-        else{
+        } else {
             isLocalReceiving = 1;
         }
 
@@ -1567,41 +1629,121 @@ $(document).ready(function () {
         $('#txtSuperiorApprovingTblId').val(tblApprovingPrehipmentId);
     });
 
-    $('#btnSuperiorDisapprove').on('click', function(){
+    $('#btnSuperiorDisapprove').on('click', function () {
         let disapprovingId = $('#txtApprovingId').val();
 
         $('#txtSuperiorDisapprovingTblId').val(disapprovingId);
     });
 
-    $('#formSuperiorApprove').submit(function(event){
+    $('#formSuperiorApprove').submit(function (event) {
         event.preventDefault();
         superiorApproving();
     });
-    $('#formSuperiorDisapprove').submit(function(event){
+    $('#formSuperiorDisapprove').submit(function (event) {
         event.preventDefault();
         superiorDisapproving();
     });
 
-    $(document).on('click', '.btn-whs-view' , function(){
-        let approvingId  = $(this).attr('preshipment-id');
+    $(document).on('click', '.btn-whs-view', function () {
+        let approvingId = $(this).attr('preshipment-id');
 
         getPreshipmentForView(approvingId);
     });
 
-    $('#formRejectPreshipment').submit(function(event){
+    $('#formRejectPreshipment').submit(function (event) {
         event.preventDefault();
         rejectPreshipment();
     });
 
-    $('#chckWbsLocalMatRecId').on('click', function(){
-        if($('input[name="checkbox_local_mat"]').is(':checked')){
+    $('#chckWbsLocalMatRecId').on('click', function () {
+        if ($('input[name="checkbox_local_mat"]').is(':checked')) {
             $('#txtApprovingInvoinceNo').prop('readonly', false);
             $('input[name="checkbox_local_mat"]').val('1');
-        }
-        else{
+        } else {
             $('#txtApprovingInvoinceNo').prop('readonly', true);
             $('input[name="checkbox_local_mat"]').val('0');
         }
+    });
+
+    $('#whse-approver-tab').on('click', function(){
+        dataTableWhseForApproval = $("#tbl_whse_for_approver").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ordering": false,
+            "bDestroy": true,
+            "ajax": {
+                url: "get_preshipment_of_ts_cn_for_approval",
+            },
+            "columns": [{
+                    "data": "status"
+                },
+                {
+                    "data": "preshipment.Date"
+                },
+                {
+                    "data": "preshipment.Station"
+                },
+                {
+                    "data": "preshipment_ctrl_num"
+                },
+                // { "data" : "preshipment.Packing_List_CtrlNo"},
+                {
+                    "data": "rapid_invoice_number"
+                },
+                {
+                    "data": "preshipment.Shipment_Date"
+                },
+                {
+                    "data": "preshipment.Destination"
+                },
+                {
+                    "data": "action"
+                },
+                //   { "data" : "action"},
+
+            ],
+        });
+    });
+
+    $('#whse-user-done-tab').on('click', function(){
+        // change 07/13/2022
+        dataTableWhseDone = $("#tbl_whse_done_preshipment").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ordering": false,
+            "bDestroy": true,
+            "ajax": {
+                url: "get_preshipment_done",
+            },
+            "columns": [{
+                    "data": "status"
+                },
+                {
+                    "data": "preshipment.Date"
+                },
+                {
+                    "data": "preshipment.Station"
+                },
+                {
+                    "data": "preshipment_ctrl_num"
+                },
+                // { "data" : "preshipment.Packing_List_CtrlNo"},
+                {
+                    "data": "rapid_invoice_number"
+                },
+                {
+                    "data": "preshipment.Shipment_Date"
+                },
+                {
+                    "data": "preshipment.Destination"
+                },
+                {
+                    "data": "action"
+                },
+                //   { "data" : "action"},
+
+            ],
+        });
     });
 });
 </script>

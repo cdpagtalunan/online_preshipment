@@ -33,7 +33,7 @@
 <script src="{{ asset('public/js/my_js/licence.js') }}"></script> --}}
 <script src="{{ asset('public/js/my_js/User.js?n=6') }}"></script>
 <script src="{{ asset('public/js/my_js/inspector.js?n=108') }}"></script>
-<script src="{{ asset('public/js/my_js/MaterialHandler.js?n=36') }}"></script>
-<script src="{{ asset('public/js/my_js/warehouse.js?n=109') }}"></script>
+<script src="{{ asset('public/js/my_js/MaterialHandler.js?n=38') }}"></script>
+<script src="{{ asset('public/js/my_js/warehouse.js?n=112') }}"></script>
 <script src="{{ asset('public/js/my_js/common.js?n=16') }}"></script>
 

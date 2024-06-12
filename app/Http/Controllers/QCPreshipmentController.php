@@ -308,8 +308,10 @@ class QCPreshipmentController extends Controller
                 Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
                     $message->to($to_email);
                     $message->cc($cc_email);
-                    $message->bcc('cpagtalunan@pricon.ph');
+                    // $message->bcc('cpagtalunan@pricon.ph');
                     $message->bcc('mrronquez@pricon.ph');
+                    $message->bcc('cbretusto@pricon.ph');
+
                     $message->subject("Online Preshipment QC Disapprove-".$packing_ctrl_num);
                 });
         
@@ -474,8 +476,10 @@ class QCPreshipmentController extends Controller
             Mail::send('mail.inpector_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
                 $message->to($to_email);
                 $message->cc($cc_email);
-                $message->bcc('cpagtalunan@pricon.ph');
+                // $message->bcc('cpagtalunan@pricon.ph');
                 $message->bcc('mrronquez@pricon.ph');
+                $message->bcc('cbretusto@pricon.ph');
+
                 $message->subject("Online Preshipment for PPS-WHSE Acceptance-".$packing_ctrl_num);
             });
     
@@ -547,8 +551,10 @@ class QCPreshipmentController extends Controller
             Mail::send('mail.inpector_notification_ext', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
                 $message->to($to_email);
                 $message->cc($cc_email);
-                $message->bcc('cpagtalunan@pricon.ph');
+                // $message->bcc('cpagtalunan@pricon.ph');
                 $message->bcc('mrronquez@pricon.ph');
+                $message->bcc('cbretusto@pricon.ph');
+
                 $message->subject("Online Preshipment Inspector Approval-".$packing_ctrl_num);
             });
     
@@ -586,12 +592,19 @@ class QCPreshipmentController extends Controller
     
     //change 07/14/2022
     public function get_Preshipment_done(Request $request){
-        $preshipment = RapidPreshipment::with([
-            'rapidx_preshipment_app_details'
-        ])
-        ->where('rapidx_QCChecking',2)
-        ->orderBy('id', 'DESC')
+        // $preshipment = RapidPreshipment::with([
+        //     'rapidx_preshipment_app_details'
+        // ])
+        // ->where('rapidx_QCChecking',2)
+        // ->orderBy('id', 'DESC')
+        // ->where('logdel', 0)
+        // ->get();
+        $preshipment = DB::connection('mysql_rapid')
+        ->table('tbl_PreShipment')
+        ->whereBetween('Date', [$request->dateFrom, $request->dateTo])
+        ->where('rapidx_QCChecking', 2)
         ->where('logdel', 0)
+        ->limit(30)
         ->get();
 
         // $preshipment = DB::connection('mysql_rapid', 'mysql')
@@ -625,19 +638,26 @@ class QCPreshipmentController extends Controller
             // ->where('logdel', 0)
             // ->first();
 
+            $rapidx_preshipment = DB::connection('mysql')
+            ->table('preshipment_approvings')
+            ->where('fk_preshipment_id', $preshipment->id)
+            ->where('logdel', 0)
+            ->first();
+            
+
 
             $result .= "<center>";
             
             $result .= '<button class="btn btn-primary btn-sm btn-openshipment mr-1"  data-toggle="modal" data-target="#modalViewQCChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button>';
-            if($preshipment->rapidx_preshipment_app_details != null){
+            if($rapidx_preshipment != null){
                 $result .= '<div class="btn-group">
                 <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
                 <i class="fas fa-lg fa-file-download"></i>
                 </button>';
                     $result .= '<div class="dropdown-menu dropdown-menu-right">'; // dropdown-menu start
 
-                    $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->rapidx_preshipment_app_details->id.'" target="_blank">Export Excel</a>';
-                    $result .='<a class="dropdown-item text-center" href="pdf_export/'.$preshipment->rapidx_preshipment_app_details->id.'" target="_blank">Export PDF</a>';
+                    $result .='<a class="dropdown-item text-center" href="export_excel/'.$rapidx_preshipment->id.'" target="_blank">Export Excel</a>';
+                    $result .='<a class="dropdown-item text-center" href="pdf_export/'.$rapidx_preshipment->id.'" target="_blank">Export PDF</a>';
                     
                     $result .= '</div>'; // dropdown-menu end
                 $result .= '</div>';

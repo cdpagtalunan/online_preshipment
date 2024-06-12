@@ -98,7 +98,7 @@ class MailerController extends Controller
                 $message->attach($attachment_path);
                 $message->cc(['rnsunga@pricon.ph','kaapines@pricon.ph']);
                 $message->subject("ALERT !! -- CN Pending Preshipment! <Do Not Reply>");
-                $message->bcc('cpagtalunan@pricon.ph');
+                $message->bcc(['cbretusto@pricon.ph']);
             });
 
 
@@ -113,7 +113,7 @@ class MailerController extends Controller
                 $message->to($to_email_ts);
                 $message->cc(['rnsunga@pricon.ph','kaapines@pricon.ph']);
                 $message->attach($attachment_path);
-                $message->bcc('cpagtalunan@pricon.ph');
+                $message->bcc(['cbretusto@pricon.ph']);
                 $message->subject("ALERT !! -- TS Pending Preshipment! <Do Not Reply>");
             });
         }

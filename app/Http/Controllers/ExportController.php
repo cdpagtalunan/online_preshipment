@@ -47,6 +47,8 @@ class ExportController extends Controller
         ->orderBy('id')
         ->get();
 
+        // return $rapid_shipment_records;
+
         
         $date = date('Ymd',strtotime(NOW()));
         return Excel::download(new WbsExports($date,$rapid_shipment_records,$packing_list_ctrl_num,$packingListProductLine), 'wbs-upload.xlsx');
@@ -54,21 +56,72 @@ class ExportController extends Controller
 
     public function export_test(Request $request, $invoice_number, $packing_list_ctrl_num, $packingListProductLine){
 
-        $rapid_shipment_records = RapidShipmentRecord::selectRaw('*')
-        // ->groupBy('ControlNumber','ItemCode','LotNo')
+        // $rapid_shipment_records = RapidShipmentRecord::selectRaw('*')
+        // ->where('ControlNumber',$invoice_number)
+        // // ->groupBy('LotNo','ItemCode')
+        // ->orderBy('id')
+        // ->get();
+
+        $rapid_shipment_records = DB::connection('mysql_rapid')
+        ->table('vw_shipment_report')
+        ->select('*')
         ->where('ControlNumber',$invoice_number)
         ->orderBy('id')
         ->get();
 
+
+        // return $rapid_shipment_records;
+
+        // return $rapid_shipment_records;
         /* Old Code - 05032023 - Chris */
         // $rapid_shipment_records = RapidShipmentRecord::selectRaw('*, SUM(ShipoutQty) AS TotalShipoutQty')
         // ->groupBy('ControlNumber','ItemCode','LotNo')
         // ->where('ControlNumber',$invoice_number)
         // ->orderBy('id')
         // ->get();
+        // $test_array = array();
+        // $package_qty = "";
+        // // return $rapid_shipment_records;
+        // for($x = 0; $x < count($rapid_shipment_records); $x++){
+        //     $rapid_shipment_records1 = RapidShipmentRecord::selectRaw('*')
+        //     ->where('ControlNumber',$invoice_number)
+        //     ->where('LotNo', $rapid_shipment_records[$x]['LotNo'])
+        //     ->where('ItemCode', $rapid_shipment_records[$x]['ItemCode'])
+        //     ->orderBy('id')
+        //     ->get();
+
+        //     // dd($rapid_shipment_records1);
+        //     $counter = 0;
+        //     for($y = 0; $y < count($rapid_shipment_records1); $y++){
+        //         $package_qty = RapidPreshipmentList::where('fkControlNo', $packing_list_ctrl_num)
+        //         ->where('PONo',$rapid_shipment_records1[$y]['OrderNo'])
+        //         ->where('Partscode',$rapid_shipment_records1[$y]['ItemCode'])
+        //         ->where('LotNo',$rapid_shipment_records1[$y]['LotNo'])
+        //         ->where('Qty',$rapid_shipment_records1[$y]['ShipoutQty'])
+        //         ->where('logdel',0)
+        //         // ->sum('PackageQty');
+        //         ->first('PackageQty');
+
+        //         $exploded_pckage_qty = preg_split('/(-|~)/', $package_qty->PackageQty);
+        //         // dd($exploded_pckage_qty);
+
+        //         if(count($exploded_pckage_qty) > 1){
+        //             $counter = $counter + intval($exploded_pckage_qty[1]);
+        //         }
+        //         else{
+        //             $counter = $counter + 1;
+        //         }
+
+        //     }
+
+        //     $test_array[$rapid_shipment_records[$x]['LotNo']."_".$rapid_shipment_records[$x]['ItemCode']] = $rapid_shipment_records1;
+        //     $test_array[$rapid_shipment_records[$x]['LotNo']."_".$rapid_shipment_records[$x]['ItemCode']."_counter"] = $counter;
+        // }
 
         
         $date = date('Ymd',strtotime(NOW()));
+        // return $test_array;
+        // return Excel::download(new WbsExports_newformat($date,$rapid_shipment_records,$packing_list_ctrl_num,$packingListProductLine, $test_array), 'wbs-upload.xlsx');
         return Excel::download(new WbsExports_newformat($date,$rapid_shipment_records,$packing_list_ctrl_num,$packingListProductLine), 'wbs-upload.xlsx');
     }
 

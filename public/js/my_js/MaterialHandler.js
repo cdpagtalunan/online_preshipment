@@ -172,23 +172,21 @@ function itemVerification(arr){
 
             var hdInputVal = $(tr).find('td:eq(14)').text().trim();
             var hdStampingVal = $(tr).find('td:eq(15)').text().trim();
-            let test;
+            let tempDrawingRev;
 
-            // var hdInputVal = tr1.getElementsByTagName("td")[11].innerHTML;
-            // console.log("arr[7].trim()-",arr[7].trim());
-            // console.log("arr[8].trim()-",arr[8]);
-            // console.log(drawing_no);
-            // console.log("drawing_rev_no-",drawing_rev_no);
+            // console.log( $(tr).find('td') );
             if(arr[8] == undefined){
-                test = arr[8];
+                tempDrawingRev = arr[8];
             }
             else{
-                test = arr[8].trim();
+                tempDrawingRev = arr[8].trim();
             }
 
-            // console.log(arr[7].trim());
+
+
             var checkedOk = $(tr).hasClass('checked-ok');
-            console.log(checkedOk);
+            // console.log(`${po_num}, ${partcode}, ${device_name}, ${lot_no},${qty},${package_category},${arr[7].trim()}`);
+            // console.log(`${arr[0].trim()}, ${arr[1].trim()}, ${arr[2].trim()}, ${arr[3].trim()},${arr[4].trim()},${arr[5].trim()},${drawing_no.trim()}`);
             if(
                 arr[0].trim() == po_num &&
                 arr[1].trim() == partcode &&
@@ -197,7 +195,7 @@ function itemVerification(arr){
                 arr[4].trim() == qty && 
                 arr[5].trim() == package_category && 
                 (arr[7].trim() == drawing_no.trim() || arr[7].trim() == ',' || arr[7].trim() == "-") && 
-                (test == drawing_rev_no || test == undefined || test == "-")
+                (tempDrawingRev == drawing_rev_no || tempDrawingRev == undefined || tempDrawingRev == "-")
             ){
                 // console.log('qweqwe');
                 check_data = true;
@@ -234,7 +232,7 @@ function itemVerification(arr){
                                 
                                 let hiddenColumnId = $(tr).find('td:eq(1)').text();
     
-                                // console.log('test',hiddenColumnId);
+                                // console.log('tempDrawingRev',hiddenColumnId);
     
                                 $('#toScrollId').attr('href', "#"+hiddenColumnId);
     

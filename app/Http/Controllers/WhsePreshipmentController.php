@@ -350,7 +350,9 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.from_whse_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line_details){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment for ".$product_line_details."-WHSE Acceptance-".$packing_ctrl_num);
         });
 
@@ -378,6 +380,21 @@ class WhsePreshipmentController extends Controller
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
         ->where('logdel',0)
         ->get();
+        
+        $send_to = "";
+        if($user_details[0]->department == "TS WHSE"){
+            $send_to = "ts";
+            // array_push($dept_array,'ts');
+            // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        }
+        else if($user_details[0]->department == "CN WHSE"){
+            $send_to = "cn";
+            // array_push($dept_array,'cn');
+            // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        }
+        else{
+            $send_to = "";
+        }
 
         $whse_preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval'
@@ -386,6 +403,7 @@ class WhsePreshipmentController extends Controller
         // ->whereIn('status', [1,2,3,4])
         ->whereIn('status', [1,2,3]) //change 07/13/2022
         ->orderBy('fk_preshipment_id', 'ASC')
+        ->where('send_to', 'LIKE', "%$send_to%")
         ->where('logdel', 0)
         ->get();
 
@@ -627,7 +645,9 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.receiver_whse_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment for Material Handler Invoice-".$packing_ctrl_num);
         });
 
@@ -790,8 +810,10 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.done_upload_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line_details){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment for Superior's Approval-".$packing_ctrl_num);
         });
 
@@ -938,8 +960,10 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.superior_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$product_line_details){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment ".$product_line_details."-WHSE Superior Approval-".$packing_ctrl_num);
         });
 
@@ -1017,8 +1041,10 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$packing_ctrl_num){
             $message->to($to_email);
             // $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment Supervisor Disapprove-".$packing_ctrl_num);
         });
 
@@ -1071,19 +1097,36 @@ class WhsePreshipmentController extends Controller
         date_default_timezone_set('Asia/Manila');
         session_start();
 
+        
         $user_details = UserAccess::with([
             'rapidx_user_details'
         ])
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
         ->where('logdel',0)
         ->get();
+        
+        $send_to = "";
 
+        if($user_details[0]->department == "TS WHSE"){
+            $send_to = "ts";
+            // array_push($dept_array,'ts');
+            // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        }
+        else if($user_details[0]->department == "CN WHSE"){
+            $send_to = "cn";
+            // array_push($dept_array,'cn');
+            // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        }
+        else{
+            $send_to = "";
+        }
         $whse_preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval'
             'preshipment',
         ])
         ->whereIn('status', [3])
         ->orderBy('id', 'ASC')
+        ->where('send_to',"LIKE", "%$send_to%")
         ->where('logdel', 0)
         ->get();
 
@@ -1098,35 +1141,35 @@ class WhsePreshipmentController extends Controller
         // }
 
 
-        $dept_array = array();
-        if(count($user_details) > 1){
-            for($x = 0; $x<count($user_details);$x++){
-                if($user_details[$x]->department == "TS WHSE"){
-                    // return "ts";
-                    array_push($dept_array,'ts');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-                }
-                if($user_details[$x]->department == "CN WHSE"){
-                    // return "cn";
-                    array_push($dept_array,'cn');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-                }
-            }
+        // $dept_array = array();
+        // if(count($user_details) > 1){
+        //     for($x = 0; $x<count($user_details);$x++){
+        //         if($user_details[$x]->department == "TS WHSE"){
+        //             // return "ts";
+        //             array_push($dept_array,'ts');
+        //             // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        //         }
+        //         if($user_details[$x]->department == "CN WHSE"){
+        //             // return "cn";
+        //             array_push($dept_array,'cn');
+        //             // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        //         }
+        //     }
 
-            $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
-        }
-        else{
-            if($user_details[0]->department == "TS WHSE"){
-                // return "ts";
-                // array_push($dept_array,'ts');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-            }
-            if($user_details[0]->department == "CN WHSE"){
-                // return "cn";
-                // array_push($dept_array,'cn');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-            }
-        }
+        //     $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
+        // }
+        // else{
+        //     if($user_details[0]->department == "TS WHSE"){
+        //         // return "ts";
+        //         // array_push($dept_array,'ts');
+        //         $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        //     }
+        //     if($user_details[0]->department == "CN WHSE"){
+        //         // return "cn";
+        //         // array_push($dept_array,'cn');
+        //         $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        //     }
+        // }
 
         // return $dept_array;
 
@@ -1217,8 +1260,10 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment PPS WHSE Disapprove-".$packing_ctrl_num);
         });
 
@@ -1288,8 +1333,10 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$department){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Online Preshipment ".$department." Disapprove-".$packing_ctrl_num);
         });
 
@@ -1324,7 +1371,22 @@ class WhsePreshipmentController extends Controller
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
         ->where('logdel',0)
         ->get();
-
+        $send_to = "";
+        if($user_details[0]->department == "TS WHSE"){
+            $send_to = "ts";
+            // array_push($dept_array,'ts');
+            // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        }
+        else if($user_details[0]->department == "CN WHSE"){
+            $send_to = "cn";
+            // array_push($dept_array,'cn');
+            // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        }
+        else{
+            $send_to = "";
+        }
+        
+        // return $send_to;
         $whse_preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval'
             'preshipment'
@@ -1333,11 +1395,12 @@ class WhsePreshipmentController extends Controller
         ->whereIn('status', [4])
         // ->orderByRaw('ISNULL(remarks)', 'DESC')
         ->orderBy('fk_preshipment_id', 'DESC')
+        ->where('send_to','LIKE', "%$send_to%")
         ->where('logdel', 0)
         ->get();
 
 
-        $whse_preshipment = collect($whse_preshipment);
+        // $whse_preshipment = collect($whse_preshipment);
 
 
         // if($user_details->department == "TS WHSE"){
@@ -1349,35 +1412,35 @@ class WhsePreshipmentController extends Controller
         //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
         // }
 
-        $dept_array = array();
-        if(count($user_details) > 1){
-            for($x = 0; $x<count($user_details);$x++){
-                if($user_details[$x]->department == "TS WHSE"){
-                    // return "ts";
-                    array_push($dept_array,'ts');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-                }
-                if($user_details[$x]->department == "CN WHSE"){
-                    // return "cn";
-                    array_push($dept_array,'cn');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-                }
-            }
-            $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
+        // $dept_array = array();
+        // if(count($user_details) > 1){
+        //     for($x = 0; $x<count($user_details);$x++){
+        //         if($user_details[$x]->department == "TS WHSE"){
+        //             // return "ts";
+        //             array_push($dept_array,'ts');
+        //             // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        //         }
+        //         if($user_details[$x]->department == "CN WHSE"){
+        //             // return "cn";
+        //             array_push($dept_array,'cn');
+        //             // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        //         }
+        //     }
+        //     $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
 
-        }
-        else{
-            if($user_details[0]->department == "TS WHSE"){
-                // return "ts";
-                // array_push($dept_array,'ts');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
-            }
-            if($user_details[0]->department == "CN WHSE"){
-                // return "cn";
-                // array_push($dept_array,'cn');
-                $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
-            }
-        }
+        // }
+        // else{
+        //     if($user_details[0]->department == "TS WHSE"){
+        //         // return "ts";
+        //         // array_push($dept_array,'ts');
+        //         $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
+        //     }
+        //     if($user_details[0]->department == "CN WHSE"){
+        //         // return "cn";
+        //         // array_push($dept_array,'cn');
+        //         $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+        //     }
+        // }
 
         // return $dept_array;
 
@@ -1511,8 +1574,10 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.invalid_scan_mail', $data, function($message) use ($to_email){
             $message->to($to_email);
             // $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Invalid Scanning Alert");
         });
         return response()->json(['result' => 1]);

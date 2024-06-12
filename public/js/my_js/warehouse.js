@@ -481,6 +481,11 @@ function getPreshipmentDetailsForUpload(id){
             id: id
         },
         dataType: "json",
+        beforeSend: function(){
+            // $('#btnDownloadForWbsTS').addClass('d-none');
+            // $('#btnDownloadForWbs').addClass('d-none');
+
+        },
         success: function(response){
 
             $('#txtApprovingID').val(response['approvingDetails']['id']);
@@ -500,12 +505,15 @@ function getPreshipmentDetailsForUpload(id){
 
             // $('#txtApprovingInvoinceNo').val(response['approvingDetails']['preshipment_for_approval']['packing_list_ctrlNo']);
             
+
+            // if(response['approvingDetails']['send_to'] == "ts"){
+            //     $('#btnDownloadForWbsTS').removeClass('d-none');
+            // }
+            // else{
+            //     $('#btnDownloadForWbs').removeClass('d-none');
+
+            // }
             dataTableWhsePreshipmentListForUpload.draw();
-
-
-            
-            
-            
         },
     });
 }

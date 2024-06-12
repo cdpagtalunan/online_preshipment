@@ -290,8 +290,9 @@ class MHPreshipmentController extends Controller
         Mail::send('mail.material_handler_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
             $message->to($to_email);
             $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
             $message->subject("Online Preshipment for Inspection-".$packing_ctrl_num);
         });
     
@@ -527,8 +528,10 @@ class MHPreshipmentController extends Controller
         Mail::send('mail.invalid_scan_mail', $data, function($message) use ($to_email){
             $message->to($to_email);
             // $message->cc($cc_email);
-            $message->bcc('cpagtalunan@pricon.ph');
+            // $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
+            $message->bcc('cbretusto@pricon.ph');
+
             $message->subject("Invalid Scanning Alert");
         });
 
