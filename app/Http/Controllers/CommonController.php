@@ -59,7 +59,7 @@ class CommonController extends Controller
 
                 for($x = 1; $x<=$exploded_last_index; $x++){
 
-                    $package_qty_for_hidden_scan .= $x."/".$exploded_last_index."";
+                    $package_qty_for_hidden_scan .= $x."/".$exploded_last_index." ";
                 }
                 $result .= $package_qty_for_hidden_scan;
             }

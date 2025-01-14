@@ -80,6 +80,24 @@
                                 </div>
 
                                 <div class="tab-pane fade show " id="whse-done-user" role="tabpanel" aria-labelledby="whse-user-done-tab">
+                                    <div class="row mt-1">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Set Date Done</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="dateFrom">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">-</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="dateTo">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-secondary" type="button"
+                                                        id="btnSearchDone"><i class="fas fa-search"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table responsive mt-2">
                                         <table id="tbl_whse_done_preshipment" class="table table-sm table-bordered table-striped table-hover dt-responsive wrap" style="width: 100%; min-width: 10%">
                                             <thead>
@@ -91,6 +109,7 @@
                                                     <th>Invoice Number</th>
                                                     <th>Shipment Date</th>
                                                     <th>Destination</th>
+                                                    <th>Date/Time Done</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -1705,8 +1724,16 @@ $(document).ready(function () {
         });
     });
 
+    $('#btnSearchDone').on('click', function(){
+        drawDoneTable();
+    })
+
     $('#whse-user-done-tab').on('click', function(){
-        // change 07/13/2022
+        drawDoneTable();
+    });
+
+    function drawDoneTable(){
+         // change 07/13/2022
         dataTableWhseDone = $("#tbl_whse_done_preshipment").DataTable({
             "processing": true,
             "serverSide": true,
@@ -1714,6 +1741,10 @@ $(document).ready(function () {
             "bDestroy": true,
             "ajax": {
                 url: "get_preshipment_done",
+                data: function (param){
+                    param.dateTo = $("#dateTo").val();
+                    param.dateFrom = $("#dateFrom").val();
+                }
             },
             "columns": [{
                     "data": "status"
@@ -1738,13 +1769,17 @@ $(document).ready(function () {
                     "data": "preshipment.Destination"
                 },
                 {
+                    "data": "whse_superior_noter_date_time"
+                },
+                {
                     "data": "action"
                 },
                 //   { "data" : "action"},
 
             ],
         });
-    });
+    }
+   
 });
 </script>
 @endsection

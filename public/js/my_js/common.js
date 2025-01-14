@@ -44,7 +44,7 @@ function verifyUser(loginUserId){
                             $('#divPPSWarehouseId').css('display','block');
                             $('#h-pps-whse').css('display','block');
                         }
-                        if(response['userDetails'][x]['department'] == 'TS WHSE' || response['userDetails'][x]['department'] == 'CN WHSE'){
+                        if(response['userDetails'][x]['department'] == 'TS WHSE' || response['userDetails'][x]['department'] == 'CN WHSE' || response['userDetails'][x]['department'] == 'TS/CN WHSE'){
                             if(response['userDetails'][x]['approver'] == 1){
                                 $('#whse-approver-tab').css('display','block');
                             }

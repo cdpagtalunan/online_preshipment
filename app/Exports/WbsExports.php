@@ -85,7 +85,6 @@ class WbsExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
 
                 for($i = 0; $i<count($rapid_shipment_records1); $i++){
 
-
                     $event->sheet->setCellValue('A'.$colno, $this->return_whse_receive_num($rapid_shipment_records1[$i]['ControlNumber'],$packingListProductLine));
                     $event->sheet->setCellValue('B'.$colno,$rapid_shipment_records1[$i]['ControlNumber']);
                     $event->sheet->setCellValueExplicit('C'.$colno, $rapid_shipment_records1[$i]['ItemCode'],DataType::TYPE_STRING);
@@ -97,14 +96,6 @@ class WbsExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
                     $event->sheet->setCellValue('H'.$colno,'PPS');
                     $event->sheet->setCellValue('I'.$colno,$this->return_iqc_matix( $rapid_shipment_records1[$i]['ItemCode']));
                     $event->sheet->setCellValue('J'.$colno,$rapid_shipment_records1[$i]['DateIssued']);
-
-                    
-
-
-
-
-
-
                     
                     $colno++;
                 }
@@ -130,8 +121,14 @@ class WbsExports implements  FromView, WithTitle, WithEvents, ShouldAutoSize
         ->offset(0)
         ->limit(1)
         ->get();
+        if(count($package_category) > 0){
+            return $package_category[0]['PackageCategory'];
 
-        return $package_category[0]['PackageCategory'];
+        }
+        // if($package_category){
+
+        // }
+        return 'Please check invoice';
         // return $package_category;
     }
 

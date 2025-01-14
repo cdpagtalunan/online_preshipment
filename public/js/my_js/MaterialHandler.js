@@ -304,7 +304,7 @@ function itemVerification(arr){
     
                                 let replacedInputVal = "";
     
-                                replacedInputVal = hdInputVal.replace(arr[6].trim(),'');
+                                replacedInputVal = hdInputVal.replace(`${arr[6].trim()}`,'');
                                 console.log(hdInputVal);
                                 console.log(replacedInputVal);
                                 $(tr).find('td:eq(14)').text(replacedInputVal);

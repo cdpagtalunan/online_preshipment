@@ -27,6 +27,6 @@
 
 {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css"> --}}
 
-<link href="{{ asset('public/css/flash.css') }}" rel="stylesheet">
+{{-- <link href="{{ asset('public/css/flash.css') }}" rel="stylesheet"> --}}
 
 <link href="{{ asset('public/css/custom.css?n=3') }}" rel="stylesheet">

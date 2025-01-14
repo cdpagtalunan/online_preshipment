@@ -120,6 +120,7 @@
                     <option value="PPS WHSE">PPS WHSE</option>
                     <option value="TS WHSE">TS WHSE</option>
                     <option value="CN WHSE">CN WHSE</option>
+                    <option value="TS/CN WHSE">TS/CN WHSE</option>
 
                   </select>
                 </div>
@@ -300,7 +301,7 @@
     
     $('#selectUserDeparment').on('change', function(){
       let userDepartment = $('#selectUserDeparment').val();
-      if(userDepartment == 'TS WHSE' || userDepartment ==  'CN WHSE'){
+      if(userDepartment == 'TS WHSE' || userDepartment ==  'CN WHSE' || userDepartment ==  'TS/CN WHSE'){
         $("#divCheckboxApprover").css('display', 'block');
       }
       else{
