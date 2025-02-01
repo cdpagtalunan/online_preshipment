@@ -30,13 +30,13 @@ class MHPreshipmentController extends Controller
     public function get_Preshipment(){
         $preshipment = RapidPreshipment::where('rapidx_MHChecking','0')
         // ->orWhere('rapidx_QCChecking', 1)
-        ->where('grinding','0') 
+        ->where('grinding','0')
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
         ->get();
-      
+
         return DataTables::of($preshipment)
-        ->addColumn('status', function($preshipment){ 
+        ->addColumn('status', function($preshipment){
             $result = "<center>";
             if($preshipment->rapidx_MHChecking == 0){
                 $result .='<span class="badge badge-warning">For MH Checking</span>';
@@ -61,7 +61,7 @@ class MHPreshipmentController extends Controller
             // if($preshipment->rapidx_QCChecking == 1){
             //     $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
             // }
-         
+
             // $result .= $preshipment->Packing_List_CtrlNo;
 
             return $result;
@@ -98,7 +98,7 @@ class MHPreshipmentController extends Controller
     //     $rapid_preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlNo)
     //     ->where('logdel', 0)
     //     ->first();
-      
+
     //     // return $rapid_preshipment;
     //     return DataTables::of($preshipment_list)
 
@@ -150,7 +150,7 @@ class MHPreshipmentController extends Controller
     //         if($rapid_preshipment->Stamping == 1){
     //             $result .= "stamping";
     //         }
-            
+
     //         return $result;
     //     })
     //     ->addcolumn('drawing_no', function($preshipment) use ($rapid_preshipment){
@@ -169,9 +169,9 @@ class MHPreshipmentController extends Controller
     //             if(isset($stamping)){
     //                 $result .= $stamping->drawing_no;
     //             }
-              
+
     //         }
-            
+
     //         return $result;
     //     })
     //     ->addcolumn('rev', function($preshipment) use ($rapid_preshipment){
@@ -193,7 +193,7 @@ class MHPreshipmentController extends Controller
     //                 // $result .= $stamping->drawing_no;
     //             }
     //         }
-          
+
     //         return $result;
     //     })
     //     /* old code */
@@ -217,20 +217,20 @@ class MHPreshipmentController extends Controller
     //     // })
     //     ->rawColumns(['hide_input', 'hide_stamping','drawing_no', 'rev'])
     //     ->make(true);
-        
+
 
     // }
 
     public function disapprove_list(Request $request){
         date_default_timezone_set('Asia/Manila');
-       
+
             try{
                 RapidPreshipment::where('Packing_List_CtrlNo', $request->packingCtrlNo)
                 ->update([ // The update method expects an array of column and value pairs representing the columns that should be updated.
                     'rapidx_MHChecking' => '2',
                     'has_invalid'       => '0'
                 ]);
-                
+
                 return response()->json(['result' => "1"]);
 
 
@@ -238,7 +238,7 @@ class MHPreshipmentController extends Controller
                 return $test;
             }
             catch(\Exception $e) {
-               
+
                 return response()->json(['result' => "0", 'tryCatchError' => $e->getMessage()]);
             }
     }
@@ -252,7 +252,7 @@ class MHPreshipmentController extends Controller
             'has_invalid'       => '0'
 
         ]);
-    
+
         $get_to_emails = UserAccess::where('department', 'inspector')
         ->where('logdel',0)
         ->get();
@@ -260,7 +260,7 @@ class MHPreshipmentController extends Controller
         $get_cc_emails = UserAccess::where('department', 'material handler')
         ->where('logdel',0)
         ->get();
-        
+
         $to_email = array();
         $cc_email = array();
 
@@ -271,14 +271,14 @@ class MHPreshipmentController extends Controller
             $cc_email[] = $get_cc_email->email;
         }
 
-        
+
         // $to_email = ['cbretusto@pricon.ph'];
         // $cc_email = ['cpagtalunan@pricon.ph'];
         // return $cc_email;
 
         $data = array(
-            'packingCtrlNo' => $request->packingCtrlNo, 
-            'packingDate' => $request->packingDate, 
+            'packingCtrlNo' => $request->packingCtrlNo,
+            'packingDate' => $request->packingDate,
             'packingDestination' => $request->packingDestination,
             'packingShipmentDate' => $request->packingShipmentDate,
             'packingStation' => $request->packingStation,
@@ -295,7 +295,7 @@ class MHPreshipmentController extends Controller
             $message->bcc('cbretusto@pricon.ph');
             $message->subject("Online Preshipment for Inspection-".$packing_ctrl_num);
         });
-    
+
         // if (Mail::failures()) {
         //     return response()->json(['result' => 0]);
         //     // return Mail::failures()[0];
@@ -308,9 +308,9 @@ class MHPreshipmentController extends Controller
     }
 
     // Function to get internal preshipment for MH
-    public function get_for_whse_transaction(){
+    public function get_for_whse_transaction(){ //nmodify
 
-        // $mh_whse_transaction = 
+        // $mh_whse_transaction =
         $preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval',
             'preshipment',
@@ -325,13 +325,13 @@ class MHPreshipmentController extends Controller
         // ->get();
 
         // return $preshipment;
-      
+
         return DataTables::of($preshipment)
         ->addColumn('action', function($preshipment) {
             $result = "";
             $result .= "<center>";
             $result .= '<button class="btn btn-primary btn-sm btn-openshipmentWhse mr-1"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->preshipment->Packing_List_CtrlNo.'" title="View Preshipment"><i class="fa fa-eye"></i></button>';
-            
+
             $result .= '<div class="btn-group">
             <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
             <i class="fas fa-lg fa-file-download"></i>
@@ -340,11 +340,11 @@ class MHPreshipmentController extends Controller
 
                 $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->id.'" target="_blank">Export Excel</a>';
                 $result .='<a class="dropdown-item text-center" href="pdf_export/'.$preshipment->id.'" target="_blank">Export PDF</a>';
-                
+
                 $result .= '</div>'; // dropdown-menu end
             $result .= '</div>';
-            
-            
+
+
             $result .= "</center>";
 
 
@@ -378,12 +378,12 @@ class MHPreshipmentController extends Controller
             $result .="</center>";
 
             return $result;
-        })  
+        })
         ->rawColumns(['action','status'])
         ->make(true);
     }
 
-    public function get_for_whse_ext_transaction(Request $request){
+    public function get_for_whse_ext_transaction(Request $request){ //nmodify
         $preshipment = PreshipmentApproving::with([
             // 'Preshipment_for_approval',
             'preshipment',
@@ -397,13 +397,13 @@ class MHPreshipmentController extends Controller
         // ->get();
 
         // return $preshipment;
-      
+
         return DataTables::of($preshipment)
         ->addColumn('action', function($preshipment) {
             $result = "";
             $result .= "<center>";
             $result .= '<button class="btn btn-primary btn-sm btn-openshipmentWhse mr-1"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->preshipment->Packing_List_CtrlNo.'" title="View Preshipment"><i class="fa fa-eye"></i></button>';
-            
+
             $result .= '<div class="btn-group">
             <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
             <i class="fas fa-lg fa-file-download"></i>
@@ -412,11 +412,11 @@ class MHPreshipmentController extends Controller
 
                 $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->id.'" target="_blank">Export Excel</a>';
                 $result .='<a class="dropdown-item text-center" href="pdf_export/'.$preshipment->id.'" target="_blank">Export PDF</a>';
-                
+
                 $result .= '</div>'; // dropdown-menu end
             $result .= '</div>';
-            
-            
+
+
             $result .= "</center>";
 
 
@@ -430,7 +430,7 @@ class MHPreshipmentController extends Controller
             $result .="</center>";
 
             return $result;
-        })  
+        })
         ->rawColumns(['action','status'])
         ->make(true);
     }
@@ -442,7 +442,7 @@ class MHPreshipmentController extends Controller
         ->orderBy('id', 'DESC')
         ->where('logdel', 0)
         ->get();
-      
+
         return DataTables::of($preshipment)
         ->addColumn('status', function($preshipment){
             $result = "<center>";
@@ -469,7 +469,7 @@ class MHPreshipmentController extends Controller
             if($preshipment->rapidx_QCChecking == 1){
                 $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button></center>';
             }
-         
+
             // $result .= $preshipment->Packing_List_CtrlNo;
 
             return $result;
@@ -481,7 +481,7 @@ class MHPreshipmentController extends Controller
     public function insert_preshimentlist_from_mh_qr_checking(Request $request){
         $data = $request->all();
 
-        												
+
         MhPreshipmentCheck::insert([
             'fkControlNo' => $request->preshipment_ctrl_no,
             'PONo' => $request->po_num,
@@ -501,7 +501,7 @@ class MHPreshipmentController extends Controller
         ->update([
             'has_invalid' => 1
         ]);
-        
+
         $to_email = array();
 
         if($request->from == 'MH'){
@@ -520,7 +520,7 @@ class MHPreshipmentController extends Controller
         foreach($get_user_email as $email){
             $to_email[] = $email->email;
         }
-        
+
         $data = array(
             'invalid_from' => $request->from
         );
@@ -554,7 +554,7 @@ class MHPreshipmentController extends Controller
         })
         ->addColumn('action', function($preshipment) {
             $result = "";
-            
+
             $result .= '<center><button class="btn btn-primary btn-sm btn-openshipment mr-1"  data-toggle="modal" data-target="#modalViewMaterialHandler" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button>';
             $result .= '<div class="btn-group">
             <button type="button" class="btn btn-secondary mr-1 dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exports">
@@ -564,7 +564,7 @@ class MHPreshipmentController extends Controller
 
                 // $result .='<a class="dropdown-item text-center" href="export_excel/'.$preshipment->id.'" target="_blank">Export Excel</a>';
                 $result .='<a class="dropdown-item text-center" href="pdf_export_grinding/'.$preshipment->id.'" target="_blank">Export PDF</a>';
-                
+
                 $result .= '</div>'; // dropdown-menu end
             $result .= '</div>';
             $result .= '</center>';

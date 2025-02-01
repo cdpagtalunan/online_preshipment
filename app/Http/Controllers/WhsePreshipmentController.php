@@ -380,7 +380,7 @@ class WhsePreshipmentController extends Controller
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
         ->where('logdel',0)
         ->get();
-        
+
         $send_to = "";
         if($user_details[0]->department == "TS WHSE"){
             $send_to = "ts";
@@ -571,7 +571,7 @@ class WhsePreshipmentController extends Controller
         /*
             * This will identify PO No. of preshipment list if its CN-WHSE-*** or TS-WHSE-*** or WHSE-****
         */
-        $internal_invoice_check = array("TS","WH","CN"); 
+        $internal_invoice_check = array("TS","WH","CN", "F3");
 
         $array_database_val = array(
             'to_whse_noter' => $_SESSION['rapidx_user_id'],
@@ -1097,14 +1097,14 @@ class WhsePreshipmentController extends Controller
         date_default_timezone_set('Asia/Manila');
         session_start();
 
-        
+
         $user_details = UserAccess::with([
             'rapidx_user_details'
         ])
         ->where('rapidx_id',$_SESSION['rapidx_user_id'])
         ->where('logdel',0)
         ->get();
-        
+
         $send_to = "";
 
         if($user_details[0]->department == "TS WHSE"){
@@ -1371,7 +1371,7 @@ class WhsePreshipmentController extends Controller
         ->get();
         $send_to = "";
 
-        
+
         if($user_details[0]->department == "TS WHSE"){
             $send_to = "ts";
         }
@@ -1381,7 +1381,7 @@ class WhsePreshipmentController extends Controller
         else{
             $send_to = "";
         }
-        
+
         $whse_preshipment = PreshipmentApproving::with([
             'preshipment'
         ])
@@ -1393,7 +1393,7 @@ class WhsePreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
 
-        
+
         // $whse_preshipment = collect($whse_preshipment)->whereBetween('preshipment.Date', [$request->dateFrom, $request->dateTo])->flatten(1);
         return DataTables::of($whse_preshipment)
         ->addColumn('preshipment_ctrl_num', function($whse_preshipment){

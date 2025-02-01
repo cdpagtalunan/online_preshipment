@@ -358,7 +358,8 @@ class QCPreshipmentController extends Controller
             "TC/DC Connector",
             "Flexicon & TC/DC Connectors",
             "CN171 Connector",
-            "Battery Connector - Stamping"
+            "Battery Connector - Stamping",
+            "Flexicon & Others - Stamping"
         );
         
         // $destination_check = array("Burn-in Sockets","Grinding","Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");// will check if the preshipment is an internal shipment of external shipment
