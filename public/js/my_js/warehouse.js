@@ -70,8 +70,8 @@ function getPreshipmentDetailsForApproval(preshipmentId){
             $('#txtAcceptShipDestination').val(response['result']['preshipment']['Destination']);
             $('#txtAcceptShipQcChecker').val(response['result']['qc_approver_details']['rapidx_user_details']['name']);
 
-            var ts = ["Burn-in Sockets","Grinding","Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
-            var cn = ["Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector", "Flexicon & TC/DC Connectors","CN171 Connector","Flexicon & Others - Stamping", 'Battery Connector - Stamping'];
+            // var ts = ["Burn-in Sockets","Grinding","Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
+            // var cn = ["Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector", "Flexicon & TC/DC Connectors","CN171 Connector","Flexicon & Others - Stamping", 'Battery Connector - Stamping'];
             
             /*
                 var ts = ["Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
@@ -87,11 +87,11 @@ function getPreshipmentDetailsForApproval(preshipmentId){
                     * Check if the destination is in the array of ts or cn
                    
                 */
-                if(ts.includes(response['result']['preshipment']['Destination'])){
+                if(response.destination.destination_whse_section == 'ts'){
                     console.log('ts', response['result']['preshipment']['Destination']);
                     $('#txtAcceptShipSendTo').val('ts').trigger('change');
                 }
-                else if(cn.includes(response['result']['preshipment']['Destination'])){
+                else if(response.destination.destination_whse_section == 'cn'){
                     console.log('ts',response['result']['preshipment']['Destination']);
                     $('#txtAcceptShipSendTo').val('cn').trigger('change');
                 }
