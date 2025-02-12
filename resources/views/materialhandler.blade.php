@@ -107,6 +107,24 @@
                     </div>
 
                     <div class="tab-pane fade" id="MH-int-whse" role="tabpanel" aria-labelledby="MH-whse-int-tab">
+                      <div class="row mt-2">
+                          <div class="col-md-6">
+                              <div class="input-group">
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text">Set Date</span>
+                                  </div>
+                                  <input type="date" class="form-control" id="dateFrom">
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text">-</span>
+                                  </div>
+                                  <input type="date" class="form-control" id="dateTo">
+                                  <div class="input-group-append">
+                                      <button class="btn btn-secondary" type="button" id="btnSearchDone"><i
+                                              class="fas fa-search"></i></button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                       <div class="table responsive mt-2">
                           <table id="tbl_whse_int_transaction" class="table table-sm table-bordered table-striped table-hover dt-responsive nowrap" style="width: 100%; min-width: 10%">
                               <thead>
@@ -635,27 +653,27 @@
       }],
     });
 
-    //datatable for internal transaction
-    dataTableForWhse = $("#tbl_whse_int_transaction").DataTable({
-      "processing" : false,
-      "serverSide" : true,
-      // "paging"     : false,
-      "ordering"   : false,
-      "ajax" : {
-          url: "get_for_whse_transaction", 
-      },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "rapid_invoice_number"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "action"},
+    // //datatable for internal transaction
+    // dataTableForWhse = $("#tbl_whse_int_transaction").DataTable({
+    //   "processing" : false,
+    //   "serverSide" : true,
+    //   // "paging"     : false,
+    //   "ordering"   : false,
+    //   "ajax" : {
+    //       url: "get_for_whse_transaction", 
+    //   },
+    //   "columns":[    
+    //       { "data" : "status"},
+    //       { "data" : "preshipment.Date" },
+    //       { "data" : "preshipment.Station" },
+    //       { "data" : "preshipment.Packing_List_CtrlNo"},
+    //       { "data" : "rapid_invoice_number"},
+    //       { "data" : "preshipment.Shipment_Date"},
+    //       { "data" : "preshipment.Destination"},
+    //       { "data" : "action"},
           
-      ],
-    });
+    //   ],
+    // });
 
     //datatable for external transaction
     dataTableForWhseExt = $("#tbl_whse_ext_transaction").DataTable({
@@ -948,8 +966,40 @@
       }
     });
 
-
+    $('#btnSearchDone').on('click', function(){
+      drawInternalTable();
+    });
   });
+
+  function drawInternalTable(){
+    //datatable for internal transaction
+    dataTableForWhse = $("#tbl_whse_int_transaction").DataTable({
+      "processing" : false,
+      "serverSide" : true,
+      // "paging"     : false,
+      "ordering"   : false,
+      "bDestroy": true,
+      "ajax" : {
+          url: "get_for_whse_transaction", 
+          data: function (param){
+              param.dateTo = $("#dateTo").val();
+              param.dateFrom = $("#dateFrom").val();
+          }
+
+      },
+      "columns":[    
+          { "data" : "status"},
+          { "data" : "preshipment.Date" },
+          { "data" : "preshipment.Station" },
+          { "data" : "preshipment.Packing_List_CtrlNo"},
+          { "data" : "rapid_invoice_number"},
+          { "data" : "preshipment.Shipment_Date"},
+          { "data" : "preshipment.Destination"},
+          { "data" : "action"},
+          
+      ],
+    });
+  }
 
 </script>
 

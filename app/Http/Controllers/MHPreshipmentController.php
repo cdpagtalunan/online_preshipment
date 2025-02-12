@@ -308,10 +308,11 @@ class MHPreshipmentController extends Controller
     }
 
     // Function to get internal preshipment for MH
-    public function get_for_whse_transaction(){ //nmodify
+    public function get_for_whse_transaction(Request $request){ //nmodify
 
         // $mh_whse_transaction =
-        $preshipment = PreshipmentApproving::with([
+        // $preshipment = PreshipmentApproving::with([
+        $preshipment1 = PreshipmentApproving::with([
             // 'Preshipment_for_approval',
             'preshipment',
         ])
@@ -320,11 +321,10 @@ class MHPreshipmentController extends Controller
         ->where('logdel', 0)
         ->orderBy('fk_preshipment_id', 'DESC')
         ->get();
+        
+        $preshipment = collect($preshipment1)->whereBetween('preshipment.Date', [$request->dateFrom, $request->dateTo])->flatten(1);
 
-        // $preshipmentlist = PreshipmentList::where('fkControlNo',$preshipment[0]->id)
-        // ->get();
-
-        // return $preshipment;
+        
 
         return DataTables::of($preshipment)
         ->addColumn('action', function($preshipment) {
