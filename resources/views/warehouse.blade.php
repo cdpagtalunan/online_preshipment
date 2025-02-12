@@ -416,15 +416,16 @@ $(document).ready(function () {
       "ajax" : {
           url: "get_preshipment_for_whse", 
       },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "from_whse_noter_date_time"},
-          { "data" : "action"},
+      "columns":[   
+        { "data" : "action"}, 
+        { "data" : "status"},
+        { "data" : "preshipment.Date" },
+        { "data" : "preshipment.Station" },
+        { "data" : "preshipment.Packing_List_CtrlNo"},
+        { "data" : "preshipment.Shipment_Date"},
+        { "data" : "preshipment.Destination"},
+        { "data" : "from_whse_noter_date_time"},
+          
           
       ],
     });
@@ -464,15 +465,16 @@ $(document).ready(function () {
       "ajax" : {
           url: "get_preshipment_for_whse_done", 
       },
-      "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "from_whse_noter_date_time"},
-          { "data" : "action"},
+      "columns":[   
+        { "data" : "action"}, 
+        { "data" : "status"},
+        { "data" : "preshipment.Date" },
+        { "data" : "preshipment.Station" },
+        { "data" : "preshipment.Packing_List_CtrlNo"},
+        { "data" : "preshipment.Shipment_Date"},
+        { "data" : "preshipment.Destination"},
+        { "data" : "from_whse_noter_date_time"},
+          
           
       ],
     });
@@ -487,14 +489,14 @@ $(document).ready(function () {
           url: "get_preshipment_for_whse_pps_cn_recieve", 
       },
       "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "from_whse_noter_date_time"},
-          { "data" : "action"},
+        { "data" : "action"},
+        { "data" : "status"},
+        { "data" : "preshipment.Date" },
+        { "data" : "preshipment.Station" },
+        { "data" : "preshipment.Packing_List_CtrlNo"},
+        { "data" : "preshipment.Shipment_Date"},
+        { "data" : "preshipment.Destination"},
+        { "data" : "from_whse_noter_date_time"},
           
       ],
     });
@@ -507,14 +509,14 @@ $(document).ready(function () {
           url: "get_preshipment_whse_pps_cn_recieved", 
       },
       "columns":[    
-          { "data" : "status"},
-          { "data" : "preshipment.Date" },
-          { "data" : "preshipment.Station" },
-          { "data" : "preshipment.Packing_List_CtrlNo"},
-          { "data" : "preshipment.Shipment_Date"},
-          { "data" : "preshipment.Destination"},
-          { "data" : "from_whse_noter_date_time"},
-          { "data" : "action"},
+        { "data" : "action"},
+        { "data" : "status"},
+        { "data" : "preshipment.Date" },
+        { "data" : "preshipment.Station" },
+        { "data" : "preshipment.Packing_List_CtrlNo"},
+        { "data" : "preshipment.Shipment_Date"},
+        { "data" : "preshipment.Destination"},
+        { "data" : "from_whse_noter_date_time"},
           
       ],
     });

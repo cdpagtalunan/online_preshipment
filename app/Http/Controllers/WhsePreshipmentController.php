@@ -2,30 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-
-
-
+use Mail;
+use DataTables;
 use App\Model\UserAccess;
+use App\Model\Destination;
+
+
+
+use App\Model\RapidStamping;
 // use App\Model\Preshipment;
-use App\Model\PreshipmentList;
-use App\Model\RapidPreshipment;
-use App\Model\RapidPreshipmentList;
-use App\Model\PreshipmentApproving;
-use App\Model\RapidShipmentInvoice;
+use Illuminate\Http\Request;
 use App\Model\SubsystemWbsCN;
 use App\Model\SubsystemWbsTS;
-use App\Model\SubsystemWbsLocalTS;
+use App\Model\PreshipmentList;
+use App\Model\RapidPreshipment;
 use App\Model\SubsystemWbsLocalCN;
+use App\Model\SubsystemWbsLocalTS;
+use Illuminate\Support\Facades\DB;
+use App\Model\PreshipmentApproving;
+use App\Model\RapidPreshipmentList;
+use App\Model\RapidShipmentInvoice;
+
+
 use App\Model\WhsePreshipmentCheck;
-use App\Model\RapidStamping;
-
-
-use DataTables;
-use Mail;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 
 class WhsePreshipmentController extends Controller
 {
@@ -116,133 +117,6 @@ class WhsePreshipmentController extends Controller
     }
 
 
-    // public function get_preshipment_list_for_whse(Request $request){
-
-    //     // return $request->preshipmentCtrlNo;
-
-    //     // $preshipment_list = PreshipmentList::where('fkcontrolNo',$request->preshipmentId)->get();
-    //     $preshipment_list = RapidPreshipmentList::with([
-    //         'dieset_info'
-    //     ])
-    //     ->where('fkcontrolNo',$request->preshipmentCtrlId)
-    //     ->where('logdel', 0)
-    //     ->get();
-
-
-    //     $preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlId)
-    //     ->where('logdel', 0)
-    //     ->first();
-
-
-    //     return DataTables::of($preshipment_list)
-    //     ->addColumn('hide_input', function($preshipment_list) {
-    //         $result = "";
-    //         /*
-    //             this is for the scanning of qr code for package qty.
-    //             this will get the last value of the array.
-    //             this will accept - or ~ only.
-    //         */
-    //         if($preshipment_list->PackageQty == "DO"){
-    //             $result .= "DO";
-    //         }
-
-    //         if (str_contains($preshipment_list->PackageQty, '-')){
-    //             $exploded = explode("-",$preshipment_list->PackageQty);
-    //             // $result .= $exploded[1];
-    //             $exploded_last_index = $exploded[1];
-    //             $test = "";
-
-    //             for($x = 1; $x<=$exploded_last_index; $x++){
-
-    //                 $test .= $x."/".$exploded_last_index."";
-    //             }
-    //             $result .= $test;
-    //         }
-    //         else if(str_contains($preshipment_list->PackageQty, '~')){
-    //             $exploded = explode("~",$preshipment_list->PackageQty);
-    //             // $result .=$exploded[1];
-    //             $exploded_last_index = $exploded[1];
-    //             $test = "";
-    //             for($x = 1; $x<=$exploded_last_index; $x++){
-    //                 $test .= $x."/".$exploded_last_index."";
-    //             }
-    //             $result .= $test;
-    //             // return $test;
-    //         }
-    //         else if($preshipment_list->PackageQty != "DO"){
-    //             $result .= $preshipment_list->PackageQty;
-    //         }
-    //         return $result;
-    //     })
-    //     ->addcolumn('drawing_no', function($preshipment_list) use ($preshipment){
-    //         $result = "";
-
-
-    //         if($preshipment->Stamping == 0 && $preshipment->for_pps_cn_transfer == 0){
-    //             if(isset($preshipment_list->dieset_info)){
-    //                 $result .= $preshipment_list->dieset_info->DrawingNo;
-    //             }
-
-    //         }
-    //         else{
-    //             $stamping = RapidStamping::where('device_code', '%'.$preshipment_list->Partscode.'%')
-    //             ->where('logdel', 0)
-    //             ->first();
-
-    //             if(isset($stamping)){
-    //                 $result .= $stamping->drawing_no;
-    //             }
-
-    //         }
-
-    //         return $result;
-    //     })
-    //     ->addcolumn('rev', function($preshipment_list) use ($preshipment){
-    //         $result = "";
-
-
-
-    //         if($preshipment->Stamping == 0 && $preshipment->for_pps_cn_transfer == 0){
-    //             if(isset($preshipment_list->dieset_info)){
-    //                 $result .= $preshipment_list->dieset_info->Rev;
-    //             }
-    //         }
-    //         else{
-    //             $stamping = RapidStamping::where('device_code', '%'.$preshipment_list->Partscode.'%')
-    //             ->where('logdel', 0)
-    //             ->first();
-
-    //             if(isset($stamping)){
-    //                 $result .= $stamping->rev;
-    //             }
-    //         }
-
-    //         return $result;
-    //     })
-    //     /* old Code */
-    //     // ->addcolumn('drawing_no', function($preshipment){
-    //     //     $result = "";
-
-    //     //     if(isset($preshipment->dieset_info)){
-    //     //         $result .= $preshipment->dieset_info->DrawingNo;
-    //     //     }
-
-    //     //     return $result;
-    //     // })
-    //     // ->addcolumn('rev', function($preshipment){
-    //     //     $result = "";
-
-    //     //     if(isset($preshipment->dieset_info)){
-    //     //         $result .= $preshipment->dieset_info->Rev;
-    //     //     }
-
-    //     //     return $result;
-    //     // })
-    //     ->rawColumns(['hide_input','drawing_no','rev'])
-    //     ->make(true);
-
-
-    // }
 
     public function get_preshipment_by_id_for_approval_whse(Request $request){
         $preshipment_details = PreshipmentApproving::with([
@@ -250,21 +124,16 @@ class WhsePreshipmentController extends Controller
             'preshipment',
             'qc_approver_details',
             'qc_approver_details.rapidx_user_details'
-            // 'Preshipment_for_approval.qc_approver_details',
-            // 'Preshipment_for_approval.qc_approver_details.rapidx_user_details'
         ])
         ->where('fk_preshipment_id', $request->preshipmentId)
         ->where('logdel', 0)
         ->first();
 
-        // return $preshipment_details;
+        $destination = Destination::where('destination_name', $preshipment_details->preshipment->Destination)
+        ->whereNull('deleted_at')
+        ->first();
 
-
-        // $preshipment_details = RapidPreshipment::where('id', $request->preshipmentId)->first();
-
-        // return $preshipment_details;
-
-        return response()->json(['result' => $preshipment_details]);
+        return response()->json(['result' => $preshipment_details, 'destination' => $destination]);
     }
 
 
@@ -1477,7 +1346,7 @@ class WhsePreshipmentController extends Controller
             $result .= '<button class="btn btn-primary btn-sm btn-whs-view mr-1" data-toggle="modal" data-target="#modalViewWhsePreshipment" preshipment-id="'.$whse_preshipment->preshipment->id.'"><i class="fas fa-eye"></i></button>';
 
             if($whse_preshipment->status == 0){
-                $result .= '<button class="btn btn-success btn-sm btn-approve-whse mr-1"  data-toggle="modal" data-target="#modalWhsApprove" preshipment-id="'.$whse_preshipment->preshipment->id.'"><i class="fas fa-check-circle"></i></button>';
+                $result .= '<button class="btn btn-success btn-sm btn-approve-whse mr-1" preshipment-id="'.$whse_preshipment->preshipment->id.'"><i class="fas fa-check-circle"></i></button>';
                 $result .= '<button class="btn btn-danger btn-sm btn-disapprove-whse" data-toggle="modal" data-target="#modalWhsDisapprove" preshipment-id="'.$whse_preshipment->id.'"><i class="fas fa-times-circle"></i></button>';
             }
             // else if($whse_preshipment->status == 1){

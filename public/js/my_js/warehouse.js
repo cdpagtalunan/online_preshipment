@@ -83,17 +83,29 @@ function getPreshipmentDetailsForApproval(preshipmentId){
                 $('#txtAcceptShipSendTo').val('pps-cn').trigger('change');
             }
             else{
-                if(jQuery.inArray(response['result']['preshipment']['Destination'], ts) != -1){
-                    // console.log('ts');
+                /**
+                    * Check if the destination is in the array of ts or cn
+                   
+                */
+                if(ts.includes(response['result']['preshipment']['Destination'])){
+                    console.log('ts', response['result']['preshipment']['Destination']);
                     $('#txtAcceptShipSendTo').val('ts').trigger('change');
-    
                 }
-                else if(jQuery.inArray(response['result']['preshipment']['Destination'], cn) != -1){
-                    // console.log('cn');
+                else if(cn.includes(response['result']['preshipment']['Destination'])){
+                    console.log('ts',response['result']['preshipment']['Destination']);
                     $('#txtAcceptShipSendTo').val('cn').trigger('change');
                 }
+                // if(jQuery.inArray(response['result']['preshipment']['Destination'], ts) != -1){
+                //     // console.log('ts');
+                //     $('#txtAcceptShipSendTo').val('ts').trigger('change');
+                // }
+                // else if(jQuery.inArray(response['result']['preshipment']['Destination'], cn) != -1){
+                //     // console.log('cn');
+                //     $('#txtAcceptShipSendTo').val('cn').trigger('change');
+                // }
             }
             
+            $('#modalWhsApprove').modal('show');
 
         },
     });

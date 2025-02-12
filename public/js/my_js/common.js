@@ -17,6 +17,7 @@ function verifyUser(loginUserId){
                     $('#divPPSWarehouseId').css('display','block');
                     $('#divTSCNWarehouseId').css('display','block');
                     $('#divUserManagementId').css('display','block');
+                    $('#divDestinationManagementId').css('display','block');
 
                     $('#h-material-handler').css('display','block');
                     $('#h-inspector').css('display','block');

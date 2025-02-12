@@ -34,6 +34,9 @@ Route::get('/warehouse', function () {
 Route::get('/receiver-warehouse', function () {
     return view('receiver-warehouse');
 });
+Route::get('/destination_management', function () {
+    return view('destination');
+})->name('destination_management');
 
 
 //USER
@@ -145,12 +148,19 @@ Route::get('/get_preshipment_whse_pps_cn_recieved', 'WhsePreshipmentController@g
 Route::post('/approve_pps_cn_transaction', 'WhsePreshipmentController@approve_pps_cn_transaction'); //added 04/25/2023
 Route::get('/check_wbs_variance', 'WhsePreshipmentController@check_wbs_variance'); //added 05/09/2023
 
+//DESTINATION
+Route::get('/dt_destination', 'DestinationController@dt_destination')->name('dt_destination');
+Route::post('/store_destination', 'DestinationController@store_destination')->name('store_destination');
+Route::post('/delete_destination', 'DestinationController@delete_destination')->name('delete_destination');
+
 //EXPORTS
 Route::get('/export/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export');
 Route::get('/export_test/{invoice_number}/{packing_list_ctrl_num}/{packingListProductLine}', 'ExportController@export_test');
 Route::get('/export_excel/{approving_id}', 'ExportController@export_excel');
 Route::get('/pdf_export_grinding/{approving_id}', 'ExportController@pdf_export_grinding');
 Route::get('/pdf_export/{approving_id}', 'ExportController@pdf_export');
+
+
 
 // AUTOMAILER
 Route::get('/mailer', function () {

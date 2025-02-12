@@ -31,9 +31,14 @@
 <!-- Custom JS -->
 {{-- <script src="{{ asset('public/js/my_js/UserLevel.js') }}"></script>
 <script src="{{ asset('public/js/my_js/licence.js') }}"></script> --}}
-<script src="{{ asset('public/js/my_js/User.js?n=6') }}"></script>
-<script src="{{ asset('public/js/my_js/inspector.js?n=108') }}"></script>
+{{-- <script src="{{ asset('public/js/my_js/User.js?n=6') }}"></script> --}}
+{{-- <script src="{{ asset('public/js/my_js/inspector.js?n=108') }}"></script>
 <script src="{{ asset('public/js/my_js/MaterialHandler.js?n=39') }}"></script>
 <script src="{{ asset('public/js/my_js/warehouse.js?n=123') }}"></script>
-<script src="{{ asset('public/js/my_js/common.js?n=16') }}"></script>
+<script src="{{ asset('public/js/my_js/common.js?n=16') }}"></script> --}}
 
+<script src="@php echo asset("public/js/my_js/User.js?".date("YmdHis")) @endphp"></script>
+<script src="@php echo asset("public/js/my_js/inspector.js?".date("YmdHis")) @endphp"></script>
+<script src="@php echo asset("public/js/my_js/MaterialHandler.js?".date("YmdHis")) @endphp"></script>
+<script src="@php echo asset("public/js/my_js/warehouse.js?".date("YmdHis")) @endphp"></script>
+<script src="@php echo asset("public/js/my_js/common.js?".date("YmdHis")) @endphp"></script>
