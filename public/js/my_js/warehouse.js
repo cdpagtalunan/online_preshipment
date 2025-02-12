@@ -73,11 +73,6 @@ function getPreshipmentDetailsForApproval(preshipmentId){
             // var ts = ["Burn-in Sockets","Grinding","Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
             // var cn = ["Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector", "Flexicon & TC/DC Connectors","CN171 Connector","Flexicon & Others - Stamping", 'Battery Connector - Stamping'];
             
-            /*
-                var ts = ["Burn-in Memory Sockets","Burn-in Other Sockets","Grinding Multi-Spindle","Grinding Conventional"];
-                var cn = ["Flexicon & TC/DC Connectors","Card Connectors","FUS/FRS/FMS Connector","CN171 Connector"];
-            
-            */
             if(response['result']['preshipment']['for_pps_cn_transfer'] == 1){ // added 04-25-2023 for pps-ts to pps-cn transactions
                 // console.log('test');
                 $('#txtAcceptShipSendTo').val('pps-cn').trigger('change');
