@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item active">Destination</li>
+                            <li class="breadcrumb-item active">Destinations</li>
                         </ol>
                     </div>
                 </div>
