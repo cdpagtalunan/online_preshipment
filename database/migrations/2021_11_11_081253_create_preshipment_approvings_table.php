@@ -42,6 +42,7 @@ class CreatePreshipmentApprovingsTable extends Migration
 
 
             $table->string('remarks')->nullable();
+            $table->string('disapproved_by')->nullable()->comment = "who disapproved";
 
             
             $table->bigInteger('logdel')->default(0)->comment = '0-Active, 1-Deleted';

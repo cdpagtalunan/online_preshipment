@@ -1080,7 +1080,8 @@ class WhsePreshipmentController extends Controller
     }
 
     public function pps_disapprove_preshipment(Request $request){
-
+        session_start();
+        date_default_timezone_set('Asia/Manila');
         $data = $request->all();
 
         // return $data;
@@ -1100,7 +1101,9 @@ class WhsePreshipmentController extends Controller
         PreshipmentApproving::where('id', $request->disapprove_preshipment)
         ->update([
             'logdel' => 1,
-            'remarks' => $request->pps_disapprove_remarks
+            'remarks' => $request->pps_disapprove_remarks,
+            'disapproved_by' => $_SESSION['rapidx_user_id'],
+            'updated_at' => NOW()
         ]);
 
         //Start Email
@@ -1137,7 +1140,7 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
             $message->to($to_email);
             $message->cc($cc_email);
-            // $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
             $message->bcc('cbretusto@pricon.ph');
 
@@ -1150,8 +1153,9 @@ class WhsePreshipmentController extends Controller
     }
 
     public function whse_reject_preshipment(Request $request){
+        session_start();
+        date_default_timezone_set('Asia/Manila');
         $data = $request->all();
-
 
         $get_preshipment_fk_id = PreshipmentApproving::where('id', $request->reject_preshipment)->first();
 
@@ -1165,7 +1169,9 @@ class WhsePreshipmentController extends Controller
         PreshipmentApproving::where('id', $request->reject_preshipment)
         ->update([
             'logdel' => 1,
+            'disapproved_by' => $_SESSION['rapidx_user_id'],
             'remarks' => $request->reject_remarks_preshipment,
+            'updated_at' => NOW()
         ]);
         if($get_preshipment_fk_id == 'cn'){
             $department = "CN WHSE";
@@ -1210,7 +1216,7 @@ class WhsePreshipmentController extends Controller
         Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num,$department){
             $message->to($to_email);
             $message->cc($cc_email);
-            // $message->bcc('cpagtalunan@pricon.ph');
+            $message->bcc('cpagtalunan@pricon.ph');
             $message->bcc('mrronquez@pricon.ph');
             $message->bcc('cbretusto@pricon.ph');
 
