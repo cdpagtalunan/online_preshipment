@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+use Mail;
+use DataTables;
+use App\Model\UserAccess;
+use App\Model\Destination;
 
 
 
 // use App\Model\Preshipment;
+use App\Model\RapidStamping;
+use Illuminate\Http\Request;
 use App\Model\PreshipmentList;
 use App\Model\RapidPreshipment;
-use App\Model\RapidPreshipmentList;
+use Illuminate\Support\Facades\DB;
 use App\Model\PreshipmentApproving;
-use App\Model\UserAccess;
-use App\Model\RapidStamping;
 
 
 
-use DataTables;
-use Mail;
+use App\Model\RapidPreshipmentList;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 
 class QCPreshipmentController extends Controller
 {
@@ -344,23 +345,28 @@ class QCPreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
         
+        $destination_check = Destination::whereNull('deleted_at')
+        ->get('destination_name')->pluck('destination_name')->toArray();
+
+        // return $destination;
+        // dd( $destination);
         // will check if the preshipment is an internal shipment of external shipment
-        $destination_check = array(
-            "Burn-in Sockets",
-            "Grinding",
-            "Burn-in Memory Sockets",
-            "Burn-in Other Sockets",
-            "Grinding Multi-Spindle",
-            "Grinding Conventional",
-            "Flexicon & Connectors",
-            "FUS/FRS/FMS Connector",
-            "Card Connector",
-            "TC/DC Connector",
-            "Flexicon & TC/DC Connectors",
-            "CN171 Connector",
-            "Battery Connector - Stamping",
-            "Flexicon & Others - Stamping"
-        );
+        // $destination_check = array(
+        //     "Burn-in Sockets",
+        //     "Grinding",
+        //     "Burn-in Memory Sockets",
+        //     "Burn-in Other Sockets",
+        //     "Grinding Multi-Spindle",
+        //     "Grinding Conventional",
+        //     "Flexicon & Connectors",
+        //     "FUS/FRS/FMS Connector",
+        //     "Card Connector",
+        //     "TC/DC Connector",
+        //     "Flexicon & TC/DC Connectors",
+        //     "CN171 Connector",
+        //     "Battery Connector - Stamping",
+        //     "Flexicon & Others - Stamping"
+        // );
         
         // $destination_check = array("Burn-in Sockets","Grinding","Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");// will check if the preshipment is an internal shipment of external shipment
 
