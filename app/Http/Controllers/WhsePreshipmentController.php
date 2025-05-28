@@ -250,6 +250,7 @@ class WhsePreshipmentController extends Controller
         ->where('logdel',0)
         ->get();
 
+        // return $user_details;
         $send_to = "";
         if($user_details[0]->department == "TS WHSE"){
             $send_to = "ts";
@@ -277,6 +278,7 @@ class WhsePreshipmentController extends Controller
         ->get();
 
 
+
         // if($user_details->department == "TS WHSE"){
         //     // return "ts";
         //     $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
@@ -292,12 +294,13 @@ class WhsePreshipmentController extends Controller
                 if($user_details[$x]->department == "TS WHSE"){
                     // return "ts";
                     array_push($dept_array,'ts');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'ts');
                 }
                 if($user_details[$x]->department == "CN WHSE"){
                     // return "cn";
                     array_push($dept_array,'cn');
-                    // $whse_preshipment = collect($whse_preshipment)->where('send_to', 'cn');
+                }
+                else{
+                    $dept_array = array('ts', 'cn');
                 }
             }
             $whse_preshipment = collect($whse_preshipment)->whereIn('send_to', $dept_array);
