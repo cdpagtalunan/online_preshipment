@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Validator;
 
 class QCPreshipmentController extends Controller
 {
-    
+
     public function get_Preshipment_QC(){
         // $preshipment = RapidPreshipment::whereIN('rapidx_QCChecking',['1','2'])
         $preshipment = RapidPreshipment::whereIN('rapidx_QCChecking',['1'])
@@ -33,8 +33,6 @@ class QCPreshipmentController extends Controller
         ->where('logdel', 0)
         ->get();
 
- 
-      
         return DataTables::of($preshipment)
         ->addColumn('status', function($preshipment){
             $result = "<center>";
@@ -59,7 +57,7 @@ class QCPreshipmentController extends Controller
 
 
             $result = "<center>";
-            
+
             $result .= '<button class="btn btn-primary btn-sm btn-openshipment mr-1"  data-toggle="modal" data-target="#modalViewQCChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button>';
             if($rapidx_preshipment != null){
                 $result .= '<div class="btn-group">
@@ -70,11 +68,11 @@ class QCPreshipmentController extends Controller
 
                     $result .='<a class="dropdown-item text-center" href="export_excel/'.$rapidx_preshipment->id.'" target="_blank">Export Excel</a>';
                     $result .='<a class="dropdown-item text-center" href="pdf_export/'.$rapidx_preshipment->id.'" target="_blank">Export PDF</a>';
-                    
+
                     $result .= '</div>'; // dropdown-menu end
                 $result .= '</div>';
             }
-            
+
 
             $result .="</center>";
             return $result;
@@ -106,7 +104,7 @@ class QCPreshipmentController extends Controller
     }
 
     // public function get_Preshipment_list_QC(Request $request){
-        
+
     //     $preshipment_list = RapidPreshipmentList::with([
     //         'dieset_info'
     //     ])
@@ -117,7 +115,7 @@ class QCPreshipmentController extends Controller
     //     $rapid_preshipment = RapidPreshipment::where('Packing_List_CtrlNo', $request->preshipmentCtrlNo)
     //     ->where('logdel', 0)
     //     ->first();
-      
+
     //     return DataTables::of($preshipment_list)
     //     ->addColumn('hide_input', function($preshipment) {
     //         $result = "";
@@ -192,7 +190,7 @@ class QCPreshipmentController extends Controller
     //         if($rapid_preshipment->Stamping == 1){
     //             $result .= "stamping";
     //         }
-            
+
     //         return $result;
     //     })
     //     ->addcolumn('drawing_no', function($preshipment) use ($rapid_preshipment){
@@ -211,9 +209,9 @@ class QCPreshipmentController extends Controller
     //             if(isset($stamping)){
     //                 $result .= $stamping->drawing_no;
     //             }
-              
+
     //         }
-            
+
     //         return $result;
     //     })
     //     ->addcolumn('rev', function($preshipment) use ($rapid_preshipment){
@@ -233,7 +231,7 @@ class QCPreshipmentController extends Controller
     //                 $result .= $stamping->rev;
     //             }
     //         }
-          
+
     //         return $result;
     //     })
     //     /* Old Code */
@@ -257,7 +255,7 @@ class QCPreshipmentController extends Controller
     //     // })
     //     ->rawColumns(['hide_input', 'hide_stamping','drawing_no', 'rev'])
     //     ->make(true);
-        
+
     // }
 
     public function disapprove_list_QC(Request $request){
@@ -266,7 +264,7 @@ class QCPreshipmentController extends Controller
 
         // return $data;
             // try{
-                
+
 
                 RapidPreshipment::where('Packing_List_CtrlNo', $request->packingCtrlNo)
                 ->update([ // The update method expects an array of column and value pairs representing the columns that should be updated.
@@ -274,7 +272,7 @@ class QCPreshipmentController extends Controller
                     'remarks' => $request->remarks,
                     'has_invalid' => '0'
                 ]);
-                
+
                 // return response()->json(['result' => "1"]);
 
                 $get_to_emails = UserAccess::where('department', 'material handler')
@@ -284,10 +282,10 @@ class QCPreshipmentController extends Controller
                 $get_cc_emails = UserAccess::where('department', 'inspector')
                 ->where('logdel', 0)
                 ->get();
-                
+
                 $to_email = array();
                 $cc_email = array();
-                
+
                 foreach($get_to_emails as $get_to_email){
                     $to_email[] = $get_to_email->email;
                 }
@@ -302,10 +300,10 @@ class QCPreshipmentController extends Controller
                 ->first();
 
                 $packing_ctrl_num = $preshipment_details->Destination."-".$request->packingCtrlNo;
-                
+
                 $data = array('data' => $preshipment_details,'remarks' => $request->remarks, 'position' => "QC");
 
-                
+
                 Mail::send('mail.disapprove_mail', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
                     $message->to($to_email);
                     $message->cc($cc_email);
@@ -315,7 +313,7 @@ class QCPreshipmentController extends Controller
 
                     $message->subject("Online Preshipment QC Disapprove-".$packing_ctrl_num);
                 });
-        
+
                 // if (Mail::failures()) {
                     // return response()->json(['result' => 0]);
                 // }
@@ -323,10 +321,10 @@ class QCPreshipmentController extends Controller
                     return response()->json(['result' => 1]);
                 // }
 
-                
+
             // }
             // catch(\Exception $e) {
-               
+
             //     return response()->json(['result' => "0", 'tryCatchError' => $e->getMessage()]);
             // }
     }
@@ -344,7 +342,7 @@ class QCPreshipmentController extends Controller
         $getPackinglist = RapidPreshipment::where('Packing_List_CtrlNo',$request->packingCtrlNo)
         ->where('logdel', 0)
         ->get();
-        
+
         $destination_check = Destination::whereNull('deleted_at')
         ->get('destination_name')->pluck('destination_name')->toArray();
 
@@ -367,7 +365,7 @@ class QCPreshipmentController extends Controller
         //     "Battery Connector - Stamping",
         //     "Flexicon & Others - Stamping"
         // );
-        
+
         // $destination_check = array("Burn-in Sockets","Grinding","Flexicon & Connectors","FUS/FRS/FMS Connector","Card Connector","TC/DC Connector");// will check if the preshipment is an internal shipment of external shipment
 
         /*
@@ -421,10 +419,10 @@ class QCPreshipmentController extends Controller
         }
 
         // check if preshipment is external or internal
-        if( in_array($getPackinglist[0]->Destination,$destination_check) ) {	
+        if( in_array($getPackinglist[0]->Destination,$destination_check) ) {
             // Internal Shipment
 
-         
+
             $preshipment_approving_id = PreshipmentApproving::insertGetId([
                 'fk_preshipment_id'     => $getPackinglist[0]->id,
                 'qc_checker'            => $_SESSION['rapidx_user_id'],
@@ -438,7 +436,7 @@ class QCPreshipmentController extends Controller
             // ->update([
             //     'logdel' => 1,
             // ]);
-            
+
             RapidPreshipment::where('Packing_List_CtrlNo', $request->packingCtrlNo)
             ->update([ // The update method expects an array of column and value pairs representing the columns that should be updated.
                 'rapidx_QCChecking' => '2',
@@ -458,7 +456,7 @@ class QCPreshipmentController extends Controller
 
             $packing_ctrl_num = $preshipment_details->preshipment->Packing_List_CtrlNo;
 
-            
+
             $get_to_emails = UserAccess::where('department', 'PPS WHSE')
             ->where('logdel', 0)
             ->get();
@@ -466,10 +464,10 @@ class QCPreshipmentController extends Controller
             $get_cc_emails = UserAccess::where('department', 'inspector')
             ->where('logdel', 0)
             ->get();
-            
+
             $to_email = array();
             $cc_email = array();
-            
+
             foreach($get_to_emails as $get_to_email){
                 $to_email[] = $get_to_email->email;
             }
@@ -480,7 +478,7 @@ class QCPreshipmentController extends Controller
             // $to_email = ['cbretusto@pricon.ph'];
             // $cc_email = ['cpagtalunan@pricon.ph'];
 
-            
+
             Mail::send('mail.inpector_notification', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
                 $message->to($to_email);
                 $message->cc($cc_email);
@@ -490,7 +488,7 @@ class QCPreshipmentController extends Controller
 
                 $message->subject("Online Preshipment for PPS-WHSE Acceptance-".$packing_ctrl_num);
             });
-    
+
             // if (Mail::failures()) {
             //     return response()->json(['result' => 0]);
             // }
@@ -533,7 +531,7 @@ class QCPreshipmentController extends Controller
 
             $packing_ctrl_num = $preshipment_details->preshipment->Destination."-".$preshipment_details->preshipment->Packing_List_CtrlNo;
 
-            
+
             $get_to_emails = UserAccess::where('department', 'material handler')
             ->where('logdel', 0)
             ->get();
@@ -541,10 +539,10 @@ class QCPreshipmentController extends Controller
             $get_cc_emails = UserAccess::where('department', 'inspector')
             ->where('logdel', 0)
             ->get();
-            
+
             $to_email = array();
             $cc_email = array();
-            
+
             foreach($get_to_emails as $get_to_email){
                 $to_email[] = $get_to_email->email;
             }
@@ -555,7 +553,7 @@ class QCPreshipmentController extends Controller
             // $to_email = ['cbretusto@pricon.ph'];
             // $cc_email = ['cpagtalunan@pricon.ph'];
 
-            
+
             Mail::send('mail.inpector_notification_ext', $data, function($message) use ($to_email,$cc_email,$packing_ctrl_num){
                 $message->to($to_email);
                 $message->cc($cc_email);
@@ -565,7 +563,7 @@ class QCPreshipmentController extends Controller
 
                 $message->subject("Online Preshipment Inspector Approval-".$packing_ctrl_num);
             });
-    
+
             // if (Mail::failures()) {
             //     return response()->json(['result' => 0]);
             // }
@@ -581,7 +579,7 @@ class QCPreshipmentController extends Controller
     public function insert_preshimentlist_from_qc_qr_checking(Request $request){
         $data = $request->all();
 
-        												
+
         PreshipmentList::insert([
             'fkControlNo' => $request->preshipment_ctrl_no,
             'PONo' => $request->po_num,
@@ -597,7 +595,7 @@ class QCPreshipmentController extends Controller
 
 
 
-    
+
     //change 07/14/2022
     public function get_Preshipment_done(Request $request){
         // $preshipment = RapidPreshipment::with([
@@ -621,7 +619,7 @@ class QCPreshipmentController extends Controller
         //     WHERE `rapidx_QCChecking` = '2' AND `logdel` = '0' ORDER BY `id` DESC
         // ");
 
-    
+
         return DataTables::of($preshipment)
         ->addColumn('status', function($preshipment){
             $result = "<center>";
@@ -641,7 +639,7 @@ class QCPreshipmentController extends Controller
         ->addColumn('action', function($preshipment) {
 
             $result = "";
-           
+
             // $rapidx_preshipment = PreshipmentApproving::where('fk_preshipment_id',$preshipment->id)
             // ->where('logdel', 0)
             // ->first();
@@ -651,11 +649,11 @@ class QCPreshipmentController extends Controller
             ->where('fk_preshipment_id', $preshipment->id)
             ->where('logdel', 0)
             ->first();
-            
+
 
 
             $result .= "<center>";
-            
+
             $result .= '<button class="btn btn-primary btn-sm btn-openshipment mr-1"  data-toggle="modal" data-target="#modalViewQCChecksheets" checksheet-id="'.$preshipment->Packing_List_CtrlNo.'"><i class="fas fa-eye"></i></button>';
             if($rapidx_preshipment != null){
                 $result .= '<div class="btn-group">
@@ -666,11 +664,11 @@ class QCPreshipmentController extends Controller
 
                     $result .='<a class="dropdown-item text-center" href="export_excel/'.$rapidx_preshipment->id.'" target="_blank">Export Excel</a>';
                     $result .='<a class="dropdown-item text-center" href="pdf_export/'.$rapidx_preshipment->id.'" target="_blank">Export PDF</a>';
-                    
+
                     $result .= '</div>'; // dropdown-menu end
                 $result .= '</div>';
             }
-            
+
 
             $result .="</center>";
             return $result;

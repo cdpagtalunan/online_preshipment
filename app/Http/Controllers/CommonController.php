@@ -35,7 +35,7 @@ class CommonController extends Controller
         ->where('logdel', 0)
         ->first();
       
-        // return $rapid_preshipment;
+        // return $preshipment_list;
         return DataTables::of($preshipment_list)
 
         ->addColumn('hide_input', function($preshipment) {

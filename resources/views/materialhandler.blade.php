@@ -974,7 +974,7 @@
   function drawInternalTable(){
     //datatable for internal transaction
     dataTableForWhse = $("#tbl_whse_int_transaction").DataTable({
-      "processing" : false,
+      "processing" : true,
       "serverSide" : true,
       // "paging"     : false,
       "ordering"   : false,
